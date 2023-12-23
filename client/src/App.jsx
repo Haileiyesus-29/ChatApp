@@ -1,15 +1,15 @@
+import { Route, Routes } from 'react-router-dom'
 import Container from './ui/Container'
-import Home from './ui/Home'
-import Sidebar from './ui/Sidebar'
+import Message from './features/chat/Message'
 
 function App() {
    return (
-      <>
-         <Container>
-            <Sidebar />
-            <Home />
-         </Container>
-      </>
+      <Routes>
+         <Route path='/' element={<Container />}>
+            <Route index element={<Message />} />
+            <Route path='chat/:userId' element={<Message />} />
+         </Route>
+      </Routes>
    )
 }
 
