@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+   .containerEl {
+      @apply h-screen dark:bg-base-100 grid grid-rows-1  grid-cols-[4rem_1fr] md:grid-cols-[4rem_20rem_1fr] lg:grid-cols-[4rem_25rem_1fr] xl:grid-cols-[4rem_20rem_1fr_25rem];
+   }
+   .containerEl:nth-child(3) {
+      @apply hidden md:flex;
+   }
+   .containerEl:nth-child(4) {
+      @apply hidden xl:flex;
+   }
+}
+
+/* Firefox */
+* {
+   scrollbar-width: thin;
+   scrollbar-color: #397524 #dfe9eb;
+}
+
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
+   height: 2px;
+   width: 2px;
+}
+*::-webkit-scrollbar-track {
+   border-radius: 4px;
+   background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+   @apply border-r-4 dark:bg-neutral-content/30;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+   @apply dark:bg-neutral-content/50;
+}
+
+*::-webkit-scrollbar-thumb:active {
+   @apply dark:bg-neutral-content/50;
+}

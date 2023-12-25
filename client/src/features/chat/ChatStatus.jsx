@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Avatar from '../../ui/Avatar'
+import Avatar from '../../ui/common/Avatar'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
 function ChatStatus() {

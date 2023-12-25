@@ -1,4 +1,4 @@
-import Avatar from './Avatar'
+import Avatar from '../common/Avatar'
 
 function ChatLink() {
    return (

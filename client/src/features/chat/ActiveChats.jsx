@@ -1,41 +1,50 @@
-import Avatar from '../../ui/Avatar'
+import Avatar from '../../ui/common/Avatar'
 
 function ActiveChats() {
    return (
-      <div className='w-full border-t border-b py-2 whitespace-nowrap overflow-x-auto dark:border-neutral-content/20 '>
+      <div className='flex whitespace-nowrap overflow-x-auto dark:border-neutral-content/20'>
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
          <Avatar
+            size='lg'
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
