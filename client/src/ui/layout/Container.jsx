@@ -4,6 +4,7 @@ import Home from './Home'
 import Message from '../../features/chat/Message'
 import { useEffect, useState } from 'react'
 import Info from '../messaging/Info'
+import Profile from '../../features/profile/Profile'
 
 function Container() {
    const location = useLocation()
@@ -20,6 +21,14 @@ function Container() {
          window.removeEventListener('resize', updateScreenWidth)
       }
    }, [])
+
+   if (path === 'profile')
+      return (
+         <div className='containerEl max-w-screen-2xl mx-auto'>
+            <Sidebar />
+            <Profile />
+         </div>
+      )
 
    if (screenWidth < 768) {
       if (!path)

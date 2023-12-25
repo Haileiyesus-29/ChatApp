@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import Icon from '../common/Icon'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Sidebar() {
    const [theme, setTheme] = useState('dark')
@@ -34,13 +34,16 @@ function Sidebar() {
             <Icon icon={faBullhorn} onClick={() => navigate('/channel')} />
             <Icon icon={faUserGroup} onClick={() => navigate('/group')} />
          </div>
-         <div className='inline-flex flex-col items-center  gap-2 mt-auto'>
+         <Link
+            to='/profile'
+            className='inline-flex flex-col items-center  gap-2 mt-auto'
+         >
             <div className='avatar'>
                <div className='w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2'>
                   <img src='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
                </div>
             </div>
-         </div>
+         </Link>
          <label className='swap swap-rotate'>
             <input
                type='checkbox'
