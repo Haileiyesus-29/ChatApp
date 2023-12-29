@@ -12,7 +12,7 @@ export const createUserAccount = async body => {
    const hashedPassword = await hashPassword(password)
 
    const account = {
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
       fname,
       lname,
