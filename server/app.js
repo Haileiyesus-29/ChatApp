@@ -20,9 +20,9 @@ app.get('/', (req, res) => res.send('hello bm'))
 
 app.use('/api/auth', authRoute)
 app.use('/api/user', userRoute)
-app.use('/api/chat', chatRoute)
 app.use('/api/channel', channelRoute)
 app.use('/api/group', groupRoute)
+app.use('/api/chat', chatRoute)
 
 app.use(handleErrors)
 
