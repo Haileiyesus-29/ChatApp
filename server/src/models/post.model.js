@@ -36,6 +36,12 @@ const postSchema = new mongoose.Schema(
       versionKey: false,
    }
 )
+postSchema.set('toJSON', {
+   transform: function (doc, ret) {
+      ret.id = ret._id
+      delete ret._id
+   },
+})
 
 const Post = mongoose.model('Post', postSchema)
 export default Post

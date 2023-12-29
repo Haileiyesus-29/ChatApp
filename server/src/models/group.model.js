@@ -9,6 +9,7 @@ const groupSchema = new mongoose.Schema(
       username: {
          type: String,
          unique: true,
+         sparse: true,
       },
       image: {
          type: String,
@@ -30,7 +31,7 @@ const groupSchema = new mongoose.Schema(
       members: [
          {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User', // Reference to the 'User' model
+            ref: 'User',
          },
       ],
    },
@@ -39,6 +40,17 @@ const groupSchema = new mongoose.Schema(
       timestamps: true,
    }
 )
+groupSchema.index(
+   { username: 1 },
+   { unique: true, partialFilterExpression: { username: { $type: 'string' } } }
+)
+
+groupSchema.set('toJSON', {
+   transform: function (doc, ret) {
+      ret.id = ret._id
+      delete ret._id
+   },
+})
 
 const Group = mongoose.model('Group', groupSchema)
 

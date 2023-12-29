@@ -33,5 +33,12 @@ const messageSchema = new mongoose.Schema(
 
 messageSchema.index({ sender: 1, createdAt: -1 })
 
+messageSchema.set('toJSON', {
+   transform: function (doc, ret) {
+      ret.id = ret._id
+      delete ret._id
+   },
+})
+
 const Message = mongoose.model('Message', messageSchema)
 export default Message

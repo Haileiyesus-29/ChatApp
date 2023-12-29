@@ -9,6 +9,7 @@ const channelSchema = new mongoose.Schema(
       username: {
          type: String,
          unique: true,
+         sparse: true,
       },
       image: {
          type: String,
@@ -39,6 +40,17 @@ const channelSchema = new mongoose.Schema(
       timestamps: true,
    }
 )
+channelSchema.index(
+   { username: 1 },
+   { unique: true, partialFilterExpression: { username: { $type: 'string' } } }
+)
+
+channelSchema.set('toJSON', {
+   transform: function (doc, ret) {
+      ret.id = ret._id
+      delete ret._id
+   },
+})
 
 const Channel = mongoose.model('Channel', channelSchema)
 

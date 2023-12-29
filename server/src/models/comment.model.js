@@ -26,6 +26,12 @@ const commentSchema = new mongoose.Schema(
       versionKey: false,
    }
 )
+commentSchema.set('toJSON', {
+   transform: function (doc, ret) {
+      ret.id = ret._id
+      delete ret._id
+   },
+})
 
 const Comment = mongoose.model('Comment', commentSchema)
 export default Comment

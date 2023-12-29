@@ -22,20 +22,23 @@ export async function createUser(req, res, next) {
    const user = await createUserAccount(req.body)
    if (!user) return next(ERRORS.SERVER_FAILED)
 
-   const token = await generateToken({ id: user._id })
+   const token = await generateToken({ id: user.id })
 
    res.cookie('jwt', token, { maxAge: 1000 * 60 * 60 * 24, httpOnly: true })
    res.status(200).json({ account: user })
 }
 
 export async function updateUser(req, res, next) {
-   const updated = await updateUserAccount(req.body, req.userId)
+   const updated = await updateUserAccount(req.body, req.user.id)
    if (!updated) return next(ERRORS.SERVER_FAILED)
    res.status(200).json({ account: updated })
 }
 
 export async function deleteUser(req, res, next) {
-   const deleted = await deleteUserAccount(req.body, req.userId)
+   const password = req.body.password
+   if (!password) return next(ERRORS.UNAUTHORISED)
+
+   const deleted = await deleteUserAccount(req.user.id, password)
    if (!deleted) return next(ERRORS.UNAUTHORISED)
    res.sendStatus(204).end()
 }
