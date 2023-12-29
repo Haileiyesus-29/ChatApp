@@ -1,9 +1,13 @@
 import ERRORS from '../../../config/_errors.js'
 import {
+   addAdminToChannel,
    createNewChannel,
    findChannel,
    findChannelAndDelete,
    findChannelAndUpdate,
+   getAllAdmins,
+   getAllMembers,
+   removeAdminFromChannel,
 } from './channel.service.js'
 
 export async function getChannel(req, res, next) {
@@ -15,7 +19,7 @@ export async function getChannel(req, res, next) {
 }
 
 export async function createChannel(req, res, next) {
-   const channel = await createNewChannel(req.body, req.user.id)
+   const channel = await createNewChannel(req.user.id, req.body)
    if (!channel) return next(ERRORS.SERVER_FAILED)
 
    res.status(201).json({ channel })
@@ -25,17 +29,65 @@ export async function updateChannel(req, res, next) {
    const channelId = req.params.channelId
    if (!channelId) return next(ERRORS.INVALID_CREDIENTIAL)
 
-   const channel = await findChannelAndUpdate(req.body, req.user.id, channelId)
+   const channel = await findChannelAndUpdate(req.user.id, channelId, req.body)
    if (!channel) return next(ERRORS.UNAUTHORISED)
 
    res.status(200).json({ channel })
 }
 
 export async function deleteChannel(req, res, next) {
-   const channelId = req.params.channelId
+   const channelId = req.body.channelId
    if (!channelId) return next(ERRORS.INVALID_CREDIENTIAL)
    const channel = await findChannelAndDelete(req.user.id, channelId)
    if (!channel) return next(ERRORS.UNAUTHORISED)
 
    res.sendStatus(204)
+}
+
+export async function joinChannel(req, res, next) {
+   const channelId = req.params.channelId
+   if (!channelId) return next(ERRORS.INVALID_CREDIENTIAL)
+   const channel = await addUserToChannel(req.userId, channelId)
+   if (!channel) return next(ERRORS.SERVER_FAILED)
+
+   res.status(200).json({ channel })
+}
+export async function leaveChannel(req, res, next) {
+   const channelId = req.body.channelId
+   if (!channelId) return next(ERRORS.INVALID_CREDIENTIAL)
+   const channel = await addUserToChannel(req.userId, channelId)
+   if (!channel) return next(ERRORS.NOT_FOUND)
+
+   res.status(200).json({ channel })
+}
+
+export async function addAdmin(req, res, next) {
+   const { adminId, channelId } = req.body
+   if (!adminId || !channelId) return next(ERRORS.BAD_REQUEST)
+
+   const channel = await addAdminToChannel(req.userId, channelId, adminId)
+   if (!channel) return next(ERRORS.FORBIDDEN)
+   res.status(200).json({ channel })
+}
+
+export async function removeAdmin(req, res, next) {
+   const { adminId, channelId } = req.body
+   if (!adminId || !channelId) return next(ERRORS.BAD_REQUEST)
+
+   const channel = await removeAdminFromChannel(req.userId, channelId, adminId)
+   if (!channel) return next(ERRORS.FORBIDDEN)
+   res.status(200).json({ channel })
+}
+
+export async function getMembers(req, res, next) {
+   const channelId = req.params.channelId
+   if (!channelId) return next(ERRORS.BAD_REQUEST)
+   const members = await getAllMembers(channelId)
+   res.send(200).json({ members })
+}
+export async function getAdmins(req, res, next) {
+   const channelId = req.params.channelId
+   if (!channelId) return next(ERRORS.BAD_REQUEST)
+   const admins = await getAllAdmins(channelId)
+   res.send(200).json({ admins })
 }
