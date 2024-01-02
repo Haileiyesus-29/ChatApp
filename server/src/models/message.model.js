@@ -17,9 +17,13 @@ const messageSchema = new mongoose.Schema(
          required: true,
          enum: ['message', 'group', 'channel'],
       },
-      text: {
+      content: {
          type: String,
+         required: true,
+         enum: ['text', 'image'],
       },
+      text: { type: String },
+      images: [{ type: String }],
       createdAt: {
          type: Date,
          default: Date.now,

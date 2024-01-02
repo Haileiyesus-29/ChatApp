@@ -36,6 +36,6 @@ export const io = new Server(server, {
 
 connectDB(() =>
    server.listen(process.env.PORT, () =>
-      console.log(`Server running on port ${process.env.PORT}`)
+      console.log(`Server running on ${process.env.PORT}`)
    )
 )

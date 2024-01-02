@@ -1,6 +1,9 @@
 import express from 'express'
+import { authenticate } from '../../middlewares/authenticate.js'
+import { getChats } from './chat.controller.js'
 const router = express.Router()
 
-router.get('/', (req, res) => res.send('chat route'))
+router.get('/', authenticate, getChats)
+router.post('/', authenticate)
 
 export default router
