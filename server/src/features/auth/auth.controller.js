@@ -18,6 +18,6 @@ export async function login(req, res, next) {
 }
 
 export function logout(req, res) {
-   res.cookie('jwt', token, { httpOnly: true, maxAge: 0 })
+   res.cookie('jwt', '', { httpOnly: true, maxAge: 0 })
    res.sendStatus(204).end()
 }

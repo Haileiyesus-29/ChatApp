@@ -15,7 +15,7 @@ const messageSchema = new mongoose.Schema(
       chatType: {
          type: String,
          required: true,
-         enum: ['message', 'group', 'channel'],
+         enum: ['User', 'Group'],
       },
       content: {
          type: String,
