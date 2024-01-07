@@ -11,7 +11,6 @@ export const createNewPost = async (userId, channelId, message) => {
       !channel?.admins.some(admin => admin.toString() === userId)
    )
       return null
-
    const post = new Post({
       channel: channelId,
       text,

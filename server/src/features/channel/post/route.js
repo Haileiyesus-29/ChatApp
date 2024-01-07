@@ -12,4 +12,4 @@ const router = Router()
  */
 router.post('/post', authenticate, makePost)
 
-export default Router
+export default router

@@ -7,6 +7,8 @@ function Input({
    secondary = false,
    defaultValue = '',
    disabled = false,
+   onChange,
+   error,
 }) {
    if (secondary)
       return (
@@ -17,6 +19,7 @@ function Input({
                className='block py-2.5 px-0 w-full text-sm text-base-300 dark:text-neutral-content bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer'
                defaultValue={defaultValue}
                disabled={disabled}
+               onChange={onChange}
             />
             <label
                htmlFor='floating_email'
@@ -39,10 +42,13 @@ function Input({
             defaultValue={defaultValue}
             disabled={disabled}
             className='input input-bordered w-full '
+            onChange={onChange}
          />
-         <div className='label hidden'>
-            <span className='label-text-alt'>Bottom Left label</span>
-         </div>
+         {error && (
+            <div className='label '>
+               <span className='text-sm text-red-400/80'>{error}</span>
+            </div>
+         )}
       </label>
    )
 }

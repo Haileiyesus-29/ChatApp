@@ -1,8 +1,13 @@
+import useSocket from '../../hooks/useSocket'
 import ChatBubble from '../../ui/messaging/ChatBubble'
 import ChatForm from '../../ui/messaging/ChatForm'
 import ChatStatus from './ChatStatus'
 
 function Message() {
+   const { data, emit, error } = useSocket('connection')
+   if (data) console.log(data)
+   if (error) console.log(error)
+
    return (
       <section className=' flex-col flex'>
          <ChatStatus />
