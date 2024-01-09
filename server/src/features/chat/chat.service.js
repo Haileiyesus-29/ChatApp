@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import Message from '../../models/message.model.js'
 import User from '../../models/user.model.js'
 
@@ -8,83 +9,68 @@ export const chatToUserAccount = async (userId, receiverId, payload) => {
    const content = images.length ? 'image' : 'text'
 
    const receiver = await User.findById(receiverId)
-   if (!receiverId) return null
+   if (!receiver.id) return null
 
    const message = new Message({
       sender: userId,
       receiver: receiverId,
-      chatType: 'message',
+      chatType: 'User',
       content,
       images,
       text,
    })
    const sentMessage = await message.save()
+   return sentMessage
 }
 
 export const getChattedContacts = async userId => {
-   const receivers = await Message.aggregate([
+   const lastMessages = await Message.aggregate([
       {
-         $match: { sender: userId },
+         $match: {
+            $or: [
+               { sender: new mongoose.Types.ObjectId(userId) },
+               { receiver: new mongoose.Types.ObjectId(userId) },
+            ],
+         },
       },
       {
          $group: {
-            _id: '$receiver',
+            _id: {
+               $cond: [
+                  { $eq: ['$sender', new mongoose.Types.ObjectId(userId)] },
+                  '$receiver',
+                  '$sender',
+               ],
+            },
             lastMessageTime: { $max: '$createdAt' },
+            lastMessage: { $last: '$$ROOT' },
          },
       },
       {
          $lookup: {
-            from: 'users',
+            from: 'users', // Assuming the collection name is 'users'
             localField: '_id',
             foreignField: '_id',
-            as: 'contact',
+            as: 'chattedUser',
          },
       },
       {
+         $unwind: '$chattedUser',
+      },
+      {
+         $sort: { lastMessageTime: -1 },
+      },
+      {
          $project: {
-            _id: '$contact._id',
-            fname: '$contact.fname',
-            lname: '$contact.lname',
-            username: '$contact.username',
-            image: '$contact.image',
+            'chattedUser.fname': 1,
+            'chattedUser.lname': 1,
+            'chattedUser.image': 1,
             lastMessageTime: 1,
+            'lastMessage.text': 1,
+            'lastMessage.images': 1,
          },
       },
    ])
 
-   const senders = await Message.aggregate([
-      {
-         $match: { receiver: userId },
-      },
-      {
-         $group: {
-            _id: '$sender',
-            lastMessageTime: { $max: '$createdAt' },
-         },
-      },
-      {
-         $lookup: {
-            from: 'users',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'contact',
-         },
-      },
-      {
-         $project: {
-            _id: '$contact._id',
-            fname: '$contact.fname',
-            lname: '$contact.lname',
-            username: '$contact.username',
-            image: '$contact.image',
-            lastMessageTime: 1,
-         },
-      },
-   ])
-
-   const chattedContacts = [...receivers, ...senders]
-
-   chattedContacts.sort((a, b) => b.lastMessageTime - a.lastMessageTime)
-
-   return chattedContacts
+   return lastMessages
 }
