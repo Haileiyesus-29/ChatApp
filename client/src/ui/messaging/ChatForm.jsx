@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function ChatForm() {
    return (
-      <form>
+      <form className=' mt-auto'>
          <div className='flex items-center px-3 py-2 dark:bg-base-300'>
             <button type='button' className='btn btn-xs btn-circle mx-1'>
                <FontAwesomeIcon icon={faImage} style={{ fontSize: '1.5rem' }} />

@@ -5,11 +5,13 @@ import {
    faRightFromBracket,
    faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Icon from '../common/Icon'
 import { Link, useNavigate } from 'react-router-dom'
+import authContext from '../../features/auth/authContext'
 
 function Sidebar() {
+   const { logout } = useContext(authContext)
    const [theme, setTheme] = useState('dark')
    const navigate = useNavigate()
    useEffect(() => {
@@ -24,7 +26,7 @@ function Sidebar() {
                bg={false}
                size={1.6}
                width={8}
-               onClick={() => navigate('/login')}
+               onClick={() => logout()}
             />
             <Icon icon={faHome} onClick={() => navigate('/')} />
          </div>

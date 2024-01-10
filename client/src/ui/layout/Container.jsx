@@ -1,12 +1,15 @@
-import { useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Home from './Home'
 import Message from '../../features/chat/Message'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Info from '../messaging/Info'
 import Profile from '../../features/profile/Profile'
+import authContext from '../../features/auth/authContext'
 
 function Container() {
+   const { account, loading } = useContext(authContext)
+
    const location = useLocation()
    const path = location.pathname.split('/')?.at(1)
 
@@ -21,6 +24,9 @@ function Container() {
          window.removeEventListener('resize', updateScreenWidth)
       }
    }, [])
+
+   if (loading) return <div className='text-3xl'>Loading...</div>
+   if (!account) return <Navigate to='login' />
 
    if (path === 'profile')
       return (

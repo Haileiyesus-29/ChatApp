@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Input from '../../ui/common/Input'
 import Button from '../../ui/common/Button'
 import { useContext, useState } from 'react'
@@ -8,11 +8,9 @@ function Login() {
    const [info, setInfo] = useState({ email: '', password: '' })
    const { login, loading, error } = useContext(authContext)
 
-   const navigate = useNavigate()
-
    const handleSubmit = async e => {
       e.preventDefault()
-      await login(info, () => navigate('/', { replace: true }))
+      await login(info)
    }
 
    return (

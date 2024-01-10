@@ -1,7 +1,11 @@
 import ERRORS from '../../../config/_errors.js'
-import { chatToUserAccount, getChattedContacts } from './chat.service.js'
+import {
+   chatToUserAccount,
+   getChatThread,
+   getChattedContacts,
+} from './chat.service.js'
 
-export async function getChats(req, res, next) {
+export async function getContacts(req, res, next) {
    const chattedContacts = await getChattedContacts(req.user.id)
    if (!chattedContacts) return next(ERRORS.SERVER_FAILED)
    res.status(200).json({ contacts: chattedContacts })
@@ -17,4 +21,11 @@ export async function sendMessage(req, res, next) {
    )
    if (!message) return next(ERRORS.BAD_REQUEST)
    res.status(201).json(message)
+}
+
+export async function getChatMessages(req, res, next) {
+   const contactId = req.params.contactId
+   if (!contactId) return next(ERRORS.INVALID_CREDENTIAL)
+   const messages = await getChatThread(req.user.id, contactId)
+   res.status(200).json(messages)
 }

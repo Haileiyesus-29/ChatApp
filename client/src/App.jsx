@@ -18,13 +18,12 @@ const queryClient = new QueryClient({
 
 function App() {
    return (
-      <AuthProvider>
-         <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-
+      <QueryClientProvider client={queryClient}>
+         <ReactQueryDevtools initialIsOpen={false} />
+         <AuthProvider>
             <Routes>
                <Route path='/' element={<Container />} />
-               <Route path='/chat' element={<Container />} />
+               <Route path='/chat/:id' element={<Container />} />
                <Route path='/group' element={<Container />} />
                <Route path='/channel' element={<Container />} />
                <Route path='/info' element={<Container />} />
@@ -33,8 +32,8 @@ function App() {
                <Route path='/register' element={<Register />} />
                <Route path='*' element={<NotFound />} />
             </Routes>
-         </QueryClientProvider>
-      </AuthProvider>
+         </AuthProvider>
+      </QueryClientProvider>
    )
 }
 

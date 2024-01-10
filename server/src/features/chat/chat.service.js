@@ -4,9 +4,9 @@ import User from '../../models/user.model.js'
 
 export const chatToUserAccount = async (userId, receiverId, payload) => {
    const { images, text } = payload
-   if (!images.length && !text) return null
+   if (!images?.length && !text) return null
 
-   const content = images.length ? 'image' : 'text'
+   const content = images?.length ? 'image' : 'text'
 
    const receiver = await User.findById(receiverId)
    if (!receiver.id) return null
@@ -62,15 +62,26 @@ export const getChattedContacts = async userId => {
       },
       {
          $project: {
-            'chattedUser.fname': 1,
-            'chattedUser.lname': 1,
-            'chattedUser.image': 1,
-            lastMessageTime: 1,
-            'lastMessage.text': 1,
-            'lastMessage.images': 1,
+            id: '$chattedUser._id',
+            fname: '$chattedUser.fname',
+            lname: '$chattedUser.lname',
+            image: '$chattedUser.image',
+            text: '$lastMessage.text',
+            createdAt: '$lastMessage.createdAt',
          },
       },
    ])
 
    return lastMessages
+}
+
+export const getChatThread = async (userId, contactId) => {
+   const chatThread = await Message.find({
+      $or: [
+         { sender: userId, receiver: contactId },
+         { sender: contactId, receiver: userId },
+      ],
+   }).sort({ createdAt: 1 })
+
+   return chatThread
 }

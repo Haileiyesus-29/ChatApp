@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-function ChatBubble({ type, content, details }) {
+function ChatBubble({ type, details, text, images, createdAt }) {
    return (
       <div
          className={`flex items-end gap-2.5 m-2 max-w-screen-sm ${
@@ -30,21 +30,20 @@ function ChatBubble({ type, content, details }) {
                      : 'rounded-e-xl rounded-ss-xl dark:bg-base-300  items-start'
                } `}
             >
-               <p className='text-md font-normal'>
-                  That's awesome. I think our users will really appreciate the
-                  improvements.
-               </p>
-               <span className='rounded-lg overflow-hidden max-w-sm'>
-                  <img
-                     src='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
-                     alt=''
-                     className='object-contain'
-                  />
-               </span>
+               <p className='text-md font-normal'>{text} </p>
+               {!!images?.length && (
+                  <span className='rounded-lg overflow-hidden max-w-sm'>
+                     <img
+                        src='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
+                        alt=''
+                        className='object-contain'
+                     />
+                  </span>
+               )}
             </div>
             <div className='flex justify-between'>
                <span className='text-sm font-normal text-gray-500 dark:text-gray-400'>
-                  11:46
+                  {new Date(createdAt).toLocaleString()}
                </span>
                {type === 'sent' && (
                   <span className='text-sm font-normal text-gray-500 dark:text-gray-400'>

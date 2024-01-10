@@ -24,7 +24,12 @@ export async function createUser(req, res, next) {
 
    const token = await generateToken({ id: user.id })
 
-   res.cookie('jwt', token, { maxAge: 1000 * 60 * 60 * 24, httpOnly: true })
+   res.cookie('jwt', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: 'None',
+   })
    res.status(200).json({ account: user })
 }
 
