@@ -19,13 +19,13 @@ function ChatLink({ chat }) {
                status={'online'}
             />
          </div>
-         <div className='flex flex-col justify-between'>
-            <span className='text-lg font-bold  leading-tight pb-1'>
-               {`${fname} ${lname}`}
+         <div className='flex flex-col justify-between gap-2'>
+            <span className='text leading-tight '>
+               {`${fname} ${lname ? lname : ''}`}
             </span>
-            <span className='text-sm '>{text}</span>
+            <span className='text-xs dark:text-gray-500'>{text}</span>
          </div>
-         <span className='absolute top-1 right-2 dark:text-neutral-content/70 text-xs'>
+         <span className='absolute top-[2px] right-2  text-[0.6rem]'>
             {time}
          </span>
       </Link>

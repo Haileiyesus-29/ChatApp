@@ -10,18 +10,16 @@ function ChatStatus({ page, name, fname, lname, image }) {
             <Avatar image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
          </div>
          <div className='flex flex-col justify-between'>
-            <h3 className='text-xl font-bold'>
-               {name || `${fname} ${lname ? lname : ''}`}
-            </h3>
+            <h3 className=''>{name || `${fname} ${lname ? lname : ''}`}</h3>
             {page === 'chat' && (
-               <span className='text-xs text-green-400'>online</span>
+               <span className='text-xs text-green-400/80'>online</span>
             )}
          </div>
          <div className=' ml-auto flex items-center gap-2 pr-2'>
             <span>
                <FontAwesomeIcon
                   icon={faEllipsisV}
-                  style={{ fontSize: '2rem' }}
+                  style={{ fontSize: '1.5rem' }}
                />
             </span>
          </div>

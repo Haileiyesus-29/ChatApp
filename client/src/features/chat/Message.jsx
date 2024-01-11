@@ -15,10 +15,10 @@ function Message() {
 
    const page = pathname.split('/')[1]
 
-   const { data, isLoading } = useQuery({
+   const { data: messages, isLoading } = useQuery({
       queryKey: [page, id],
       queryFn: async () => {
-         const messages = await api.get(`chat/${id}`)
+         const messages = id && (await api.get(`chat/${id}`))
          return messages
       },
    })
@@ -32,7 +32,7 @@ function Message() {
                   <div>Loading... </div>
                ) : (
                   <div className='py-2 overflow-y-auto'>
-                     {data.map(message => {
+                     {messages.map(message => {
                         return (
                            <ChatBubble
                               key={message.id}

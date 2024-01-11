@@ -23,6 +23,7 @@ function App() {
          <AuthProvider>
             <Routes>
                <Route path='/' element={<Container />} />
+               <Route path='/chat' element={<Container />} />
                <Route path='/chat/:id' element={<Container />} />
                <Route path='/group' element={<Container />} />
                <Route path='/channel' element={<Container />} />
