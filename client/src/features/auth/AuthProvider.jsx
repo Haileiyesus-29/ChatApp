@@ -31,7 +31,7 @@ function AuthProvider({ children }) {
          const data = await api.post('auth/login', payload)
          setAccount(data.account)
          setLoading(false)
-         navigate('')
+         navigate('/')
       } catch (error) {
          setLoading(false)
          console.log(error)
@@ -41,7 +41,7 @@ function AuthProvider({ children }) {
       try {
          await api.post('auth/logout')
          setAccount(null)
-         navigate('login')
+         navigate('/login')
       } catch (error) {
          console.log(error)
       }
@@ -53,7 +53,7 @@ function AuthProvider({ children }) {
          const data = await api.post('user', payload)
          setAccount(data.account)
          setLoading(false)
-         navigate('')
+         navigate('/')
       } catch (error) {
          setLoading(false)
          console.log(error)

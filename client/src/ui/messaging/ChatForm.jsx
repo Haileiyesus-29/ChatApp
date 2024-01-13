@@ -8,23 +8,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 function ChatForm() {
    return (
       <form className=' mt-auto'>
-         <div className='flex items-center px-3 py-2 dark:bg-base-300'>
-            <button type='button' className='btn btn-xs btn-circle mx-1'>
+         <div className='flex items-center gap-1 px-2 py-1 dark:bg-base-300'>
+            <button type='button' className='btn btn-xs btn-circle'>
                <FontAwesomeIcon icon={faImage} style={{ fontSize: '1.5rem' }} />
             </button>
-            <button type='button' className='btn btn-xs btn-circle mx-1'>
+            <button type='button' className='btn btn-xs btn-circle'>
                <FontAwesomeIcon
                   icon={faFaceLaugh}
                   style={{ fontSize: '1.5rem' }}
                />
             </button>
             <textarea
-               className='textarea h-12 max-h-24 w-full mx-1 text-lg'
+               className='grow max-h-10 resize-none dark:bg-gray-700/30 w-full px-2 py-1 rounded-md  focus:outline-gray-700 focus:outline-offset-1 focus:outline-double focus:outline-2'
                placeholder='Your message...'
             ></textarea>
             <button
                type='submit'
-               className='btn btn-sm btn-circle dark:bg-primary dark:text-primary-content'
+               className=' dark:bg-primary px-2 self-stretch rounded-lg dark:text-primary-content'
             >
                <FontAwesomeIcon
                   icon={faAngleRight}

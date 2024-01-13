@@ -1,15 +1,15 @@
 import { useLocation, useParams } from 'react-router-dom'
 import useSocket from '../../hooks/useSocket'
-import ChatBubble from '../../ui/messaging/ChatBubble'
-import ChatForm from '../../ui/messaging/ChatForm'
+import ChatBubble from './ChatBubble'
+import ChatForm from './ChatForm'
 import ChatStatus from './ChatStatus'
 import { useQuery } from '@tanstack/react-query'
 import api from '../../services/api'
 
 function Message() {
-   // const { data, emit, error } = useSocket('connection')
-   // if (data) console.log(data)
-   // if (error) console.log(error)
+   const { data, emit, error } = useSocket('connection')
+   if (data) console.log(data)
+   if (error) console.log(error)
    const { pathname, state } = useLocation()
    const { id } = useParams()
 
@@ -22,12 +22,22 @@ function Message() {
          return messages
       },
    })
-
+   const { data: accountData, isLoading: accountLoading } = useQuery({
+      queryKey: ['user', id],
+      queryFn: async () => {
+         const user = id && (await api.get(`user/${id}`))
+         return user
+      },
+   })
    return (
-      <section className='flex-col flex h-full '>
+      <section className='flex-col flex h-full grow dark:bg-base-200'>
          {id ? (
             <>
-               <ChatStatus page={page} {...state} />
+               <ChatStatus
+                  page={page}
+                  {...accountData?.account}
+                  isLoading={accountLoading}
+               />
                {isLoading ? (
                   <div>Loading... </div>
                ) : (
@@ -46,7 +56,7 @@ function Message() {
                      })}
                   </div>
                )}
-               <ChatForm />
+               <ChatForm key={id} />
             </>
          ) : (
             <div className='text-2xl'>Select chat</div>

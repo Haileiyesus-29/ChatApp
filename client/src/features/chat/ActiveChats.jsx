@@ -18,6 +18,36 @@ function ActiveChats() {
             image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             status={'online'}
          />
+         <Avatar
+            size='sm'
+            image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
+            status={'online'}
+         />
+         <Avatar
+            size='sm'
+            image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
+            status={'online'}
+         />
+         <Avatar
+            size='sm'
+            image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
+            status={'online'}
+         />
+         <Avatar
+            size='sm'
+            image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
+            status={'online'}
+         />
+         <Avatar
+            size='sm'
+            image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
+            status={'online'}
+         />
+         <Avatar
+            size='sm'
+            image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
+            status={'online'}
+         />
       </div>
    )
 }

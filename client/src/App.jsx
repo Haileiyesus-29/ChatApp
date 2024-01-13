@@ -1,5 +1,3 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Route, Routes } from 'react-router-dom'
 
 import Container from './ui/layout/Container'
@@ -7,34 +5,26 @@ import Login from './features/auth/Login'
 import Register from './features/auth/Register'
 import NotFound from './ui/layout/NotFound'
 import AuthProvider from './features/auth/AuthProvider'
-
-const queryClient = new QueryClient({
-   defaultOptions: {
-      queries: {
-         staleTime: 30 * 1000,
-      },
-   },
-})
+import Chat from './features/chat/Chat'
+import Group from './features/group/Group'
+import Channel from './features/channel/Channel'
+import Profile from './features/profile/Profile'
 
 function App() {
    return (
-      <QueryClientProvider client={queryClient}>
-         <ReactQueryDevtools initialIsOpen={false} />
-         <AuthProvider>
-            <Routes>
-               <Route path='/' element={<Container />} />
-               <Route path='/chat' element={<Container />} />
-               <Route path='/chat/:id' element={<Container />} />
-               <Route path='/group' element={<Container />} />
-               <Route path='/channel' element={<Container />} />
-               <Route path='/info' element={<Container />} />
-               <Route path='/profile' element={<Container />} />
-               <Route path='/login' element={<Login />} />
-               <Route path='/register' element={<Register />} />
-               <Route path='*' element={<NotFound />} />
-            </Routes>
-         </AuthProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+         <Routes>
+            <Route path='/' element={<Container />}>
+               <Route path='/chat/*' element={<Chat />} />
+               <Route path='/group/*' element={<Group />} />
+               <Route path='/channel/*' element={<Channel />} />
+               <Route path='/profile' element={<Profile />} />
+            </Route>
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='*' element={<NotFound />} />
+         </Routes>
+      </AuthProvider>
    )
 }
 

@@ -1,5 +1,5 @@
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
-import ChatLink from '../../ui/messaging/ChatLink'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import ChatLink from './ChatLink'
 import api from '../../services/api'
 
 function ChatList() {
@@ -12,8 +12,6 @@ function ChatList() {
       },
    })
 
-   // console.log(data)
-
    return (
       <section className='flex flex-col gap-1 overflow-y-scroll px-1'>
          {isLoading ? (
@@ -21,7 +19,7 @@ function ChatList() {
                Loading...
             </div>
          ) : (
-            data.map(chat => <ChatLink key={chat.id} chat={chat} />)
+            data?.map(chat => <ChatLink key={chat.id} chat={chat} />)
          )}
       </section>
    )
