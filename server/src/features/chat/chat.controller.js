@@ -8,7 +8,7 @@ import {
 export async function getContacts(req, res, next) {
    const chattedContacts = await getChattedContacts(req.user.id)
    if (!chattedContacts) return next(ERRORS.SERVER_FAILED)
-   res.status(200).json({ contacts: chattedContacts })
+   res.status(200).json(chattedContacts)
 }
 
 export async function sendMessage(req, res, next) {

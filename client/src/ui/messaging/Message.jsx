@@ -1,66 +1,41 @@
-import { useLocation, useParams } from 'react-router-dom'
-import useSocket from '../../hooks/useSocket'
+import { useParams } from 'react-router-dom'
 import ChatBubble from './ChatBubble'
 import ChatForm from './ChatForm'
-import ChatStatus from './ChatStatus'
+import Info from './Info'
+import Title from './Title'
 import { useQuery } from '@tanstack/react-query'
-import api from '../../services/api'
 
-function Message() {
-   const { data, emit, error } = useSocket('connection')
-   if (data) console.log(data)
-   if (error) console.log(error)
-   const { pathname, state } = useLocation()
+// eslint-disable-next-line react/prop-types
+function Message({ getMessages, getContactInfo }) {
    const { id } = useParams()
+   const { data, isLoading } = useQuery(getMessages(id))
+   const { data: chatInfo, isLoading: chatInfoLoading } = useQuery(
+      getContactInfo(id)
+   )
 
-   const page = pathname.split('/')[1]
-
-   const { data: messages, isLoading } = useQuery({
-      queryKey: [page, id],
-      queryFn: async () => {
-         const messages = id && (await api.get(`chat/${id}`))
-         return messages
-      },
-   })
-   const { data: accountData, isLoading: accountLoading } = useQuery({
-      queryKey: ['user', id],
-      queryFn: async () => {
-         const user = id && (await api.get(`user/${id}`))
-         return user
-      },
-   })
    return (
-      <section className='flex-col flex h-full grow dark:bg-base-200'>
-         {id ? (
-            <>
-               <ChatStatus
-                  page={page}
-                  {...accountData?.account}
-                  isLoading={accountLoading}
-               />
+      <section className='grid grid-cols-[5fr_3fr] grid-rows-1'>
+         <div className='flex-col flex dark:bg-base-200'>
+            <Title {...chatInfo?.account} isLoading={chatInfoLoading} />
+            <div className='py-2 overflow-y-auto'>
                {isLoading ? (
                   <div>Loading... </div>
                ) : (
-                  <div className='py-2 overflow-y-auto'>
-                     {messages.map(message => {
-                        return (
-                           <ChatBubble
-                              key={message.id}
-                              type={
-                                 id === message.receiver ? 'received' : 'sent'
-                              }
-                              details={page !== 'chat'}
-                              {...message}
-                           />
-                        )
-                     })}
-                  </div>
+                  data.map(message => (
+                     <ChatBubble
+                        key={message.id}
+                        details={false}
+                        createdAt={message.createdAt}
+                        images={message.images}
+                        text={message.text}
+                        type={id === message.receiver ? 'received' : 'sent'}
+                     />
+                  ))
                )}
-               <ChatForm key={id} />
-            </>
-         ) : (
-            <div className='text-2xl'>Select chat</div>
-         )}
+            </div>
+            <ChatForm key={id} />
+         </div>
+         <Info chatInfo={chatInfo?.account} loading={chatInfoLoading} />
       </section>
    )
 }
