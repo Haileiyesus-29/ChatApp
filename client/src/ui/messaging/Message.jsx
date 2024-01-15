@@ -3,21 +3,35 @@ import ChatBubble from './ChatBubble'
 import ChatForm from './ChatForm'
 import Info from './Info'
 import Title from './Title'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
 
 // eslint-disable-next-line react/prop-types
-function Message({ getMessages, getContactInfo }) {
+function Message({ getMessages, getContactInfo, sendMessage }) {
+   const messageBox = useRef()
    const { id } = useParams()
+
    const { data, isLoading } = useQuery(getMessages(id))
    const { data: chatInfo, isLoading: chatInfoLoading } = useQuery(
       getContactInfo(id)
    )
+   const mutation = useMutation(sendMessage(id))
+
+   const handleSubmit = message => {
+      mutation.mutate({ receiverId: id, message })
+   }
+
+   useEffect(() => {
+      if (data && data.length > 0) {
+         messageBox.current.scrollTop = messageBox.current.scrollHeight
+      }
+   }, [data])
 
    return (
-      <section className='grid grid-cols-[5fr_3fr] grid-rows-1'>
+      <section id='message' className='grid grid-cols-[5fr_3fr] grid-rows-1'>
          <div className='flex-col flex dark:bg-base-200'>
             <Title {...chatInfo?.account} isLoading={chatInfoLoading} />
-            <div className='py-2 overflow-y-auto'>
+            <div ref={messageBox} className='py-2 overflow-y-auto'>
                {isLoading ? (
                   <div>Loading... </div>
                ) : (
@@ -28,12 +42,12 @@ function Message({ getMessages, getContactInfo }) {
                         createdAt={message.createdAt}
                         images={message.images}
                         text={message.text}
-                        type={id === message.receiver ? 'received' : 'sent'}
+                        type={id === message.receiver ? 'sent' : 'received'}
                      />
                   ))
                )}
             </div>
-            <ChatForm key={id} />
+            <ChatForm key={id} handleSubmit={handleSubmit} />
          </div>
          <Info chatInfo={chatInfo?.account} loading={chatInfoLoading} />
       </section>

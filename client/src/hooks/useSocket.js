@@ -5,7 +5,7 @@ const ENDPOINT = 'http://localhost:5000' // Replace with Socket.IO server URL
 const socket = io(ENDPOINT)
 
 function useSocket(connection) {
-   const [data, setData] = useState()
+   const [data, setData] = useState(null)
    const [error, setError] = useState(null)
 
    useEffect(() => {

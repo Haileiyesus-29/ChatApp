@@ -1,10 +1,14 @@
 import chatContext from './chatContext'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
+import socketContext from '../socket-io/socketContext'
+import authContext from '../auth/authContext'
 
 // eslint-disable-next-line react/prop-types
 function ChatProvider({ children }) {
+   const { socket } = useContext(socketContext)
+   const { account } = useContext(authContext)
    const queryClient = useQueryClient()
 
    const { data: chatList, isLoading: chatListLoading } = useQuery({
@@ -26,6 +30,23 @@ function ChatProvider({ children }) {
          })
       )
    }, [chatList, queryClient])
+
+   useEffect(() => {
+      account?.id &&
+         socket.on(`chat-${account.id}`, (message, sender) => {
+            queryClient.setQueryData(
+               ['messages', 'chat', { id: sender }],
+               prev => [...prev, message]
+            )
+            ;(async () => {
+               await queryClient.invalidateQueries({
+                  queryKey: ['chats', 'contacts'],
+                  exact: true,
+                  type: 'active',
+               })
+            })()
+         })
+   }, [socket, account?.id, queryClient])
 
    const getMessages = id => {
       return {
@@ -49,7 +70,35 @@ function ChatProvider({ children }) {
       }
    }
 
-   const value = { chatList, chatListLoading, getMessages, getContactInfo }
+   const sendMessage = id => {
+      return {
+         mutationKey: ['messages', 'chat', { id }],
+         mutationFn: async payload => {
+            const msg = await api.post('chat', payload)
+            return msg
+         },
+         onSuccess: async (data, variables) => {
+            queryClient.setQueryData(
+               ['messages', 'chat', { id: variables.receiverId }],
+               prevData => [...prevData, data]
+            )
+            await queryClient.invalidateQueries({
+               queryKey: ['chats', 'contacts'],
+               exact: true,
+               type: 'active',
+            })
+         },
+         onError: err => console.log(err),
+      }
+   }
+
+   const value = {
+      chatList,
+      chatListLoading,
+      getMessages,
+      getContactInfo,
+      sendMessage,
+   }
    return <chatContext.Provider value={value}>{children}</chatContext.Provider>
 }
 export default ChatProvider

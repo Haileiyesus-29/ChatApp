@@ -29,8 +29,25 @@ app.use(
    })
 )
 
-app.get('/', (req, res) => res.send('hello bm'))
+export const io = new Server(server, {
+   // connectionStateRecovery: true,
+   cors: {
+      origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+      credentials: true,
+   },
+})
 
+io.on('connection', socket => {
+   console.log('user connected')
+   io.emit('connection', 'connection successfull')
+})
+
+app.get('/bm', (req, res) => res.send('bm'))
+
+app.use('/', (req, res, next) => {
+   req.io = io
+   next()
+})
 app.use('/api/auth', authRoute)
 app.use('/api/user', userRoute)
 app.use('/api/channel', channelRoute)
@@ -38,19 +55,6 @@ app.use('/api/group', groupRoute)
 app.use('/api/chat', chatRoute)
 
 app.use(handleErrors)
-
-export const io = new Server(server, {
-   connectionStateRecovery: true,
-   cors: {
-      origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-      credentials: true,
-   },
-})
-
-io.on('connection', data => {
-   console.log('user connected')
-   io.emit('connection', 'You are now connneced!')
-})
 
 connectDB(() =>
    server.listen(process.env.PORT, () =>

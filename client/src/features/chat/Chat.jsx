@@ -5,8 +5,13 @@ import { useContext } from 'react'
 import chatContext from './chatContext'
 
 function Chat() {
-   const { chatList, chatListLoading, getMessages, getContactInfo } =
-      useContext(chatContext)
+   const {
+      chatList,
+      chatListLoading,
+      getMessages,
+      getContactInfo,
+      sendMessage,
+   } = useContext(chatContext)
    return (
       <main className='grow grid grid-rows-1 grid-cols-[minmax(18rem,22rem)_minmax(40rem,1fr)]'>
          <Sidebar data={chatList} loading={chatListLoading} />
@@ -21,6 +26,7 @@ function Chat() {
                   <Message
                      getMessages={getMessages}
                      getContactInfo={getContactInfo}
+                     sendMessage={sendMessage}
                   />
                }
             />

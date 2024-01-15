@@ -20,6 +20,7 @@ export async function sendMessage(req, res, next) {
       req.body.message
    )
    if (!message) return next(ERRORS.BAD_REQUEST)
+   req.io.emit(`chat-${receiverId}`, message, req.user.id)
    res.status(201).json(message)
 }
 
