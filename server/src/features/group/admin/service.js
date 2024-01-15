@@ -1,9 +1,5 @@
-import Group from '../../models/group.model.js'
-
-export const findGroup = async id => {
-   const group = await Group.findById(id).select('-admins -members')
-   return group
-}
+import Group from '../../../models/group.model.js'
+import User from '../../../models/user.model.js'
 
 export const createNewGroup = async (userId, data) => {
    const { name, username, image, info } = data
@@ -16,6 +12,9 @@ export const createNewGroup = async (userId, data) => {
       members: [userId],
    })
    const newGroup = await group.save()
+
+   // const saveGroup = await User.findByIdAndUpdate(userId,{})
+
    return newGroup
 }
 
@@ -42,24 +41,6 @@ export const findGroupAndDelete = async (userId, groupId) => {
    return group
 }
 
-export const addUserToGroup = async (userId, groupId) => {
-   const group = await Group.findByIdAndUpdate(
-      groupId,
-      { $addToSet: { members: userId } },
-      { new: true }
-   ).select('name username members')
-   return group
-}
-
-export const removeUserFromGroup = async (userId, groupId) => {
-   const group = await Group.findByIdAndUpdate(
-      groupId,
-      { $pull: { members: userId } },
-      { new: true }
-   ).select('name username members')
-   return group
-}
-
 export const addAdminToGroup = async (userId, groupId, adminId) => {
    const group = await Group.findOneAndUpdate(
       { _id: groupId, owner: userId },
@@ -80,18 +61,4 @@ export const removeAdminFromGroup = async (userId, groupId, adminId) => {
       { new: true }
    )
    return group
-}
-
-export const getAllMembers = async groupId => {
-   const members = await Group.findById(groupId)
-      .select('members')
-      .populate('members', 'name image')
-   return members
-}
-
-export const getAllAdmins = async groupId => {
-   const admins = await Group.findById(groupId)
-      .select('admins')
-      .populate('admins', 'name image')
-   return admins
 }
