@@ -5,7 +5,7 @@ import {
    findGroupAndDelete,
    findGroupAndUpdate,
    removeAdminFromGroup,
-} from './service'
+} from './service.js'
 
 export async function addAdmin(req, res, next) {
    const { adminId, groupId } = req.body

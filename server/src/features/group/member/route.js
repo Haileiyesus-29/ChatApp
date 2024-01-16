@@ -1,5 +1,13 @@
 import { Router } from 'express'
 import { authenticate } from '../../../middlewares/authenticate.js'
+import {
+   getAdmins,
+   getGroup,
+   getMembers,
+   joinGroup,
+   leaveGroup,
+   myGroups,
+} from './controller.js'
 
 const router = Router()
 

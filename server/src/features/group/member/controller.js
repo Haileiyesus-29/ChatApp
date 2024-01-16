@@ -6,7 +6,7 @@ import {
    getAllAdmins,
    getAllMembers,
    removeUserFromGroup,
-} from './service'
+} from './service.js'
 
 export async function myGroups(req, res, next) {
    const groups = await findSubscribedGroups(req.user.id)
