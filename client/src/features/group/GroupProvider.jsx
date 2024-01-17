@@ -14,7 +14,7 @@ function GroupProvider({ children }) {
    const queryClient = useQueryClient()
 
    const { data: chatList, isLoading: chatListLoading } = useQuery({
-      queryKey: ['chats', 'contacts'],
+      queryKey: ['groups', 'contacts'],
       queryFn: async () => {
          const result = await api.get('group')
          return result

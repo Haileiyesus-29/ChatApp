@@ -11,7 +11,7 @@ export async function addAdmin(req, res, next) {
    const { adminId, groupId } = req.body
    if (!adminId || !groupId) return next(ERRORS.BAD_REQUEST)
 
-   const group = await addAdminToGroup(req.userId, groupId, adminId)
+   const group = await addAdminToGroup(req.user.id, groupId, adminId)
    if (!group) return next(ERRORS.FORBIDDEN)
    res.status(200).json({ group })
 }
@@ -20,7 +20,7 @@ export async function removeAdmin(req, res, next) {
    const { adminId, groupId } = req.body
    if (!adminId || !groupId) return next(ERRORS.BAD_REQUEST)
 
-   const group = await removeAdminFromGroup(req.userId, groupId, adminId)
+   const group = await removeAdminFromGroup(req.user.id, groupId, adminId)
    if (!group) return next(ERRORS.FORBIDDEN)
    res.status(200).json({ group })
 }
@@ -43,7 +43,7 @@ export async function deleteGroup(req, res, next) {
 }
 
 export async function updateGroup(req, res, next) {
-   const groupId = req.params.groupId
+   const groupId = req.body.groupId
    if (!groupId) return next(ERRORS.INVALID_CREDENTIAL)
 
    const group = await findGroupAndUpdate(req.user.id, groupId, req.body)

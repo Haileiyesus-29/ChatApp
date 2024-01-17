@@ -4,7 +4,7 @@ import { formatDate } from '../../utils/formatDate'
 import Avatar from '../common/Avatar'
 
 function ChatLink({ chat }) {
-   const { fname, lname, image, id, createdAt, text } = chat
+   const { fname, lname, name, image, id, createdAt, text } = chat
    const time = formatDate(createdAt)
    const { '*': paramId } = useParams()
    return (
@@ -25,7 +25,7 @@ function ChatLink({ chat }) {
          </div>
          <div className='flex flex-col justify-between gap-2'>
             <span className='text leading-tight '>
-               {`${fname} ${lname ? lname : ''}`}
+               {`${fname || name} ${lname ? lname : ''}`}
             </span>
             <span
                className={`text-xs ${

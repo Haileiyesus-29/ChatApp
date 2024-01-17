@@ -13,7 +13,10 @@ export const createNewGroup = async (userId, data) => {
    })
    const newGroup = await group.save()
 
-   // const saveGroup = await User.findByIdAndUpdate(userId,{})
+   if (newGroup)
+      await User.findByIdAndUpdate(userId, {
+         $addToSet: { groups: newGroup.id },
+      })
 
    return newGroup
 }
@@ -22,14 +25,15 @@ export const findGroupAndUpdate = async (userId, groupId, data) => {
    const { name, username, image, info } = data
    const update = { name, username, image, info }
 
-   const updatedGroup = await Group.findOneAndUpdate(
-      {
-         _id: groupId,
-         $or: [{ owner: userId }, { admins: { $in: [userId] } }],
-      },
-      update,
-      { new: true }
-   ).select('-admins -members')
+   const group = await Group.findById(groupId)
+   if (!group) return null
+
+   if (!(group.owner.equals(userId) || group.admins.includes(userId)))
+      return null
+
+   Object.assign(group, update)
+   const updatedGroup = await group.save()
+   updatedGroup.members = undefined
    return updatedGroup
 }
 
@@ -42,23 +46,25 @@ export const findGroupAndDelete = async (userId, groupId) => {
 }
 
 export const addAdminToGroup = async (userId, groupId, adminId) => {
-   const group = await Group.findOneAndUpdate(
-      { _id: groupId, owner: userId },
-      {
-         $addToSet: { admins: adminId },
-      },
-      { new: true }
-   )
-   return group
+   const group = await Group.findById(groupId)
+   if (!group) return null
+   if (!group.owner.equals(userId)) return null
+
+   group.admins.addToSet(adminId)
+   const updatedGroup = await group.save()
+
+   updatedGroup.members = undefined
+   return updatedGroup
 }
 
 export const removeAdminFromGroup = async (userId, groupId, adminId) => {
-   const group = await Group.findOneAndUpdate(
-      { _id: groupId, owner: userId },
-      {
-         $pull: { admins: adminId },
-      },
-      { new: true }
-   )
-   return group
+   const group = await Group.findById(groupId)
+   if (!group) return null
+   if (!group.owner.equals(userId)) return null
+
+   group.admins.pull(userId)
+   const updatedGroup = await group.save()
+
+   updatedGroup.members = undefined
+   return updatedGroup
 }

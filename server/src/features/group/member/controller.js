@@ -10,7 +10,7 @@ import {
 
 export async function myGroups(req, res, next) {
    const groups = await findSubscribedGroups(req.user.id)
-   res.status(200).json(groups)
+   res.status(200).json(groups?.groups)
 }
 
 export async function getGroup(req, res, next) {
@@ -22,9 +22,9 @@ export async function getGroup(req, res, next) {
 }
 
 export async function joinGroup(req, res, next) {
-   const groupId = req.params.groupId
+   const groupId = req.body.groupId
    if (!groupId) return next(ERRORS.INVALID_CREDENTIAL)
-   const group = await addUserToGroup(req.userId, groupId)
+   const group = await addUserToGroup(req.user.id, groupId)
    if (!group) return next(ERRORS.SERVER_FAILED)
 
    res.status(200).json({ group })
@@ -33,7 +33,7 @@ export async function joinGroup(req, res, next) {
 export async function leaveGroup(req, res, next) {
    const groupId = req.body.groupId
    if (!groupId) return next(ERRORS.INVALID_CREDENTIAL)
-   const group = await removeUserFromGroup(req.userId, groupId)
+   const group = await removeUserFromGroup(req.user.id, groupId)
    if (!group) return next(ERRORS.NOT_FOUND)
 
    res.status(200).json({ group })

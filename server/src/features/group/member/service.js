@@ -14,21 +14,38 @@ export const findGroup = async id => {
 }
 
 export const addUserToGroup = async (userId, groupId) => {
-   const group = await Group.findByIdAndUpdate(
-      groupId,
-      { $addToSet: { members: userId } },
-      { new: true }
-   ).select('name username members')
-   return group
+   const group = await Group.findById(groupId)
+   group.members.addToSet(userId)
+   const newGroup = await group.save()
+
+   if (newGroup)
+      await User.findByIdAndUpdate(
+         userId,
+         {
+            $addToSet: { groups: newGroup.id },
+         },
+         { new: true }
+      )
+   newGroup.members = undefined
+   return newGroup
 }
 
 export const removeUserFromGroup = async (userId, groupId) => {
-   const group = await Group.findByIdAndUpdate(
-      groupId,
-      { $pull: { members: userId } },
-      { new: true }
-   ).select('name username members')
-   return group
+   const group = await Group.findById(groupId)
+   group.members.pull(userId)
+   const newGroup = await group.save()
+
+   if (newGroup)
+      await User.findByIdAndUpdate(
+         userId,
+         {
+            $pull: { groups: newGroup.id },
+         },
+         { new: true }
+      )
+
+   newGroup.members = undefined
+   return newGroup
 }
 
 export const getAllMembers = async groupId => {

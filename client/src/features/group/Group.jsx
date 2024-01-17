@@ -4,8 +4,8 @@ import Message from '../../ui/messaging/Message'
 import { useContext } from 'react'
 import groupContext from './groupContext'
 
-function Chat() {
-   const {} = useContext(groupContext)
+function Group() {
+   const { chatList, chatListLoading } = useContext(groupContext)
 
    return (
       <main className='grow grid grid-rows-1 grid-cols-[minmax(18rem,22rem)_minmax(40rem,1fr)]'>
@@ -15,7 +15,7 @@ function Chat() {
                index
                element={<div>select contact to start chatting. </div>}
             />
-            <Route
+            {/* <Route
                path='/:id'
                element={
                   <Message
@@ -24,10 +24,10 @@ function Chat() {
                      sendMessage={sendMessage}
                   />
                }
-            />
+            /> */}
          </Routes>
       </main>
    )
 }
 
-export default Chat
+export default Group

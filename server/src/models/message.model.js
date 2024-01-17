@@ -17,11 +17,6 @@ const messageSchema = new mongoose.Schema(
          required: true,
          enum: ['User', 'Group'],
       },
-      content: {
-         type: String,
-         required: true,
-         enum: ['text', 'image'],
-      },
       text: { type: String },
       images: [{ type: String }],
       createdAt: {
