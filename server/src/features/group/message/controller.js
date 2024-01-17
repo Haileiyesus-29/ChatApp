@@ -1,5 +1,10 @@
 import ERRORS from '../../../../config/_errors.js'
-import { getSubscribedGroupsLastMessages, sendGroupMessage } from './service.js'
+import {
+   getChattedGroups,
+   getSubscribedGroupsLastMessages,
+   // getSubscribedGroupsLastMessages,
+   sendGroupMessage,
+} from './service.js'
 
 export async function sendMessage(req, res, next) {
    const { groupId, message } = req.body
@@ -17,6 +22,6 @@ export async function getMesssages(req, res, next) {
 }
 
 export async function getGroupsWithLastMessages(req, res, next) {
-   const groups = await getSubscribedGroupsLastMessages(req.user.id)
+   const groups = await getSubscribedGroupsLastMessages(req.user)
    res.status(200).json(groups)
 }

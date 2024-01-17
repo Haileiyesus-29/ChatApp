@@ -19,8 +19,7 @@ export const authenticate = async (req, res, next) => {
 
    const verified = jwt.verify(token, process.env.JWT_SECRET_KEY)
    const user = await User.findById(verified.id).select('-password')
-
    if (!user) return next(ERRORS.NOT_FOUND)
    req.user = user
-   next()
+   return next()
 }
