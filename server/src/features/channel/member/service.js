@@ -1,16 +1,18 @@
+import ERRORS from '../../../../config/_errors.js'
 import Channel from '../../../models/channel.model.js'
 import User from '../../../models/user.model.js'
 
-export const getUserJoinedChannels = async userId => {
-   const channels = await User.findById(userId)
+export const getUserJoinedChannels = async user => {
+   const channels = await User.findById(user.id)
       .select('channels')
       .populate('name image')
    return channels
 }
 
-export const findChannel = async id => {
-   const channel = await Channel.findById(id).select('-admins -members')
-   return channel
+export const findChannel = async userId => {
+   const channel = await Channel.findById(userId).select('-admins -members')
+   if (!channel) return ERRORS.NOT_FOUND
+   return { channel }
 }
 
 export const addUserToChannel = async (userId, channelId) => {

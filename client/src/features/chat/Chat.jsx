@@ -14,7 +14,7 @@ function Chat() {
    } = useContext(chatContext)
    return (
       <main className='grow grid grid-rows-1 grid-cols-[minmax(18rem,22rem)_minmax(40rem,1fr)]'>
-         <Sidebar data={chatList} loading={chatListLoading} />
+         <Sidebar data={chatList} loading={chatListLoading} link='chat' />
          <Routes>
             <Route
                index

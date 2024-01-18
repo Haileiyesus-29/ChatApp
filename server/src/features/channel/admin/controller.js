@@ -1,4 +1,5 @@
 import ERRORS from '../../../../config/_errors.js'
+import RESPONSE from '../../../../config/_response.js'
 import {
    addAdminToChannel,
    createNewChannel,
@@ -8,37 +9,28 @@ import {
 } from './service.js'
 
 export async function createChannel(req, res, next) {
-   const channel = await createNewChannel(req.user.id, req.body)
-   if (!channel) return next(ERRORS.SERVER_FAILED)
-
-   res.status(201).json({ channel })
+   const { error, channel } = await createNewChannel(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+   res.status(201).json(RESPONSE.success(channel, 201))
 }
 
 export async function updateChannel(req, res, next) {
-   const channelId = req.body.channelId
-   if (!channelId) return next(ERRORS.INVALID_CREDENTIAL)
+   const { error, channel } = await findChannelAndUpdate(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
 
-   const channel = await findChannelAndUpdate(req.user.id, channelId, req.body)
-   if (!channel) return next(ERRORS.UNAUTHORIZED)
-
-   res.status(200).json({ channel })
+   res.status(200).json(RESPONSE.success(channel, 200))
 }
 
 export async function deleteChannel(req, res, next) {
-   const channelId = req.body.channelId
-   if (!channelId) return next(ERRORS.INVALID_CREDENTIAL)
-   const channel = await findChannelAndDelete(req.user.id, channelId)
-   if (!channel) return next(ERRORS.UNAUTHORIZED)
+   const { error } = await findChannelAndDelete(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
 
    res.sendStatus(204)
 }
 export async function addAdmin(req, res, next) {
-   const { adminId, channelId } = req.body
-   if (!adminId || !channelId) return next(ERRORS.BAD_REQUEST)
-
-   const channel = await addAdminToChannel(req.userId, channelId, adminId)
-   if (!channel) return next(ERRORS.FORBIDDEN)
-   res.status(200).json({ channel })
+   const { error, channel } = await addAdminToChannel(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+   res.status(201).json(RESPONSE.success(channel, 201))
 }
 
 export async function removeAdmin(req, res, next) {

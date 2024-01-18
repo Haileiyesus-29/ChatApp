@@ -12,7 +12,7 @@ export async function getUser(req, res, next) {
    const id = req.params.id
    const user = await getUserAccount(id)
    if (!user) return next(ERRORS.NOT_FOUND)
-   res.status(200).json({ account: user })
+   res.status(200).json(user)
 }
 
 export async function createUser(req, res, next) {
@@ -30,13 +30,13 @@ export async function createUser(req, res, next) {
       secure: true,
       sameSite: 'None',
    })
-   res.status(200).json({ account: user })
+   res.status(200).json(user)
 }
 
 export async function updateUser(req, res, next) {
    const updated = await updateUserAccount(req.body, req.user.id)
    if (!updated) return next(ERRORS.SERVER_FAILED)
-   res.status(200).json({ account: updated })
+   res.status(200).json(updated)
 }
 
 export async function deleteUser(req, res, next) {

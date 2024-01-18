@@ -2,14 +2,15 @@ import Message from '../../../models/message.model.js'
 import User from '../../../models/user.model.js'
 import Group from '../../../models/group.model.js' // Replace with your actual group model
 
-export const sendGroupMessage = async (userId, groupId, payload) => {
+export const sendGroupMessage = async (user, groupId, payload) => {
+   if (!user.groups.includes(groupId)) return null
    const { text, images } = payload
    if (!(text || images?.length)) return null
 
    const message = new Message({
       text,
       images,
-      sender: userId,
+      sender: user.id,
       receiver: groupId,
       chatType: 'Group',
    })
@@ -70,15 +71,17 @@ export const getChattedGroups = async userId => {
 
    // return lastGroupMessages
 }
-
 export const getSubscribedGroupsLastMessages = async user => {
    const subscribedGroups = user.groups
+
+   const subscribedGroupInfo = await Group.find({
+      _id: { $in: subscribedGroups },
+   }).select('_id name username image createdAt')
 
    const lastMessages = await Message.aggregate([
       {
          $match: {
             receiver: { $in: subscribedGroups },
-            chatType: 'Group',
          },
       },
       {
@@ -90,7 +93,7 @@ export const getSubscribedGroupsLastMessages = async user => {
       },
       {
          $lookup: {
-            from: 'groups', // Assuming the collection name is 'groups'
+            from: 'groups',
             localField: '_id',
             foreignField: '_id',
             as: 'chattedGroup',
@@ -114,5 +117,30 @@ export const getSubscribedGroupsLastMessages = async user => {
       },
    ])
 
-   return lastMessages
+   const mergedResult = subscribedGroupInfo.map(subscribedGroup => {
+      const groupWithMessage = lastMessages.find(
+         groupInfo => groupInfo.id.toString() === subscribedGroup._id.toString()
+      )
+
+      return (
+         groupWithMessage || {
+            id: subscribedGroup._id,
+            name: subscribedGroup.name,
+            username: subscribedGroup.username,
+            image: subscribedGroup.image,
+            text: '',
+            createdAt: subscribedGroup.createdAt,
+         }
+      )
+   })
+
+   const sortedResult = mergedResult.sort((a, b) =>
+      a.lastMessageTime
+         ? b.lastMessageTime
+            ? b.lastMessageTime - a.lastMessageTime
+            : 1
+         : -1
+   )
+
+   return sortedResult
 }

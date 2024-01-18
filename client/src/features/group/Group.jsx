@@ -5,17 +5,23 @@ import { useContext } from 'react'
 import groupContext from './groupContext'
 
 function Group() {
-   const { chatList, chatListLoading } = useContext(groupContext)
+   const {
+      chatList,
+      chatListLoading,
+      getMessages,
+      getContactInfo,
+      sendMessage,
+   } = useContext(groupContext)
 
    return (
       <main className='grow grid grid-rows-1 grid-cols-[minmax(18rem,22rem)_minmax(40rem,1fr)]'>
-         <Sidebar data={chatList} loading={chatListLoading} />
+         <Sidebar data={chatList} loading={chatListLoading} link={'group'} />
          <Routes>
             <Route
                index
                element={<div>select contact to start chatting. </div>}
             />
-            {/* <Route
+            <Route
                path='/:id'
                element={
                   <Message
@@ -24,7 +30,7 @@ function Group() {
                      sendMessage={sendMessage}
                   />
                }
-            /> */}
+            />
          </Routes>
       </main>
    )

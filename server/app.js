@@ -6,6 +6,7 @@ import http from 'http'
 import { Server } from 'socket.io'
 import compression from 'compression'
 import cors from 'cors'
+import 'express-async-errors'
 
 import authRoute from './src/features/auth/auth.route.js'
 import userRoute from './src/features/user/user.route.js'
@@ -13,6 +14,7 @@ import chatRoute from './src/features/chat/chat.route.js'
 import channelRoute from './src/features/channel/channel.route.js'
 import groupRoute from './src/features/group/group.route.js'
 import { handleErrors } from './src/middlewares/handleErrors.js'
+import { logger } from './config/_logger.js'
 
 dotenv.config()
 
@@ -43,6 +45,10 @@ io.on('connection', socket => {
 
 app.get('/bm', (req, res) => res.send('bm'))
 
+app.use((req, res, next) => {
+   logger.info(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
+   next()
+})
 app.use('/', (req, res, next) => {
    req.io = io
    next()

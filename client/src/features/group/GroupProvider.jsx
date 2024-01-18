@@ -14,16 +14,62 @@ function GroupProvider({ children }) {
    const queryClient = useQueryClient()
 
    const { data: chatList, isLoading: chatListLoading } = useQuery({
-      queryKey: ['groups', 'contacts'],
+      queryKey: ['group', 'contacts'],
       queryFn: async () => {
-         const result = await api.get('group')
+         const result = await api.get('group/chatlist')
          return result
       },
    })
 
+   const getMessages = id => {
+      return {
+         queryKey: ['messages', 'group', { id }],
+         queryFn: async () => {
+            const messages = await api.get(`group/messaage/${id}`)
+            return messages
+         },
+         enabled: !!id,
+      }
+   }
+
+   const getContactInfo = id => {
+      return {
+         queryKey: ['account', 'group', { id }],
+         queryFn: async () => {
+            const user = await api.get(`group/${id}`)
+            return user
+         },
+         enabled: !!id,
+      }
+   }
+   const sendMessage = id => {
+      return {
+         mutationKey: ['messages', 'group', { id }],
+         mutationFn: async payload => {
+            const msg = await api.post('group/message', payload)
+            return msg
+         },
+         onSuccess: async (data, variables) => {
+            queryClient.setQueryData(
+               ['messages', 'group', { id: variables.receiverId }],
+               prevData => [...prevData, data]
+            )
+            await queryClient.invalidateQueries({
+               queryKey: ['group', 'contacts'],
+               exact: true,
+               type: 'active',
+            })
+         },
+         onError: err => console.log(err),
+      }
+   }
+
    const value = {
       chatList,
       chatListLoading,
+      getMessages,
+      getContactInfo,
+      sendMessage,
    }
    return (
       <groupContext.Provider value={value}>{children}</groupContext.Provider>

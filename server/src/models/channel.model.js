@@ -34,10 +34,14 @@ const channelSchema = new mongoose.Schema(
             ref: 'User', // Reference to the 'User' model
          },
       ],
+      createdAt: {
+         type: Date,
+         default: Date.now,
+         get: createdAt => createdAt.toISOString(),
+      },
    },
    {
       versionKey: false,
-      timestamps: true,
    }
 )
 channelSchema.index(

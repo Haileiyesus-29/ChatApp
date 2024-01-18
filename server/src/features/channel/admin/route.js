@@ -10,8 +10,6 @@ import {
 
 const router = Router()
 
-router.use(authenticate)
-
 /**
  * @route   POST /api/channel/admin
  * @desc    Add an admin to a channel
@@ -21,12 +19,12 @@ router.use(authenticate)
 router.post('/admin', addAdmin)
 
 /**
- * @route   POST /api/channel/admin/remove
+ * @route   DELETE /api/channel/admin
  * @desc    Remove an admin from a channel
  * @access  owner
  * @body {channelId, adminId}
  */
-router.post('/admin/remove', removeAdmin)
+router.delete('/admin', removeAdmin)
 
 /**
  * @route   POST /api/channel/
@@ -51,6 +49,6 @@ router.put('/', updateChannel)
  * @param   channelId the id of the target channel
  * @access  owner
  */
-router.delete('/:channelId', deleteChannel)
+router.delete('/', deleteChannel)
 
 export default router

@@ -3,14 +3,14 @@ import { Link, useParams } from 'react-router-dom'
 import { formatDate } from '../../utils/formatDate'
 import Avatar from '../common/Avatar'
 
-function ChatLink({ chat }) {
+function ChatLink({ chat, linkTo }) {
    const { fname, lname, name, image, id, createdAt, text } = chat
    const time = formatDate(createdAt)
    const { '*': paramId } = useParams()
    return (
       <Link
          state={chat}
-         to={`/chat/${id}`}
+         to={linkTo}
          className={`flex gap-2 items-center p-1 rounded-md relative ${
             paramId === id
                ? 'dark:bg-primary dark:text-primary-content'
