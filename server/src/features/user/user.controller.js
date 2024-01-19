@@ -1,4 +1,4 @@
-import ERRORS from '../../../config/_errors.js'
+import RESPONSE from '../../../config/_response.js'
 import { generateToken } from '../../helpers/generateToken.js'
 import { validateNewAccount } from '../../validations/validateNewAccount.js'
 import {
@@ -9,18 +9,15 @@ import {
 } from './user.service.js'
 
 export async function getUser(req, res, next) {
-   const id = req.params.id
-   const user = await getUserAccount(id)
-   if (!user) return next(ERRORS.NOT_FOUND)
-   res.status(200).json(user)
+   const { error, user } = await getUserAccount(req.params.id)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(user, 200))
 }
 
 export async function createUser(req, res, next) {
-   const error = validateNewAccount(req.body)
-   if (error) return next(error)
-
-   const user = await createUserAccount(req.body)
-   if (!user) return next(ERRORS.SERVER_FAILED)
+   const { error, user } = await createUserAccount(req.body)
+   if (error) return next(RESPONSE.error(error))
 
    const token = await generateToken({ id: user.id })
 
@@ -30,20 +27,26 @@ export async function createUser(req, res, next) {
       secure: true,
       sameSite: 'None',
    })
-   res.status(200).json(user)
+
+   res.status(201).json(RESPONSE.success(user, 201))
 }
 
 export async function updateUser(req, res, next) {
-   const updated = await updateUserAccount(req.body, req.user.id)
-   if (!updated) return next(ERRORS.SERVER_FAILED)
-   res.status(200).json(updated)
+   const { error, updated } = await updateUserAccount(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(updated, 200))
 }
 
 export async function deleteUser(req, res, next) {
-   const password = req.body.password
-   if (!password) return next(ERRORS.UNAUTHORISED)
+   const { error } = await deleteUserAccount(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
 
-   const deleted = await deleteUserAccount(req.user.id, password)
-   if (!deleted) return next(ERRORS.UNAUTHORISED)
+   res.cookie('jwt', '', {
+      httpOnly: true,
+      maxAge: 0,
+      secure: true,
+      sameSite: 'None',
+   })
    res.sendStatus(204).end()
 }

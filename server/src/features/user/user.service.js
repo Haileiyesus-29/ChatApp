@@ -1,21 +1,27 @@
 import bcrypt from 'bcryptjs'
 import { hashPassword } from '../../helpers/hashPassword.js'
 import User from '../../models/user.model.js'
+import ERRORS from '../../../config/_errors.js'
+import { validateNewAccount } from '../../validations/validateNewAccount.js'
 
 export const getUserAccount = async id => {
-   const user = await User.findById(id).select('-password')
-   return user
+   if (!id) return ERRORS.INVALID_CREDENTIAL
+   const user = await User.findById(id).select('-password -channels -groups')
+   if (!user) return ERRORS.NOT_FOUND
+   return { user }
 }
 
-export const createUserAccount = async body => {
-   const { email, password, fname, lname, username, bio, image } = body
+export const createUserAccount = async data => {
+   const error = validateNewAccount(req.body)
+   if (error) return ERRORS.BAD_REQUEST
+
+   const { email, password, name, username, bio, image } = data
    const hashedPassword = await hashPassword(password)
 
    const account = {
       email: email.toLowerCase(),
       password: hashedPassword,
-      fname,
-      lname,
+      name,
       bio,
       image,
       username,
@@ -24,27 +30,30 @@ export const createUserAccount = async body => {
    const user = new User(account)
    const newUser = await user.save()
 
+   if (!newUser) return ERRORS.SERVER_FAILED
+
    newUser.password = undefined
-   return newUser
+   return { user: newUser }
 }
 
-export const updateUserAccount = async (body, userId) => {
-   const { fname, lname, bio, image, username } = body
+export const updateUserAccount = async (user, data) => {
+   const { name, bio, image, username } = data
    const updateList = { fname, lname, bio, image, username }
 
-   const user = await User.findByIdAndUpdate(userId, updateList, {
-      new: true,
-   }).select('-password')
+   Object.assign(user, updateList)
+   const updated = await user.save()
 
-   return user
+   if (!updated) return ERRORS.SERVER_FAILED
+
+   return { updated }
 }
 
-export const deleteUserAccount = async (userId, password) => {
-   const user = await User.findById(userId)
-
+export const deleteUserAccount = async (user, data) => {
+   const { password } = data
+   if (!data) return ERRORS.INVALID_CREDENTIAL
    const passwordVerified = await bcrypt.compare(password, user.password)
 
-   if (!passwordVerified) return null
-   const deletedAcc = await User.findByIdAndDelete(userId)
-   return deletedAcc
+   if (!passwordVerified) return ERRORS.FORBIDDEN
+   const deletedAcc = await User.findByIdAndDelete(user.id)
+   return { account: deletedAcc }
 }

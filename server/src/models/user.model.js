@@ -2,12 +2,9 @@ import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema(
    {
-      fname: {
+      name: {
          type: String,
          required: true,
-      },
-      lname: {
-         type: String,
       },
       username: {
          type: String,

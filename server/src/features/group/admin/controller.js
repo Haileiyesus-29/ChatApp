@@ -1,4 +1,4 @@
-import ERRORS from '../../../../config/_errors.js'
+import RESPONSE from '../../../../config/_response.js'
 import {
    addAdminToGroup,
    createNewGroup,
@@ -8,46 +8,31 @@ import {
 } from './service.js'
 
 export async function addAdmin(req, res, next) {
-   const { adminId, groupId } = req.body
-   if (!adminId || !groupId) return next(ERRORS.BAD_REQUEST)
-
-   const group = await addAdminToGroup(req.user.id, groupId, adminId)
-   if (!group) return next(ERRORS.FORBIDDEN)
-   res.status(200).json({ group })
+   const { error, data } = await addAdminToGroup(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+   res.status(200).json(RESPONSE.success({ group: data }))
 }
 
 export async function removeAdmin(req, res, next) {
-   const { adminId, groupId } = req.body
-   if (!adminId || !groupId) return next(ERRORS.BAD_REQUEST)
-
-   const group = await removeAdminFromGroup(req.user.id, groupId, adminId)
-   if (!group) return next(ERRORS.FORBIDDEN)
-   res.status(200).json({ group })
+   const { error, data } = await removeAdminFromGroup(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+   res.status(200).json(RESPONSE.success({ group: data }))
 }
 
 export async function createGroup(req, res, next) {
-   const data = req.body
-   if (!data.name) return next(ERRORS.BAD_REQUEST)
-   const group = await createNewGroup(req.user.id, data)
-   if (!group) return next(ERRORS.SERVER_FAILED)
-
-   res.status(201).json({ group })
+   const { error, data } = await createNewGroup(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+   res.status(201).json(RESPONSE.success({ group: data }))
 }
-export async function deleteGroup(req, res, next) {
-   const groupId = req.body.groupId
-   if (!groupId) return next(ERRORS.INVALID_CREDENTIAL)
-   const group = await findGroupAndDelete(req.user.id, groupId)
-   if (!group) return next(ERRORS.UNAUTHORIZED)
 
+export async function deleteGroup(req, res, next) {
+   const { error, data } = await findGroupAndDelete(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
    res.sendStatus(204)
 }
 
 export async function updateGroup(req, res, next) {
-   const groupId = req.body.groupId
-   if (!groupId) return next(ERRORS.INVALID_CREDENTIAL)
-
-   const group = await findGroupAndUpdate(req.user.id, groupId, req.body)
-   if (!group) return next(ERRORS.UNAUTHORIZED)
-
-   res.status(200).json({ group })
+   const { error, data } = await findGroupAndUpdate(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+   res.status(200).json(RESPONSE.success({ group: data }))
 }

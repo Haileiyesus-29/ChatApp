@@ -1,63 +1,67 @@
+import ERRORS from '../../../../config/_errors.js'
 import Group from '../../../models/group.model.js'
 import User from '../../../models/user.model.js'
 
-export const findSubscribedGroups = async userId => {
-   const groups = await User.findById(userId)
+export const findSubscribedGroups = async user => {
+   const groups = await User.findById(user.id)
       .select('groups')
       .populate('groups', 'name username image')
-   return groups
+   if (!groups) return ERRORS.SERVER_FAILED
+   return { data: groups }
 }
 
 export const findGroup = async id => {
    const group = await Group.findById(id).select('-admins -members')
-   return group
+   if (!group) return ERRORS.NOT_FOUND
+
+   return { data: group }
 }
 
-export const addUserToGroup = async (userId, groupId) => {
-   const group = await Group.findById(groupId)
-   group.members.addToSet(userId)
-   const newGroup = await group.save()
+export const addUserToGroup = async (user, data) => {
+   const { groupId } = data
+   if (groupId) return ERRORS.INVALID_CREDENTIAL
 
-   if (newGroup)
-      await User.findByIdAndUpdate(
-         userId,
-         {
-            $addToSet: { groups: newGroup.id },
-         },
-         { new: true }
-      )
+   const group = await Group.findById(groupId)
+
+   group.members.addToSet(user.id)
+   const newGroup = await group.save()
+   if (!newGroup) return ERRORS.SERVER_FAILED
+
+   user.groups.addToSet(newGroup.id)
+   await user.save()
+
    newGroup.members = undefined
-   return newGroup
+   return { data: newGroup }
 }
 
-export const removeUserFromGroup = async (userId, groupId) => {
+export const removeUserFromGroup = async (user, data) => {
+   const { groupId } = data
+   if (!groupId) return ERRORS.BAD_REQUEST
+
    const group = await Group.findById(groupId)
-   group.members.pull(userId)
-   const newGroup = await group.save()
 
-   if (newGroup)
-      await User.findByIdAndUpdate(
-         userId,
-         {
-            $pull: { groups: newGroup.id },
-         },
-         { new: true }
-      )
+   group.members.pull(user.id)
+   const updated = await group.save()
 
-   newGroup.members = undefined
-   return newGroup
+   if (!updated) return ERRORS.SERVER_FAILED
+
+   user.groups.pull(updated.id)
+   await user.save()
+
+   updated.members = undefined
+   return { data: updated }
 }
 
 export const getAllMembers = async groupId => {
    const members = await Group.findById(groupId)
       .select('members')
       .populate('members', 'name image')
-   return members
+   return { data: members }
 }
 
 export const getAllAdmins = async groupId => {
    const admins = await Group.findById(groupId)
       .select('admins')
       .populate('admins', 'name image')
-   return admins
+   return { data: admins }
 }
