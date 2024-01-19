@@ -34,10 +34,8 @@ export async function addAdmin(req, res, next) {
 }
 
 export async function removeAdmin(req, res, next) {
-   const { adminId, channelId } = req.body
-   if (!adminId || !channelId) return next(ERRORS.BAD_REQUEST)
+   const { error, channel } = await removeAdminFromChannel(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
 
-   const channel = await removeAdminFromChannel(req.userId, channelId, adminId)
-   if (!channel) return next(ERRORS.FORBIDDEN)
-   res.status(200).json({ channel })
+   res.status(200).json(RESPONSE.success(channel, 200))
 }

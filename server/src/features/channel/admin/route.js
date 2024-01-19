@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import { authenticate } from '../../../middlewares/authenticate.js'
 import {
    addAdmin,
    createChannel,

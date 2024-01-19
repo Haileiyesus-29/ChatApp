@@ -1,9 +1,9 @@
-import ERRORS from '../../../../config/_errors.js'
+import RESPONSE from '../../../../config/_response.js'
 import { createNewPost } from './service.js'
 
 export async function makePost(req, res, next) {
-   if (!req.body.channelId) return next(ERRORS.BAD_REQUEST)
-   const post = await createNewPost(req.user.id, req.body.channelId, req.body)
-   if (!post) return next(ERRORS.INVALID_CREDENTIAL)
-   res.status(201).json(post)
+   const { error, post } = await createNewPost(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(201).json(RESPONSE.success(post, 201))
 }

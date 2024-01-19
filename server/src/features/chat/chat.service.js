@@ -1,35 +1,35 @@
 import mongoose from 'mongoose'
 import Message from '../../models/message.model.js'
 import User from '../../models/user.model.js'
+import ERRORS from '../../../config/_errors.js'
 
-export const chatToUserAccount = async (userId, receiverId, payload) => {
-   const { images, text } = payload
-   if (!images?.length && !text) return null
+export const chatToUserAccount = async (user, data) => {
+   const { images, text, receiverId } = data
 
-   const content = images?.length ? 'image' : 'text'
+   if (!receiverId || !(text || images?.length))
+      return ERRORS.INVALID_CREDENTIAL
 
    const receiver = await User.findById(receiverId)
-   if (!receiver.id) return null
+   if (!receiver) return ERRORS.BAD_REQUEST
 
    const message = new Message({
-      sender: userId,
+      sender: user.id,
       receiver: receiverId,
       chatType: 'User',
-      content,
       images,
       text,
    })
    const sentMessage = await message.save()
-   return sentMessage
+   return { message: sentMessage }
 }
 
-export const getChattedContacts = async userId => {
+export const getChattedContacts = async user => {
    const lastMessages = await Message.aggregate([
       {
          $match: {
             $or: [
-               { sender: new mongoose.Types.ObjectId(userId) },
-               { receiver: new mongoose.Types.ObjectId(userId) },
+               { sender: new mongoose.Types.ObjectId(user.id) },
+               { receiver: new mongoose.Types.ObjectId(user.id) },
             ],
          },
       },
@@ -37,7 +37,7 @@ export const getChattedContacts = async userId => {
          $group: {
             _id: {
                $cond: [
-                  { $eq: ['$sender', new mongoose.Types.ObjectId(userId)] },
+                  { $eq: ['$sender', new mongoose.Types.ObjectId(user.id)] },
                   '$receiver',
                   '$sender',
                ],
@@ -71,17 +71,20 @@ export const getChattedContacts = async userId => {
          },
       },
    ])
+   if (!lastMessages) return ERRORS.SERVER_FAILED
 
-   return lastMessages
+   return { conctacts: lastMessages }
 }
 
-export const getChatThread = async (userId, contactId) => {
+export const getChatThread = async (user, contactId) => {
+   if (!contactId) return ERRORS.INVALID_CREDENTIAL
+
    const chatThread = await Message.find({
       $or: [
-         { sender: userId, receiver: contactId },
-         { sender: contactId, receiver: userId },
+         { sender: user.id, receiver: contactId },
+         { sender: contactId, receiver: user.id },
       ],
    }).sort({ createdAt: 1 })
 
-   return chatThread
+   return { messages: chatThread }
 }

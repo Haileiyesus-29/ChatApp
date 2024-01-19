@@ -75,7 +75,7 @@ export const addAdminToChannel = async (user, data) => {
    if (!updatedChannel) return ERRORS.SERVER_FAILED
 
    updatedChannel.members = undefined
-   return updatedChannel
+   return { channel: updatedChannel }
 }
 
 export const removeAdminFromChannel = async (user, data) => {
@@ -95,5 +95,5 @@ export const removeAdminFromChannel = async (user, data) => {
 
    updatedChannel.members = undefined
 
-   return updatedChannel
+   return { channel: updatedChannel }
 }

@@ -1,21 +1,23 @@
+import ERRORS from '../../../../config/_errors.js'
 import Channel from '../../../models/channel.model.js'
 import Post from '../../../models/post.model.js'
 
-export const createNewPost = async (userId, channelId, message) => {
-   const { text, images } = message
-   if (!text && !images?.length) return null
+export const createNewPost = async (user, data) => {
+   const { text, images, channelId } = data
 
-   const channel = await Channel.findById(channelId).select('admins owner')
-   if (
-      !channel?.owner.toString() === userId &&
-      !channel?.admins.some(admin => admin.toString() === userId)
-   )
-      return null
+   if (!channelId || !(text || images?.length)) return ERRORS.INVALID_CREDENTIAL
+
+   const channel = await Channel.findById(channelId)
+   if (!channel.owner.equals(user.id) || !channel.admins.includes(user.id))
+      return ERRORS.FORBIDDEN
+
    const post = new Post({
       channel: channelId,
       text,
       images,
    })
+
    const newPost = await post.save()
-   return newPost
+   if (!newPost) return ERRORS.SERVER_FAILED
+   return { post: newPost }
 }

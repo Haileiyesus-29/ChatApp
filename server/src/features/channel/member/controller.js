@@ -16,45 +16,43 @@ export async function getJoinedChannels(req, res, next) {
    res.status(200).json(RESPONSE.success(channels, 200))
 }
 export async function getChannel(req, res, next) {
-   const channel = await findChannel(req.params)
-   if (!channel) return next(ERRORS.NOT_FOUND)
+   const { error, channel } = await findChannel(req.params)
+   if (error) return next(RESPONSE.error(error))
 
-   res.status(200).json({ channel })
+   res.status(200).json(RESPONSE.success(channel, 200))
 }
 
 export async function joinChannel(req, res, next) {
-   const channelId = req.params.channelId
-   if (!channelId) return next(ERRORS.INVALID_CREDENTIAL)
-   const channel = await addUserToChannel(req.user, channelId)
-   if (!channel) return next(ERRORS.SERVER_FAILED)
+   const { error, channel } = await addUserToChannel(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
 
-   res.status(200).json({ channel })
+   res.status(201).json(RESPONSE.success(channel, 201))
 }
 
 export async function leaveChannel(req, res, next) {
-   const channelId = req.body.channelId
-   if (!channelId) return next(ERRORS.INVALID_CREDENTIAL)
-   const channel = await remmoveUserFromChannel(req.user, channelId)
-   if (!channel) return next(ERRORS.NOT_FOUND)
+   const { error, channel } = await remmoveUserFromChannel(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
 
-   res.status(200).json({ channel })
+   res.status(201).json(RESPONSE.success(channel, 201))
 }
 
 export async function getMembers(req, res, next) {
-   const channelId = req.params.channelId
-   if (!channelId) return next(ERRORS.BAD_REQUEST)
-   const members = await getAllMembers(channelId)
-   res.status(200).json({ members })
+   const { error, members } = await getAllMembers(req.params.channelId)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(members, 200))
 }
 
 export async function getAdmins(req, res, next) {
-   const channelId = req.params.channelId
-   if (!channelId) return next(ERRORS.BAD_REQUEST)
-   const admins = await getAllAdmins(channelId)
-   res.status(200).json({ admins })
+   const { error, admins } = await getAllAdmins(req.params.channelId)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(admins, 200))
 }
 
 export async function myChannels(req, res, next) {
-   const channels = await getUserChannels(req.user.id)
-   res.status(200).json({ channels })
+   const { error, channels } = await getUserChannels(req.user)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(channels, 200))
 }

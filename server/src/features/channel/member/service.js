@@ -5,52 +5,66 @@ import User from '../../../models/user.model.js'
 export const getUserJoinedChannels = async user => {
    const channels = await User.findById(user.id)
       .select('channels')
-      .populate('name image')
+      .populate('channels', 'name image')
    return channels
 }
 
-export const findChannel = async userId => {
-   const channel = await Channel.findById(userId).select('-admins -members')
+export const findChannel = async groupId => {
+   const channel = await Channel.findById(groupId).select('-admins -members')
    if (!channel) return ERRORS.NOT_FOUND
    return { channel }
 }
 
-export const addUserToChannel = async (userId, channelId) => {
-   const channel = await Channel.findByIdAndUpdate(
-      channelId,
-      { $addToSet: { members: userId } },
-      { new: true }
-   ).select('name username members')
-   if (channel)
-      await User.findByIdAndUpdate(userId, {
-         $addToSet: { channels: channel.id },
-      })
-   return channel
+export const addUserToChannel = async (user, data) => {
+   const { channelId } = data
+   if (!channelId) return ERRORS.INVALID_CREDENTIAL
+
+   const channel = await Channel.findById(channelId)
+   if (!channel) return ERRORS.NOT_FOUND
+
+   channel.members.addToSet(user.id)
+
+   const updated = await channel.save()
+   if (!updated) return ERRORS.SERVER_FAILED
+
+   user.channels.addToSet(channelId)
+   await user.save
+
+   return { channel: updated }
 }
-export const remmoveUserFromChannel = async (userId, channelId) => {
-   const channel = await Channel.findByIdAndUpdate(
-      channelId,
-      { $pull: { members: userId }, $pull: { admins: userId } },
-      { new: true }
-   ).select('name username members')
-   if (channel)
-      await User.findByIdAndUpdate(userId, {
-         $pull: { channels: channel.id },
-      })
-   return channel
+
+export const remmoveUserFromChannel = async (user, data) => {
+   const { channelId } = data
+   if (!channelId) return ERRORS.INVALID_CREDENTIAL
+
+   const channel = await Channel.findById(channelId)
+   if (!channel) return ERRORS.NOT_FOUND
+
+   channel.members.pull(user.id)
+
+   const updated = await channel.save()
+   if (!updated) return ERRORS.SERVER_FAILED
+
+   user.channels.pull(channelId)
+   await user.save
+
+   return { channel: updated }
 }
 
 export const getAllMembers = async channelId => {
+   if (!channelId) return ERRORS.INVALID_CREDENTIAL
    const members = await Channel.findById(channelId)
       .select('members')
       .populate('members', 'name image')
-   return members
+   return { members }
 }
+
 export const getAllAdmins = async channelId => {
-   const members = await Channel.findById(channelId)
+   if (!channelId) return ERRORS.INVALID_CREDENTIAL
+   const admins = await Channel.findById(channelId)
       .select('admins')
       .populate('admins', 'name image')
-   return members
+   return { admins }
 }
 
 export const getUserChannels = async userId => {
