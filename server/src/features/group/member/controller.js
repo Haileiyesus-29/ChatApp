@@ -43,8 +43,8 @@ export async function getMembers(req, res, next) {
    res.status(200).json(RESPONSE.success(data, 200))
 }
 
-export async function getAdmins(req, res, next) {
-   const { error, data } = await getAllAdmins(req.params.groupId)
-   if (error) return next(RESPONSE.error(error))
-   res.status(200).json(RESPONSE.success(data, 200))
-}
+// export async function getAdmins(req, res, next) {
+//    const { error, data } = await getAllAdmins(req.params.groupId)
+//    if (error) return next(RESPONSE.error(error))
+//    res.status(200).json(RESPONSE.success(data, 200))
+// }

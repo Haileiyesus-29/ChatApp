@@ -6,14 +6,46 @@ import {
    removeAdmin,
    updateGroup,
 } from './controller.js'
-import { authenticate } from '../../../middlewares/authenticate.js'
 const router = Router()
 
-router.post('/admin', authenticate, addAdmin)
-router.post('/admin/remove', authenticate, removeAdmin)
+/**
+ * @route   POST /api/group/admin
+ * @desc    Add admin to the group
+ * @body   {channelId, groupId}
+ * @access  owner
+ */
+router.post('/admin', addAdmin)
 
-router.post('/', authenticate, createGroup)
-router.put('/', authenticate, updateGroup)
-router.delete('/:groupId', authenticate, deleteGroup)
+/**
+ * @route   DELETE /api/group/admin
+ * @desc    Remove admin from the group
+ * @body   {channelId, groupId}
+ * @access  owner
+ */
+router.delete('/admin', removeAdmin)
+
+/**
+ * @route   POST /api/group
+ * @desc    Create new group
+ * @body   {name, image, username, info}
+ * @access  owner
+ */
+router.post('/', createGroup)
+
+/**
+ * @route   PUT /api/group
+ * @desc    Update group info
+ * @body   { groupId, name, image, info, username}
+ * @access  admin
+ */
+router.put('/', updateGroup)
+
+/**
+ * @route   DELETE /api/group
+ * @desc    Delete group
+ * @body   {groupId}
+ * @access  owner
+ */
+router.delete('/', deleteGroup)
 
 export default router

@@ -1,4 +1,4 @@
-import ERRORS from '../../../../config/_errors.js'
+import RESPONSE from '../../../../config/_response.js'
 import {
    findGroupMessages,
    getSubscribedGroupsLastMessages,
@@ -6,21 +6,22 @@ import {
 } from './service.js'
 
 export async function sendMessage(req, res, next) {
-   const { receiverId: groupId, message } = req.body
-   if (!groupId || !message) return next(ERRORS.INVALID_CREDENTIAL)
-   const newMessage = await sendGroupMessage(req.user, groupId, message)
+   const { error, message } = await sendGroupMessage(req.user, req.body)
+   if (error) return next(RESPONSE.error(error))
 
-   res.status(201).json(newMessage)
+   res.status(201).json(RESPONSE.success(message, 201))
 }
 
 export async function getMesssages(req, res, next) {
-   const groupId = req.params.groupId
-   if (!groupId) return next(ERRORS.INVALID_CREDENTIAL)
-   const messages = await findGroupMessages(groupId)
-   res.status(200).json(messages)
+   const { error, messages } = await findGroupMessages(req.params.groupId)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(messages, 200))
 }
 
 export async function getGroupsWithLastMessages(req, res, next) {
-   const groups = await getSubscribedGroupsLastMessages(req.user)
-   res.status(200).json(groups)
+   const { error, groups } = await getSubscribedGroupsLastMessages(req.user)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(groups, 200))
 }

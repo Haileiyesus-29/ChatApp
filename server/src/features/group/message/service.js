@@ -1,11 +1,12 @@
 import Message from '../../../models/message.model.js'
-import User from '../../../models/user.model.js'
-import Group from '../../../models/group.model.js' // Replace with your actual group model
+import Group from '../../../models/group.model.js'
+import ERRORS from '../../../../config/_errors.js'
 
-export const sendGroupMessage = async (user, groupId, payload) => {
-   if (!user.groups.includes(groupId)) return null
-   const { text, images } = payload
-   if (!(text || images?.length)) return null
+export const sendGroupMessage = async (user, data) => {
+   const { groupId, text, images } = data
+
+   if (!user.groups.includes(groupId)) return ERRORS.BAD_REQUEST
+   if (!(text || images?.length)) return ERRORS.INVALID_CREDENTIAL
 
    const message = new Message({
       text,
@@ -15,62 +16,20 @@ export const sendGroupMessage = async (user, groupId, payload) => {
       chatType: 'Group',
    })
    const newMessage = await message.save()
-   return newMessage
+   return { message: newMessage }
 }
 
 export const findGroupMessages = async groupId => {
+   if (!groupId) return ERRORS.INVALID_CREDENTIAL
+
    const messages = await Message.find({ receiver: groupId })
       .populate('sender', 'image fname lname')
       .populate('receiver', 'name image')
       .sort({ createdAt: -1 })
-   return messages
+
+   return { messages }
 }
 
-export const getChattedGroups = async userId => {
-   return userId
-
-   // const lastGroupMessages = await Message.aggregate([
-   //    {
-   //       $match:
-   //          receiver: new mongoose.Types.ObjectId(userId), // Assuming userId is a member of groups
-   //          chatType: 'Group', // Specify chat type for groups
-   //       },
-   //    },
-   //    {
-   //       $group: {
-   //          _id: '$receiver', // Group by group (receiver)
-   //          lastMessageTime: { $max: '$createdAt' },
-   //          lastMessage: { $last: '$$ROOT' },
-   //       },
-   //    },
-   //    {
-   //       $lookup: {
-   //          from: 'groups', // Assuming the collection name is 'groups'
-   //          localField: '_id',
-   //          foreignField: '_id',
-   //          as: 'chattedGroup',
-   //       },
-   //    },
-   //    {
-   //       $unwind: '$chattedGroup',
-   //    },
-   //    {
-   //       $sort: { lastMessageTime: -1 },
-   //    },
-   //    {
-   //       $project: {
-   //          id: '$chattedGroup._id',
-   //          name: '$chattedGroup.name',
-   //          username: '$chattedGroup.username',
-   //          image: '$chattedGroup.image',
-   //          text: '$lastMessage.text',
-   //          createdAt: '$lastMessage.createdAt',
-   //       },
-   //    },
-   // ])
-
-   // return lastGroupMessages
-}
 export const getSubscribedGroupsLastMessages = async user => {
    const subscribedGroups = user.groups
 
@@ -142,5 +101,5 @@ export const getSubscribedGroupsLastMessages = async user => {
          : -1
    )
 
-   return sortedResult
+   return { groups: sortedResult }
 }
