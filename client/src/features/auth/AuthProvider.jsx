@@ -14,12 +14,11 @@ function AuthProvider({ children }) {
       const verifyAuth = async () => {
          try {
             setLoading(true)
-            const data = await api.post('auth/verify')
+            const response = await api.post('auth/verify')
             setLoading(false)
-            setAccount(data.account)
+            setAccount(response.data)
          } catch (error) {
             setLoading(false)
-            setError(error)
          }
       }
       verifyAuth()
@@ -60,12 +59,7 @@ function AuthProvider({ children }) {
       }
    }
 
-   return (
-      <authContext.Provider
-         value={{ account, loading, login, signup, logout, error }}
-      >
-         {children}
-      </authContext.Provider>
-   )
+   const value = { account, loading, login, signup, logout, error }
+   return <authContext.Provider value={value}>{children}</authContext.Provider>
 }
 export default AuthProvider

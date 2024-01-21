@@ -8,6 +8,7 @@ function Input({
    defaultValue = '',
    disabled = false,
    onChange,
+   onFocus,
    error,
 }) {
    if (secondary)
@@ -20,6 +21,7 @@ function Input({
                defaultValue={defaultValue}
                disabled={disabled}
                onChange={onChange}
+               onFocus={onFocus}
             />
             <label
                htmlFor='floating_email'
@@ -43,6 +45,7 @@ function Input({
             disabled={disabled}
             className='input input-bordered w-full '
             onChange={onChange}
+            onFocus={onFocus}
          />
          {error && (
             <div className='label '>

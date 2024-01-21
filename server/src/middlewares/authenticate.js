@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import User from '../models/user.model.js'
 import ERRORS from '../../config/_errors.js'
+import RESPONSE from '../../config/_response.js'
 
 /**
  * @middleware   authenticate
@@ -15,11 +16,11 @@ import ERRORS from '../../config/_errors.js'
  */
 export const authenticate = async (req, res, next) => {
    const token = req.cookies.jwt
-   if (!token) return next(ERRORS.INVALID_TOKEN)
+   if (!token) return next(RESPONSE.error(ERRORS.INVALID_TOKEN))
 
    const verified = jwt.verify(token, process.env.JWT_SECRET_KEY)
    const user = await User.findById(verified.id).select('-password')
-   if (!user) return next(ERRORS.NOT_FOUND)
+   if (!user) return next(RESPONSE.error(ERRORS.NOT_FOUND))
    req.user = user
    return next()
 }

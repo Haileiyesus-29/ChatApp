@@ -8,11 +8,8 @@ export function getAuth(req, res) {
 }
 
 export async function login(req, res, next) {
-   const { email, password } = req.body
-   if (!email || !password)
-      return next(RESPONSE.error(ERRORS.WRONG_EMAIL_OR_PASSWORD))
-   const user = await verifyUserAccount(email, password)
-   if (!user) return next(RESPONSE.error(ERRORS.BAD_REQUEST))
+   const { error, user } = await verifyUserAccount(req.body)
+   if (error) return next(RESPONSE.error(error))
 
    const token = await generateToken({ id: user.id })
    res.cookie('jwt', token, {
@@ -21,7 +18,7 @@ export async function login(req, res, next) {
       secure: true,
       sameSite: 'None',
    })
-   res.status(200).json(RESPONSE.success(user))
+   res.status(200).json(RESPONSE.success(user, 200))
 }
 
 export function logout(req, res) {

@@ -5,7 +5,7 @@ export const validateNewAccount = payload => {
    const error = []
 
    // Check if any required field is missing
-   if (!name) error.push('first name is required')
+   if (!name) error.push('name is required')
    if (!email) error.push('email is required')
    if (!password) error.push('password is required')
 
@@ -18,6 +18,6 @@ export const validateNewAccount = payload => {
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
    if (password && !passwordRegex.test(password)) error.push('Invalid password')
 
-   if (error.length) return { ...ERRORS.BAD_REQUEST, error }
+   if (error.length) return error
    return null
 }

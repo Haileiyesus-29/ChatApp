@@ -38,15 +38,16 @@ export const io = new Server(server, {
    },
 })
 
-io.on('connection', socket => {
-   console.log('user connected')
-   io.emit('connection', 'connection successfull')
-})
+// io.on('connection', socket => {
+//    console.log('user connected')
+//    io.emit('connection', 'connection successfull')
+// })
 
 app.get('/bm', (req, res) => res.send('bm'))
 
 app.use((req, res, next) => {
-   logger.info(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
+   process.env.NODE_ENV === 'dev' &&
+      logger.info(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
    next()
 })
 app.use('/', (req, res, next) => {
@@ -66,3 +67,4 @@ connectDB(() =>
       console.log(`Server running on ${process.env.PORT}`)
    )
 )
+export default app

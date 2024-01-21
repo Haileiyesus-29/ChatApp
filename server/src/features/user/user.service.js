@@ -12,8 +12,8 @@ export const getUserAccount = async id => {
 }
 
 export const createUserAccount = async data => {
-   const error = validateNewAccount(req.body)
-   if (error) return ERRORS.BAD_REQUEST
+   const error = validateNewAccount(data)
+   if (error?.length) return Object.assign(ERRORS.VALIDATION_ERROR, error)
 
    const { email, password, name, username, bio, image } = data
    const hashedPassword = await hashPassword(password)
@@ -38,7 +38,9 @@ export const createUserAccount = async data => {
 
 export const updateUserAccount = async (user, data) => {
    const { name, bio, image, username } = data
-   const updateList = { fname, lname, bio, image, username }
+
+   const updateList = { bio, image, username }
+   if (name) updateList['name'] = name
 
    Object.assign(user, updateList)
    const updated = await user.save()

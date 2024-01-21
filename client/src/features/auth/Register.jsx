@@ -5,40 +5,31 @@ import { useContext, useReducer } from 'react'
 import authContext from './authContext'
 
 const initial = {
-   fname: {
+   name: {
       value: '',
-      error: '',
-   },
-   lname: {
-      value: '',
-      error: '',
+      error: 'this field is required',
+      focused: false,
    },
    email: {
       value: '',
-      error: '',
+      error: 'this field is required',
+      focused: false,
    },
    password: {
       value: '',
-      error: '',
+      error: 'this field is required',
+      focused: false,
    },
 }
 
 function reducer(state, action) {
    switch (action.type) {
-      case 'fname': {
+      case 'name': {
          return {
             ...state,
-            fname: {
+            name: {
                value: action.payload,
-               error: !action.payload ? 'First name is required' : '',
-            },
-         }
-      }
-      case 'lname': {
-         return {
-            ...state,
-            lname: {
-               value: action.payload,
+               error: !action.payload ? 'Name is required' : '',
             },
          }
       }
@@ -76,19 +67,25 @@ function reducer(state, action) {
             },
          }
       }
+      case 'focus': {
+         return {
+            ...state,
+            [action.payload]: {
+               ...state[action.payload],
+               focused: true,
+            },
+         }
+      }
       default:
-         break
+         return state
    }
 }
 
 function Register() {
    const [state, dispatch] = useReducer(reducer, initial)
-   const { loading, error, signup } = useContext(authContext)
-   const navigate = useNavigate()
+   const { loading, signup, error } = useContext(authContext)
 
-   const changeHandler = e => {
-      dispatch({ type: e.target.name, payload: e.target.value })
-   }
+   const navigate = useNavigate()
 
    const submitHandler = async e => {
       e.preventDefault()
@@ -104,6 +101,8 @@ function Register() {
       await signup(payload, () => navigate('/', { replace: true }))
    }
 
+   console.log(state)
+
    return (
       <main className='min-h-screen flex justify-center items-center p-2'>
          <form
@@ -113,27 +112,26 @@ function Register() {
             <h2 className='text-3xl text-center leading-loose'>Register</h2>
             <div className='text-sm text-red-400/80'>{error}</div>
             <Input
-               name='fname'
-               placeholder='Your first name'
+               name='name'
+               placeholder='Your full name'
                type='text'
-               label='First Name'
-               onChange={changeHandler}
-               error={state.fname.error}
-            />
-            <Input
-               name='lname'
-               placeholder='Your last name'
-               type='text'
-               label='Last Name'
-               onChange={changeHandler}
+               label='Full Name'
+               onChange={e =>
+                  dispatch({ type: 'name', payload: e.target.value })
+               }
+               onFocus={() => dispatch({ type: 'focus', payload: 'name' })}
+               error={state.name.focused && state.name.error}
             />
             <Input
                placeholder='e.g, John@example.com'
                type='email'
                name='email'
                label='email'
-               onChange={changeHandler}
-               error={state.email.error}
+               onChange={e =>
+                  dispatch({ type: 'name', payload: e.target.value })
+               }
+               onFocus={() => dispatch({ type: 'focus', payload: 'email' })}
+               error={state.email.focused && state.email.error}
             />
             <Input
                label='password'
@@ -141,8 +139,11 @@ function Register() {
                type='password'
                key='password'
                placeholder='your password'
-               onChange={changeHandler}
-               error={state.password.error}
+               onChange={e =>
+                  dispatch({ type: 'name', payload: e.target.value })
+               }
+               onFocus={() => dispatch({ type: 'focus', payload: 'password' })}
+               error={state.password.focused && state.password.error}
             />
 
             <div className='flex flex-col gap-3'>

@@ -7,7 +7,10 @@
    "license": "MIT",
    "type": "module",
    "scripts": {
-      "dev": "nodemon app.js"
+      "test": "mocha -r esm --exit test/**/*.test.js",
+      "test-watch": "nodemon --exec 'mocha --exit' test/**/*.test.js",
+      "dev": "nodemon app.js",
+      "start": "node app.js"
    },
    "dependencies": {
       "bcryptjs": "^2.4.3",
@@ -23,6 +26,14 @@
       "winston": "^3.11.0"
    },
    "devDependencies": {
-      "nodemon": "^3.0.2"
+      "@types/chai": "^4.3.11",
+      "@types/mocha": "^10.0.6",
+      "@types/node": "^20.11.5",
+      "@types/supertest": "^6.0.2",
+      "chai": "^5.0.0",
+      "esm": "^3.2.25",
+      "mocha": "^10.2.0",
+      "nodemon": "^3.0.2",
+      "supertest": "^6.3.4"
    }
 }

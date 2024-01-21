@@ -14,7 +14,7 @@ const router = Router()
  * @param   id the id of the target user
  * @access  private
  */
-router.get('/:id', getUser)
+router.get('/:id', authenticate, getUser)
 
 /**
  * @route   POST /api/user
