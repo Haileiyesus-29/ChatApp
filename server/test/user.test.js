@@ -1,14 +1,10 @@
 import supertest from 'supertest'
 import { expect } from 'chai'
 import app from '../app.js'
-
-const userData = {
-   name: 'John Doe',
-   email: `john.${Math.random().toString().slice(-5)}@example.com`,
-   password: 'Pa$$w0rd',
-}
+import { generateTestUserData } from './testHelpers.js'
 
 describe('USER actions /api/user', () => {
+   const userData = generateTestUserData()
    let userToken = null
    let userId = null
 
@@ -23,8 +19,7 @@ describe('USER actions /api/user', () => {
 
       // Check the response body structure
       expect(response.body).to.have.property('success', true)
-      expect(response.body).to.have.property('data')
-      expect(response.body.data).to.have.property('id')
+      expect(response.body).to.have.property('data').and.to.have.property('id')
       expect(response.body.data.name).to.equal(userData.name)
       expect(response.body.data.email).to.equal(userData.email)
       expect(response.body.error).to.equal(null)

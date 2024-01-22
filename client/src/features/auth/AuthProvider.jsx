@@ -27,8 +27,8 @@ function AuthProvider({ children }) {
    const login = async payload => {
       try {
          setLoading(true)
-         const data = await api.post('auth/login', payload)
-         setAccount(data.account)
+         const response = await api.post('auth/login', payload)
+         setAccount(response.data)
          setLoading(false)
          navigate('/')
       } catch (error) {
@@ -49,8 +49,8 @@ function AuthProvider({ children }) {
    const signup = async payload => {
       try {
          setLoading(true)
-         const data = await api.post('user', payload)
-         setAccount(data.account)
+         const response = await api.post('user', payload)
+         setAccount(response.data)
          setLoading(false)
          navigate('/')
       } catch (error) {

@@ -23,11 +23,19 @@ export const findGroupMessages = async groupId => {
    if (!groupId) return ERRORS.INVALID_CREDENTIAL
 
    const messages = await Message.find({ receiver: groupId })
-      .populate('sender', 'image fname lname')
-      .populate('receiver', 'name image')
-      .sort({ createdAt: -1 })
+      .populate('sender', 'image name')
+      .select('-chatType')
+      .lean()
 
-   return { messages }
+   const transformed = messages.map(msg => ({
+      ...msg,
+      id: msg._id,
+      image: msg.sender.image,
+      name: msg.sender.name,
+      sender: msg.sender._id,
+      _id: undefined,
+   }))
+   return { messages: transformed }
 }
 
 export const getSubscribedGroupsLastMessages = async user => {

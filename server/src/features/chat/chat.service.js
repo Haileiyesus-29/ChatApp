@@ -14,7 +14,7 @@ export const chatToUserAccount = async (user, data) => {
 
    const message = new Message({
       sender: user.id,
-      receiver: receiverId,
+      receiver: receiver.id,
       chatType: 'User',
       images,
       text,
@@ -63,8 +63,7 @@ export const getChattedContacts = async user => {
       {
          $project: {
             id: '$chattedUser._id',
-            fname: '$chattedUser.fname',
-            lname: '$chattedUser.lname',
+            name: '$chattedUser.name',
             image: '$chattedUser.image',
             text: '$lastMessage.text',
             createdAt: '$lastMessage.createdAt',
@@ -73,7 +72,7 @@ export const getChattedContacts = async user => {
    ])
    if (!lastMessages) return ERRORS.SERVER_FAILED
 
-   return { conctacts: lastMessages }
+   return { contacts: lastMessages }
 }
 
 export const getChatThread = async (user, contactId) => {

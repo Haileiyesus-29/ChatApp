@@ -19,9 +19,10 @@ export const findGroup = async id => {
 
 export const addUserToGroup = async (user, data) => {
    const { groupId } = data
-   if (groupId) return ERRORS.INVALID_CREDENTIAL
+   if (!groupId) return ERRORS.INVALID_CREDENTIAL
 
    const group = await Group.findById(groupId)
+   if (!group) return ERRORS.NOT_FOUND
 
    group.members.addToSet(user.id)
    const newGroup = await group.save()

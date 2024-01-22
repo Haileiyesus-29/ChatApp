@@ -3,7 +3,7 @@ import Avatar from '../common/Avatar'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
 // eslint-disable-next-line react/prop-types
-function Title({ page, name, fname, lname, image, isLoading }) {
+function Title({ page, name, image, isLoading }) {
    return (
       <div className='p-2 border-b flex gap-2 items-center dark:bg-neutral-content/10'>
          {isLoading ? (

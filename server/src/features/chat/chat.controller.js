@@ -16,7 +16,7 @@ export async function sendMessage(req, res, next) {
    const { error, message } = await chatToUserAccount(req.user, req.body)
    if (error) return next(RESPONSE.error(error))
 
-   req.io.emit(`chat-${receiverId}`, message, req.user.id)
+   req.io.emit(`chat-${message.receiver}`, message, req.user.id)
    res.status(201).json(RESPONSE.success(message, 201))
 }
 

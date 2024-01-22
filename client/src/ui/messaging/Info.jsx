@@ -13,9 +13,7 @@ function Info({ chatInfo, loading }) {
                image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
             />
             <div className='flex flex-col justify-center'>
-               <h3 className='text-xl '>{`${chatInfo?.fname} ${
-                  chatInfo?.lname || ''
-               }`}</h3>
+               <h3 className='text-xl '>{chatInfo?.name}</h3>
                <span className='text-xs dark:text-gray-200/40 leading-tight'>
                   Last seen recently
                </span>

@@ -26,7 +26,7 @@ export async function joinGroup(req, res, next) {
    const { error, data } = await addUserToGroup(req.user, req.body)
    if (error) return next(RESPONSE.error(error))
 
-   res.status(201).json(RESPONSE.success(data, 201))
+   res.status(200).json(RESPONSE.success(data, 200))
 }
 
 export async function leaveGroup(req, res, next) {

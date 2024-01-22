@@ -14,8 +14,8 @@ function ChatProvider({ children }) {
    const { data: chatList, isLoading: chatListLoading } = useQuery({
       queryKey: ['chats', 'contacts'],
       queryFn: async () => {
-         const result = await api.get('chat')
-         return result
+         const response = await api.get('chat')
+         return response.data
       },
    })
 
@@ -24,8 +24,8 @@ function ChatProvider({ children }) {
          queryClient.prefetchQuery({
             queryKey: ['messages', 'chat', { id: chat.id }],
             queryFn: async () => {
-               const messages = await api.get(`chat/${chat.id}`)
-               return messages
+               const response = await api.get(`chat/${chat.id}`)
+               return response.data
             },
          })
       )
@@ -52,8 +52,8 @@ function ChatProvider({ children }) {
       return {
          queryKey: ['messages', 'chat', { id }],
          queryFn: async () => {
-            const messages = await api.get(`chat/${id}`)
-            return messages
+            const response = await api.get(`chat/${id}`)
+            return response.data
          },
          enabled: !!id,
       }
@@ -63,8 +63,8 @@ function ChatProvider({ children }) {
       return {
          queryKey: ['account', 'chat', { id }],
          queryFn: async () => {
-            const user = await api.get(`user/${id}`)
-            return user
+            const response = await api.get(`user/${id}`)
+            return response.data
          },
          enabled: !!id,
       }
@@ -77,10 +77,10 @@ function ChatProvider({ children }) {
             const msg = await api.post('chat', payload)
             return msg
          },
-         onSuccess: async (data, variables) => {
+         onSuccess: async (response, variables) => {
             queryClient.setQueryData(
                ['messages', 'chat', { id: variables.receiverId }],
-               prevData => [...prevData, data]
+               prevData => [...prevData, response.data]
             )
             await queryClient.invalidateQueries({
                queryKey: ['chats', 'contacts'],

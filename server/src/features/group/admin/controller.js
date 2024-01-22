@@ -10,19 +10,19 @@ import {
 export async function addAdmin(req, res, next) {
    const { error, data } = await addAdminToGroup(req.user, req.body)
    if (error) return next(RESPONSE.error(error))
-   res.status(200).json(RESPONSE.success({ group: data }))
+   res.status(200).json(RESPONSE.success(data, 200))
 }
 
 export async function removeAdmin(req, res, next) {
    const { error, data } = await removeAdminFromGroup(req.user, req.body)
    if (error) return next(RESPONSE.error(error))
-   res.status(200).json(RESPONSE.success({ group: data }))
+   res.status(200).json(RESPONSE.success(data, 200))
 }
 
 export async function createGroup(req, res, next) {
    const { error, data } = await createNewGroup(req.user, req.body)
    if (error) return next(RESPONSE.error(error))
-   res.status(201).json(RESPONSE.success({ group: data }))
+   res.status(201).json(RESPONSE.success(data))
 }
 
 export async function deleteGroup(req, res, next) {
@@ -34,5 +34,5 @@ export async function deleteGroup(req, res, next) {
 export async function updateGroup(req, res, next) {
    const { error, data } = await findGroupAndUpdate(req.user, req.body)
    if (error) return next(RESPONSE.error(error))
-   res.status(200).json(RESPONSE.success({ group: data }))
+   res.status(200).json(RESPONSE.success(data, 200))
 }

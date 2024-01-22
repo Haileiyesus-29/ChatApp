@@ -7,17 +7,17 @@ import authContext from './authContext'
 const initial = {
    name: {
       value: '',
-      error: 'this field is required',
+      error: 'This field is required',
       focused: false,
    },
    email: {
       value: '',
-      error: 'this field is required',
+      error: 'This field is required',
       focused: false,
    },
    password: {
       value: '',
-      error: 'this field is required',
+      error: 'This field is required',
       focused: false,
    },
 }
@@ -30,6 +30,7 @@ function reducer(state, action) {
             name: {
                value: action.payload,
                error: !action.payload ? 'Name is required' : '',
+               focused: state.name.focused,
             },
          }
       }
@@ -39,17 +40,18 @@ function reducer(state, action) {
             password: {
                value: action.payload,
                error: (() => {
-                  if (!action.payload) return 'password is required!'
-                  else if (action.payload?.length < 8)
-                     return 'password must be atleast 8 characters'
+                  if (!action.payload) return 'Password is required!'
+                  else if (action.payload.length < 8)
+                     return 'Password must be at least 8 characters'
                   else if (
                      !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(
                         action.payload
                      )
                   )
-                     return 'pasword must contain Uppercase, lowercase, number and character'
+                     return 'Password must contain uppercase, lowercase, number, and special character'
                   else return ''
                })(),
+               focused: state.password.focused,
             },
          }
       }
@@ -59,11 +61,12 @@ function reducer(state, action) {
             email: {
                value: action.payload,
                error: (() => {
-                  if (!action.payload) return 'email is required!'
+                  if (!action.payload) return 'Email is required!'
                   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.payload))
                      return 'Invalid email format'
                   else return ''
                })(),
+               focused: state.email.focused,
             },
          }
       }
@@ -101,8 +104,6 @@ function Register() {
       await signup(payload, () => navigate('/', { replace: true }))
    }
 
-   console.log(state)
-
    return (
       <main className='min-h-screen flex justify-center items-center p-2'>
          <form
@@ -126,21 +127,21 @@ function Register() {
                placeholder='e.g, John@example.com'
                type='email'
                name='email'
-               label='email'
+               label='Email'
                onChange={e =>
-                  dispatch({ type: 'name', payload: e.target.value })
+                  dispatch({ type: 'email', payload: e.target.value })
                }
                onFocus={() => dispatch({ type: 'focus', payload: 'email' })}
                error={state.email.focused && state.email.error}
             />
             <Input
-               label='password'
+               label='Password'
                name='password'
                type='password'
                key='password'
-               placeholder='your password'
+               placeholder='Your password'
                onChange={e =>
-                  dispatch({ type: 'name', payload: e.target.value })
+                  dispatch({ type: 'password', payload: e.target.value })
                }
                onFocus={() => dispatch({ type: 'focus', payload: 'password' })}
                error={state.password.focused && state.password.error}
@@ -149,7 +150,7 @@ function Register() {
             <div className='flex flex-col gap-3'>
                <Button label={loading ? 'Loading...' : 'Create my account'} />
                <span className='text-sm'>
-                  Already have an account ? &nbsp;
+                  Already have an account? &nbsp;
                   <Link to='/login' className='text-primary'>
                      Login
                   </Link>
@@ -159,4 +160,5 @@ function Register() {
       </main>
    )
 }
+
 export default Register

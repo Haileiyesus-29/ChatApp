@@ -16,8 +16,8 @@ function GroupProvider({ children }) {
    const { data: chatList, isLoading: chatListLoading } = useQuery({
       queryKey: ['group', 'contacts'],
       queryFn: async () => {
-         const result = await api.get('group/chatlist')
-         return result
+         const response = await api.get('group/chatlist')
+         return response.data
       },
    })
 
@@ -25,8 +25,8 @@ function GroupProvider({ children }) {
       return {
          queryKey: ['messages', 'group', { id }],
          queryFn: async () => {
-            const messages = await api.get(`group/messaage/${id}`)
-            return messages
+            const response = await api.get(`group/message/${id}`)
+            return response.data
          },
          enabled: !!id,
       }
@@ -36,8 +36,8 @@ function GroupProvider({ children }) {
       return {
          queryKey: ['account', 'group', { id }],
          queryFn: async () => {
-            const user = await api.get(`group/${id}`)
-            return user
+            const response = await api.get(`group/${id}`)
+            return response.data
          },
          enabled: !!id,
       }
@@ -46,13 +46,16 @@ function GroupProvider({ children }) {
       return {
          mutationKey: ['messages', 'group', { id }],
          mutationFn: async payload => {
-            const msg = await api.post('group/message', payload)
-            return msg
+            const response = await api.post('group/message', {
+               ...payload,
+               groupId: payload.receiverId,
+            })
+            return response.data
          },
-         onSuccess: async (data, variables) => {
+         onSuccess: async (response, variables) => {
             queryClient.setQueryData(
                ['messages', 'group', { id: variables.receiverId }],
-               prevData => [...prevData, data]
+               prevData => [...prevData, response.data]
             )
             await queryClient.invalidateQueries({
                queryKey: ['group', 'contacts'],

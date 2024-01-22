@@ -18,7 +18,7 @@ function Message({ getMessages, getContactInfo, sendMessage }) {
    const mutation = useMutation(sendMessage(id))
 
    const handleSubmit = message => {
-      mutation.mutate({ receiverId: id, message })
+      mutation.mutate({ receiverId: id, ...message })
    }
 
    useEffect(() => {
@@ -30,7 +30,7 @@ function Message({ getMessages, getContactInfo, sendMessage }) {
    return (
       <section id='message' className='grid grid-cols-[5fr_3fr] grid-rows-1'>
          <div className='flex-col flex dark:bg-base-200'>
-            <Title {...chatInfo?.account} isLoading={chatInfoLoading} />
+            <Title {...chatInfo} isLoading={chatInfoLoading} />
             <div ref={messageBox} className='py-2 overflow-y-auto'>
                {isLoading ? (
                   <div>Loading... </div>
@@ -49,7 +49,7 @@ function Message({ getMessages, getContactInfo, sendMessage }) {
             </div>
             <ChatForm key={id} handleSubmit={handleSubmit} />
          </div>
-         <Info chatInfo={chatInfo?.account} loading={chatInfoLoading} />
+         <Info chatInfo={chatInfo} loading={chatInfoLoading} />
       </section>
    )
 }

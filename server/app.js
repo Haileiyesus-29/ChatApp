@@ -46,8 +46,7 @@ export const io = new Server(server, {
 app.get('/bm', (req, res) => res.send('bm'))
 
 app.use((req, res, next) => {
-   process.env.NODE_ENV === 'dev' &&
-      logger.info(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
+   process.env.NODE_ENV === 'dev' && logger.info(` ${req.method} ${req.url}`)
    next()
 })
 app.use('/', (req, res, next) => {
