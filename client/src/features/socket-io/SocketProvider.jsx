@@ -1,38 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import socketContext from './socketContext'
 import { io } from 'socket.io-client'
+import authContext from '../auth/authContext'
 
-const ENDPOINT = 'http://localhost:5000' // Replace with Socket.IO server URL
-const socket = io(ENDPOINT)
+const ENDPOINT = 'http://localhost:5000'
 
 // eslint-disable-next-line react/prop-types
 export default function SocketProvider({ children }) {
+   const socket = useRef(null)
+   const { loading, account } = useContext(authContext)
+
    const [connected, setConnected] = useState(false)
    useEffect(() => {
-      socket.on('connect', () => {
+      if (!loading && account) {
+         socket.current = io(ENDPOINT)
+      }
+      socket.current?.on('connect', () => {
          console.log('connected')
          setConnected(true)
       })
 
-      socket.on('disconnect', () => {
+      socket.current?.on('disconnect', () => {
          console.log('disconnected')
          setConnected(false)
       })
 
       return () => {
-         socket.off('connect')
-         socket.off('disconnect')
+         if (socket.current) {
+            socket.current.disconnect()
+         }
       }
-   }, [])
+   }, [loading, account])
 
    const emit = (connection, payload) => {
-      socket.emit(connection, payload)
+      if (socket.current) {
+         socket.current.emit(connection, payload)
+      }
    }
 
    const value = {
       connected,
       emit,
-      socket,
+      socket: socket.current,
    }
 
    return (

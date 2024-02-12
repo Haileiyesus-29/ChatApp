@@ -32,7 +32,8 @@ function ChatProvider({ children }) {
    }, [chatList, queryClient])
 
    useEffect(() => {
-      account?.id &&
+      account &&
+         socket &&
          socket.on(`chat-${account.id}`, (message, sender) => {
             queryClient.setQueryData(
                ['messages', 'chat', { id: sender }],
@@ -46,7 +47,7 @@ function ChatProvider({ children }) {
                })
             })()
          })
-   }, [socket, account?.id, queryClient])
+   }, [socket, account, queryClient])
 
    const getMessages = id => {
       return {

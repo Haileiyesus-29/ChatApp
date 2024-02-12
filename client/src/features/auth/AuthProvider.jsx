@@ -19,10 +19,11 @@ function AuthProvider({ children }) {
             setAccount(response.data)
          } catch (error) {
             setLoading(false)
+            navigate('/login')
          }
       }
       verifyAuth()
-   }, [])
+   }, [navigate])
 
    const login = async payload => {
       try {
