@@ -43,8 +43,6 @@ export const io = new Server(server, {
 //    io.emit('connection', 'connection successfull')
 // })
 
-app.get('/bm', (req, res) => res.send('bm'))
-
 app.use((req, res, next) => {
    process.env.NODE_ENV === 'dev' && logger.info(` ${req.method} ${req.url}`)
    next()

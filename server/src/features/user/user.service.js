@@ -52,8 +52,12 @@ export const updateUserAccount = async (user, data) => {
 
 export const deleteUserAccount = async (user, data) => {
    const { password } = data
-   if (!data) return ERRORS.INVALID_CREDENTIAL
-   const passwordVerified = await bcrypt.compare(password, user.password)
+   if (!password) return ERRORS.INVALID_CREDENTIAL
+   const userWithPasswordData = await User.findById(user.id)
+   const passwordVerified = await bcrypt.compare(
+      password,
+      userWithPasswordData.password
+   )
 
    if (!passwordVerified) return ERRORS.FORBIDDEN
    const deletedAcc = await User.findByIdAndDelete(user.id)

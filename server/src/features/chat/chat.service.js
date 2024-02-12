@@ -72,7 +72,9 @@ export const getChattedContacts = async user => {
    ])
    if (!lastMessages) return ERRORS.SERVER_FAILED
 
-   return { contacts: lastMessages }
+   return {
+      contacts: lastMessages.map(message => ({ ...message, _id: undefined })),
+   }
 }
 
 export const getChatThread = async (user, contactId) => {

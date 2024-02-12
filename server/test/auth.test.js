@@ -1,5 +1,14 @@
+import { expect } from 'chai'
+import supertest from 'supertest'
+import app from '../app.js'
+
 describe('Auth actions /api/auth', () => {
    let userToken = null
+   const userData = {
+      email: 'john.14537@example.com',
+      password: 'Pa$$w0rd',
+   }
+
    it('should login the user and return new token', async () => {
       const response = await supertest(app)
          .post('/api/auth/login')
