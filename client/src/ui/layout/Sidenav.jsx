@@ -14,6 +14,7 @@ function Sidenav() {
    const { logout } = useContext(authContext)
    const [theme, setTheme] = useState('dark')
    const navigate = useNavigate()
+
    useEffect(() => {
       document.body.dataset.theme = theme
    }, [theme])
@@ -26,7 +27,7 @@ function Sidenav() {
                bg={false}
                size={1.6}
                width={8}
-               onClick={() => logout()}
+               onClick={() => logout(() => navigate('/login'))}
             />
             <Icon icon={faHome} onClick={() => navigate('/')} />
          </div>

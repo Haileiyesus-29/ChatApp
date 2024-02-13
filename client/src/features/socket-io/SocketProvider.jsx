@@ -7,14 +7,15 @@ const ENDPOINT = 'http://localhost:5000'
 
 // eslint-disable-next-line react/prop-types
 export default function SocketProvider({ children }) {
-   const socket = useRef(null)
-   const { loading, account } = useContext(authContext)
-
+   const { account } = useContext(authContext)
    const [connected, setConnected] = useState(false)
+   const socket = useRef(null)
+
    useEffect(() => {
-      if (!loading && account) {
-         socket.current = io(ENDPOINT)
-      }
+      if (account) socket.current = io(ENDPOINT)
+      else socket.current?.disconnect()
+      console.log('re-rendered')
+
       socket.current?.on('connect', () => {
          console.log('connected')
          setConnected(true)
@@ -24,18 +25,13 @@ export default function SocketProvider({ children }) {
          console.log('disconnected')
          setConnected(false)
       })
-
       return () => {
-         if (socket.current) {
-            socket.current.disconnect()
-         }
+         socket.current?.disconnect()
       }
-   }, [loading, account])
+   }, [account])
 
    const emit = (connection, payload) => {
-      if (socket.current) {
-         socket.current.emit(connection, payload)
-      }
+      socket.current?.emit(connection, payload)
    }
 
    const value = {

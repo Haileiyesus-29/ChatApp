@@ -42,6 +42,10 @@ io.on('connection', socket => {
    process.env.NODE_ENV === 'dev' &&
       logger.info(`new socket connection ${socket.id}`)
 })
+io.on('disconnect', socket => {
+   process.env.NODE_ENV === 'dev' &&
+      logger.info(`closed socket connection ${socket.id}`)
+})
 
 app.use((req, res, next) => {
    process.env.NODE_ENV === 'dev' && logger.info(` ${req.method} ${req.url}`)

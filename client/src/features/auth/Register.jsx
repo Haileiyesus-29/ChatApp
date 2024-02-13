@@ -101,7 +101,7 @@ function Register() {
       }
 
       if (errors.length) return
-      await signup(payload, () => navigate('/', { replace: true }))
+      await signup(payload, () => navigate('/'))
    }
 
    return (
