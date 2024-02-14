@@ -9,6 +9,7 @@ export async function sendMessage(req, res, next) {
    const { error, message } = await sendGroupMessage(req.user, req.body)
    if (error) return next(RESPONSE.error(error))
 
+   req.io.emit(`group-${message.receiver}`, message, message.receiver)
    res.status(201).json(RESPONSE.success(message, 201))
 }
 

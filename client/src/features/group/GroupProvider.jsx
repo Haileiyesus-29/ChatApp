@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import groupContext from './groupContext'
@@ -8,7 +8,7 @@ import api from '../../services/api'
 
 // eslint-disable-next-line react/prop-types
 function GroupProvider({ children }) {
-   const { socket, emit } = useContext(socketContext)
+   const { socket } = useContext(socketContext)
    const { account } = useContext(authContext)
 
    const queryClient = useQueryClient()
@@ -20,6 +20,38 @@ function GroupProvider({ children }) {
          return response.data
       },
    })
+
+   useEffect(() => {
+      const handleSocketMessage = (message, groupId) => {
+         queryClient.setQueryData(
+            ['messages', 'group', { id: groupId }],
+            prev => {
+               if (message.sender !== account.id) return [...prev, message]
+               else return [...prev]
+            }
+         )
+
+         queryClient.invalidateQueries({
+            queryKey: ['group', 'contacts'],
+            exact: true,
+            type: 'active',
+         })
+      }
+
+      if (socket) {
+         chatList.forEach(chat =>
+            socket.on(`group-${chat.id}`, handleSocketMessage)
+         )
+      }
+
+      return () => {
+         if (socket) {
+            chatList.forEach(chat =>
+               socket.off(`group-${chat.id}`, handleSocketMessage)
+            )
+         }
+      }
+   }, [socket, account.id, queryClient, chatList])
 
    const getMessages = id => {
       return {
@@ -50,7 +82,7 @@ function GroupProvider({ children }) {
                ...payload,
                groupId: payload.receiverId,
             })
-            return response.data
+            return response
          },
          onSuccess: async (response, variables) => {
             queryClient.setQueryData(

@@ -47,11 +47,12 @@ io.on('disconnect', socket => {
       logger.info(`closed socket connection ${socket.id}`)
 })
 
-app.use((req, res, next) => {
+app.use((req, _, next) => {
    process.env.NODE_ENV === 'dev' && logger.info(` ${req.method} ${req.url}`)
    next()
 })
-app.use('/', (req, res, next) => {
+
+app.use('/', (req, _, next) => {
    req.io = io
    next()
 })

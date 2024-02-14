@@ -4,12 +4,16 @@ import ChatForm from './ChatForm'
 import Info from './Info'
 import Title from './Title'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
+import authContext from '../../features/auth/authContext'
 
 // eslint-disable-next-line react/prop-types
 function Message({ getMessages, getContactInfo, sendMessage }) {
    const messageBox = useRef()
    const { id } = useParams()
+   const {
+      account: { id: userId },
+   } = useContext(authContext)
 
    const { data, isLoading } = useQuery(getMessages(id))
    const { data: chatInfo, isLoading: chatInfoLoading } = useQuery(
@@ -42,7 +46,7 @@ function Message({ getMessages, getContactInfo, sendMessage }) {
                         createdAt={message.createdAt}
                         images={message.images}
                         text={message.text}
-                        type={id === message.receiver ? 'sent' : 'received'}
+                        type={userId === message.sender ? 'sent' : 'received'}
                      />
                   ))
                )}

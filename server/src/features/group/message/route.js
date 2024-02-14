@@ -15,7 +15,7 @@ route.get('/chatlist', getGroupsWithLastMessages)
 
 /**
  * @route   GET /api/message/:groupId
- * @desc    Get the messages sent to the group
+ * @desc    Get the messages sent on the group
  * @param   groupId the id of the target group
  * @access  private
  */
