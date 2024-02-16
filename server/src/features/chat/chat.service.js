@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Document } from 'mongoose'
 import Message from '../../models/message.model.js'
 import User from '../../models/user.model.js'
 import ERRORS from '../../../config/_errors.js'

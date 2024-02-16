@@ -13,6 +13,8 @@ function GroupProvider({ children }) {
 
    const queryClient = useQueryClient()
 
+   console.log('group re-rendered')
+
    const { data: chatList, isLoading: chatListLoading } = useQuery({
       queryKey: ['group', 'contacts'],
       queryFn: async () => {

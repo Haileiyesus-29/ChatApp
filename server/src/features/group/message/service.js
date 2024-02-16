@@ -85,9 +85,10 @@ export const getSubscribedGroupsLastMessages = async user => {
    ])
 
    const mergedResult = subscribedGroupInfo.map(subscribedGroup => {
-      const groupWithMessage = lastMessages.find(
-         groupInfo => groupInfo.id.toString() === subscribedGroup._id.toString()
+      const groupWithMessage = lastMessages.find(groupInfo =>
+         groupInfo.id.equals(subscribedGroup._id)
       )
+      // toString() === subscribedGroup._id.toString()
 
       return (
          groupWithMessage || {

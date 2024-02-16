@@ -4,7 +4,7 @@ import Image from '../common/Image'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import Avatar from '../common/Avatar'
 
-function Info({ chatInfo, loading }) {
+function Info({ chatInfo }) {
    return (
       <section className='flex-col flex dark:bg-base-100'>
          <div className='flex gap-2 p-3 dark:bg-neutral-content/10'>
@@ -58,12 +58,6 @@ function Info({ chatInfo, loading }) {
          <div className='overflow-y-auto'>
             <h3 className=' dark:bg-base-100 px-3 py-1'>shared medias</h3>
             <div className='grid grid-cols-4 auto-rows-auto gap-1 p-1'>
-               <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
-               <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
-               <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
-               <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
-               <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
-               <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
                <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
                <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
                <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />

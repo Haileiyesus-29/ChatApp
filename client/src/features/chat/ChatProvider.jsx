@@ -12,7 +12,7 @@ function ChatProvider({ children }) {
    const queryClient = useQueryClient()
 
    const { data: chatList, isLoading: chatListLoading } = useQuery({
-      queryKey: ['chats', 'contacts'],
+      queryKey: ['chat', 'contacts'],
       queryFn: async () => {
          const response = await api.get('chat')
          return response.data
@@ -20,33 +20,20 @@ function ChatProvider({ children }) {
    })
 
    useEffect(() => {
-      const prefetchMessages = async () => {
-         chatList &&
-            (await Promise.all(
-               chatList.map(chat =>
-                  queryClient.prefetchQuery({
-                     queryKey: ['messages', 'chat', { id: chat.id }],
-                     queryFn: async () => {
-                        const response = await api.get(`chat/${chat.id}`)
-                        return response.data
-                     },
-                  })
-               )
-            ))
-      }
-
-      prefetchMessages()
-   }, [chatList, queryClient])
-
-   useEffect(() => {
-      const handleSocketMessage = (message, sender) => {
+      const handleSocketMessage = (message, from, to) => {
          queryClient.setQueryData(
-            ['messages', 'chat', { id: sender }],
-            prev => [...prev, message]
+            ['messages', 'chat', { id: account.id === from ? to : from }],
+            prev => [
+               ...prev,
+               {
+                  ...message,
+                  type: message.sender === account.id ? 'sent' : 'received',
+               },
+            ]
          )
 
          queryClient.invalidateQueries({
-            queryKey: ['chats', 'contacts'],
+            queryKey: ['chat', 'contacts'],
             exact: true,
             type: 'active',
          })
@@ -63,6 +50,31 @@ function ChatProvider({ children }) {
       }
    }, [socket, account.id, queryClient])
 
+   const fetchMessages = async id => {
+      const data = await queryClient.ensureQueryData({
+         queryKey: ['messages', 'chat', { id }],
+         queryFn: async () => {
+            const response = await api.get(`chat/${id}`)
+            return response.data.map(msg => ({
+               ...msg,
+               type: account.id === msg.sender ? 'sent' : 'received',
+            }))
+         },
+      })
+      return data
+   }
+
+   const getContactInfo = async id => {
+      const data = await queryClient.ensureQueryData({
+         queryKey: ['account', 'chat', { id }],
+         queryFn: async () => {
+            const response = await api.get(`user/${id}`)
+            return response.data
+         },
+      })
+      return data
+   }
+
    const getMessages = useCallback(
       id => ({
          queryKey: ['messages', 'chat', { id }],
@@ -75,45 +87,15 @@ function ChatProvider({ children }) {
       []
    )
 
-   const getContactInfo = useCallback(
-      id => ({
-         queryKey: ['account', 'chat', { id }],
-         queryFn: async () => {
-            const response = await api.get(`user/${id}`)
-            return response.data
-         },
-         enabled: !!id,
-      }),
-      []
-   )
-
-   const sendMessage = useCallback(
-      id => ({
-         mutationKey: ['messages', 'chat', { id }],
-         mutationFn: async payload => {
-            const msg = await api.post('chat', payload)
-            return msg
-         },
-         onSuccess: async (response, variables) => {
-            queryClient.setQueryData(
-               ['messages', 'chat', { id: variables.receiverId }],
-               prevData => [...prevData, response.data]
-            )
-
-            await queryClient.invalidateQueries({
-               queryKey: ['chats', 'contacts'],
-               exact: true,
-               type: 'active',
-            })
-         },
-         onError: err => console.log(err),
-      }),
-      [queryClient]
-   )
+   const sendMessage = useCallback(async payload => {
+      const response = await api.post(`chat`, payload)
+      return response.data
+   }, [])
 
    const value = {
       chatList,
       chatListLoading,
+      fetchMessages,
       getMessages,
       getContactInfo,
       sendMessage,

@@ -6,14 +6,14 @@ const router = Router()
 router.use(authenticate)
 
 /**
- * @route   GET /api/message
+ * @route   GET /api/chat
  * @desc    Get a list of contacts a user chatted with and their last message
  * @access  private
  */
 router.get('/', getContacts)
 
 /**
- * @route   POST /api/message
+ * @route   POST /api/chat
  * @desc    Create a new message
  * @access  private
  * @body {receiverId, text, images[]}
@@ -21,7 +21,7 @@ router.get('/', getContacts)
 router.post('/', sendMessage)
 
 /**
- * @route   GET /api/message/:contactId
+ * @route   GET /api/chat/:contactId
  * @desc    Get a chat thread of a user made with the contact
  * @access  private
  */
