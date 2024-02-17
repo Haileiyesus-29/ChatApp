@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import groupContext from './groupContext'
@@ -13,8 +13,6 @@ function GroupProvider({ children }) {
 
    const queryClient = useQueryClient()
 
-   console.log('group re-rendered')
-
    const { data: chatList, isLoading: chatListLoading } = useQuery({
       queryKey: ['group', 'contacts'],
       queryFn: async () => {
@@ -27,10 +25,13 @@ function GroupProvider({ children }) {
       const handleSocketMessage = (message, groupId) => {
          queryClient.setQueryData(
             ['messages', 'group', { id: groupId }],
-            prev => {
-               if (message.sender !== account.id) return [...prev, message]
-               else return [...prev]
-            }
+            prev => [
+               ...(prev || []),
+               {
+                  ...message,
+                  type: account.id === message.sender ? 'sent' : 'received',
+               },
+            ]
          )
 
          queryClient.invalidateQueries({
@@ -55,56 +56,40 @@ function GroupProvider({ children }) {
       }
    }, [socket, account.id, queryClient, chatList])
 
-   const getMessages = id => {
-      return {
+   const fetchMessages = async id => {
+      const data = await queryClient.ensureQueryData({
          queryKey: ['messages', 'group', { id }],
          queryFn: async () => {
             const response = await api.get(`group/message/${id}`)
-            return response.data
+            return response.data.map(msg => ({
+               ...(msg || []),
+               type: account.id === msg.sender ? 'sent' : 'received',
+            }))
          },
-         enabled: !!id,
-      }
+      })
+      return data
    }
 
-   const getContactInfo = id => {
-      return {
+   const getContactInfo = async id => {
+      const data = await queryClient.ensureQueryData({
          queryKey: ['account', 'group', { id }],
          queryFn: async () => {
             const response = await api.get(`group/${id}`)
             return response.data
          },
-         enabled: !!id,
-      }
+      })
+      return data
    }
-   const sendMessage = id => {
-      return {
-         mutationKey: ['messages', 'group', { id }],
-         mutationFn: async payload => {
-            const response = await api.post('group/message', {
-               ...payload,
-               groupId: payload.receiverId,
-            })
-            return response
-         },
-         onSuccess: async (response, variables) => {
-            queryClient.setQueryData(
-               ['messages', 'group', { id: variables.receiverId }],
-               prevData => [...prevData, response.data]
-            )
-            await queryClient.invalidateQueries({
-               queryKey: ['group', 'contacts'],
-               exact: true,
-               type: 'active',
-            })
-         },
-         onError: err => console.log(err),
-      }
-   }
+
+   const sendMessage = useCallback(async payload => {
+      const response = await api.post(`group/message`, payload)
+      return response.data
+   }, [])
 
    const value = {
       chatList,
       chatListLoading,
-      getMessages,
+      fetchMessages,
       getContactInfo,
       sendMessage,
    }

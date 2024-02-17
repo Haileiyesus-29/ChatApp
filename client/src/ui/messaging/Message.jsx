@@ -5,7 +5,7 @@ import Info from './Info'
 import Title from './Title'
 
 // eslint-disable-next-line react/prop-types
-function Message({ messages, onMessage, info }) {
+function Message({ messages, onMessage, info, withDetails = false }) {
    const messageBox = useRef()
 
    useEffect(() => {
@@ -20,11 +20,12 @@ function Message({ messages, onMessage, info }) {
                {messages.map(message => (
                   <ChatBubble
                      key={message.id}
-                     details={false}
-                     createdAt={message.createdAt}
-                     images={message.images}
-                     text={message.text}
-                     type={message.type}
+                     details={withDetails}
+                     {...message}
+                     // createdAt={message.createdAt}
+                     // images={message.images}
+                     // text={message.text}
+                     // type={message.type}
                   />
                ))}
             </div>

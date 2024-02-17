@@ -15,8 +15,17 @@ export const sendGroupMessage = async (user, data) => {
       receiver: groupId,
       chatType: 'Group',
    })
-   const newMessage = await message.save()
-   return { message: newMessage }
+   let newMessage = await message.save()
+
+   return {
+      message: {
+         ...newMessage.toObject(),
+         name: user.name,
+         image: user.image,
+         id: newMessage._id,
+         _id: undefined,
+      },
+   }
 }
 
 export const findGroupMessages = async groupId => {

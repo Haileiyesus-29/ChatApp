@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-const ChatBubble = ({ type, details, text, images, createdAt }) => {
+const ChatBubble = ({ type, details, text, images, createdAt, name }) => {
    const isSent = type === 'sent'
    const isReceived = type === 'received'
 
@@ -33,7 +33,7 @@ const ChatBubble = ({ type, details, text, images, createdAt }) => {
             {details && isReceived && (
                <div className={nameContainerClass}>
                   <span className='text-sm font-semibold text-gray-900 dark:text-primary'>
-                     Bonnie Green
+                     {name}
                   </span>
                </div>
             )}

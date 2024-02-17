@@ -24,7 +24,7 @@ function ChatProvider({ children }) {
          queryClient.setQueryData(
             ['messages', 'chat', { id: account.id === from ? to : from }],
             prev => [
-               ...prev,
+               ...(prev || []),
                {
                   ...message,
                   type: message.sender === account.id ? 'sent' : 'received',
@@ -74,19 +74,6 @@ function ChatProvider({ children }) {
       })
       return data
    }
-
-   const getMessages = useCallback(
-      id => ({
-         queryKey: ['messages', 'chat', { id }],
-         queryFn: async () => {
-            const response = await api.get(`chat/${id}`)
-            return response.data
-         },
-         enabled: !!id,
-      }),
-      []
-   )
-
    const sendMessage = useCallback(async payload => {
       const response = await api.post(`chat`, payload)
       return response.data
@@ -96,7 +83,6 @@ function ChatProvider({ children }) {
       chatList,
       chatListLoading,
       fetchMessages,
-      getMessages,
       getContactInfo,
       sendMessage,
    }
