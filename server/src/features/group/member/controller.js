@@ -2,6 +2,7 @@ import RESPONSE from '../../../../config/_response.js'
 import {
    addUserToGroup,
    findGroup,
+   findGroupByUsername,
    findSubscribedGroups,
    getAllAdmins,
    getAllMembers,
@@ -17,6 +18,13 @@ export async function myGroups(req, res, next) {
 
 export async function getGroup(req, res, next) {
    const { error, data } = await findGroup(req.params.groupId)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(data, 200))
+}
+
+export async function findByUsername(req, res, next) {
+   const { error, data } = await findGroupByUsername(req.params.username)
    if (error) return next(RESPONSE.error(error))
 
    res.status(200).json(RESPONSE.success(data, 200))

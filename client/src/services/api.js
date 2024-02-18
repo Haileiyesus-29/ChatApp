@@ -31,7 +31,7 @@ const api = {
    // GET request
    get: async (url, config = {}) => {
       try {
-         const response = await axiosInstance.get(url, config)
+         const response = await axiosInstance.get(url, { config })
          return response.data
       } catch (error) {
          return handleError(error)

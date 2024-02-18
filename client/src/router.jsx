@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 import Container from './ui/layout/Container'
 import Chat from './features/chat/Chat'
 import Group from './features/group/Group'
@@ -13,6 +13,10 @@ const router = createBrowserRouter([
       path: '/',
       element: <Container />,
       children: [
+         {
+            path: '/',
+            element: <Navigate to='/chat' />,
+         },
          {
             path: '/chat/*',
             element: <Chat />,

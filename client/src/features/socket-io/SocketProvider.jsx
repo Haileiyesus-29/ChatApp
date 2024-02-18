@@ -14,8 +14,6 @@ export default function SocketProvider({ children }) {
    useEffect(() => {
       if (account) socket.current = io(ENDPOINT)
       else socket.current?.disconnect()
-      console.log('re-rendered')
-
       socket.current?.on('connect', () => {
          console.log('connected')
          setConnected(true)

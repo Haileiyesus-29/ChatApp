@@ -86,12 +86,28 @@ function GroupProvider({ children }) {
       return response.data
    }, [])
 
+   const createGroup = useCallback(
+      async payload => {
+         try {
+            const response = await api.post('group', payload)
+            queryClient.invalidateQueries({
+               queryKey: ['group', 'contacts'],
+            })
+            return response
+         } catch (error) {
+            console.error(error)
+         }
+      },
+      [queryClient]
+   )
+
    const value = {
       chatList,
       chatListLoading,
       fetchMessages,
       getContactInfo,
       sendMessage,
+      createGroup,
    }
    return (
       <groupContext.Provider value={value}>{children}</groupContext.Provider>

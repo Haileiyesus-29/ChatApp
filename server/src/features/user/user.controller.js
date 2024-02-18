@@ -6,10 +6,18 @@ import {
    getUserAccount,
    updateUserAccount,
    createUserAccount,
+   findUserByUsername,
 } from './user.service.js'
 
 export async function getUser(req, res, next) {
    const { error, user } = await getUserAccount(req.params.id)
+   if (error) return next(RESPONSE.error(error))
+
+   res.status(200).json(RESPONSE.success(user, 200))
+}
+
+export async function findUser(req, res, next) {
+   const { error, user } = await findUserByUsername(req.params.username)
    if (error) return next(RESPONSE.error(error))
 
    res.status(200).json(RESPONSE.success(user, 200))

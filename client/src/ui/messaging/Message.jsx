@@ -22,14 +22,10 @@ function Message({ messages, onMessage, info, withDetails = false }) {
                      key={message.id}
                      details={withDetails}
                      {...message}
-                     // createdAt={message.createdAt}
-                     // images={message.images}
-                     // text={message.text}
-                     // type={message.type}
                   />
                ))}
             </div>
-            <ChatForm handleSubmit={onMessage} />
+            <ChatForm key={Math.random()} handleSubmit={onMessage} />
          </div>
          <Info chatInfo={info} />
       </section>

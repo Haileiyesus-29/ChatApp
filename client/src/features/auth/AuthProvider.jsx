@@ -8,7 +8,6 @@ function AuthProvider({ children }) {
    const [loading, setLoading] = useState(true)
 
    useEffect(() => {
-      console.log("I'm gonna out here if this is going to be re-rendered")
       const verifyAuth = async () => {
          try {
             setLoading(true)

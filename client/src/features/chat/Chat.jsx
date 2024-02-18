@@ -3,6 +3,7 @@ import Sidebar from '../../ui/layout/Sidebar'
 import Message from '../../ui/messaging/Message'
 import { useContext, useEffect, useState } from 'react'
 import chatContext from './chatContext'
+import AddContact from './AddContact'
 
 function Chat() {
    const { '*': id } = useParams()
@@ -42,7 +43,12 @@ function Chat() {
 
    return (
       <main className='grow grid grid-rows-1 grid-cols-[minmax(18rem,22rem)_minmax(40rem,1fr)]'>
-         <Sidebar data={chatList} loading={chatListLoading} link='chat' />
+         <Sidebar
+            data={chatList}
+            loading={chatListLoading}
+            link='chat'
+            el={<AddContact />}
+         />
          {id && (
             <Message messages={messages} onMessage={handleSubmit} info={info} />
          )}

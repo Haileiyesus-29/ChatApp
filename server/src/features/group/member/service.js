@@ -17,6 +17,13 @@ export const findGroup = async id => {
    return { data: group }
 }
 
+export const findGroupByUsername = async username => {
+   const group = await Group.findOne({ username }).select('name image id ')
+   if (!group) return ERRORS.NOT_FOUND
+
+   return { data: group }
+}
+
 export const addUserToGroup = async (user, data) => {
    const { groupId } = data
    if (!groupId) return ERRORS.INVALID_CREDENTIAL

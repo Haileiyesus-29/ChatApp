@@ -4,6 +4,7 @@ import {
    updateUser,
    createUser,
    deleteUser,
+   findUser,
 } from './user.controller.js'
 import { authenticate } from '../../middlewares/authenticate.js'
 const router = Router()
@@ -11,10 +12,18 @@ const router = Router()
 /**
  * @route   GET /api/user/:id
  * @desc    Get user details by ID
- * @param   id the id of the target user
+ * @param   {id} the id of the target user
  * @access  private
  */
 router.get('/:id', authenticate, getUser)
+
+/**
+ * @route   GET /api/user/:username
+ * @desc    Get user details by username
+ * @param   {username} the username of the target user
+ * @access  private
+ */
+router.get('/find/:username', authenticate, findUser)
 
 /**
  * @route   POST /api/user

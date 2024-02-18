@@ -18,8 +18,6 @@ const queryClient = new QueryClient({
 function Container() {
    const { loading, account } = useContext(authContext)
 
-   console.log('container re-rendered')
-
    if (loading) return <div className='text-3xl font-bold'>Loading...</div>
    if (!account) return <Navigate to={'/login'} />
    return (

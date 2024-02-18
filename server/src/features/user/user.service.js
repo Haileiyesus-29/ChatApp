@@ -11,6 +11,13 @@ export const getUserAccount = async id => {
    return { user }
 }
 
+export const findUserByUsername = async username => {
+   if (!username) return ERRORS.INVALID_CREDENTIAL
+   const user = await User.findOne({ username }).select('name image id')
+   if (!user) return ERRORS.NOT_FOUND
+   return { user }
+}
+
 export const createUserAccount = async data => {
    const error = validateNewAccount(data)
    if (error?.length) return Object.assign(ERRORS.VALIDATION_ERROR, error)
@@ -24,7 +31,11 @@ export const createUserAccount = async data => {
       name,
       bio,
       image,
-      username,
+      username:
+         username ||
+         `user_${
+            Math.floor(Math.random() * 1000) * Math.floor(Math.random() * 1000)
+         }`,
    }
 
    const user = new User(account)

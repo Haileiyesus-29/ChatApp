@@ -29,12 +29,12 @@ function Sidenav() {
                width={8}
                onClick={() => logout(() => navigate('/login'))}
             />
-            <Icon icon={faHome} onClick={() => navigate('/')} />
+            {/* <Icon icon={faHome} onClick={() => navigate('/')} /> */}
          </div>
          <hr className='w-10 mx-auto' />
          <div className='inline-flex flex-col items-center  gap-2'>
             <Icon icon={faMessage} onClick={() => navigate('/chat')} />
-            <Icon icon={faBullhorn} onClick={() => navigate('/channel')} />
+            {/* <Icon icon={faBullhorn} onClick={() => navigate('/channel')} /> */}
             <Icon icon={faUserGroup} onClick={() => navigate('/group')} />
          </div>
          <Link

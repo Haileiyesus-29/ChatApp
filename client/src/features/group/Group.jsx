@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import Sidebar from '../../ui/layout/Sidebar'
 import Message from '../../ui/messaging/Message'
 import groupContext from './groupContext'
+import CreateGroup from './CreateGroup'
 
 function Group() {
    const { '*': id } = useParams()
@@ -42,7 +43,12 @@ function Group() {
 
    return (
       <main className='grow grid grid-rows-1 grid-cols-[minmax(18rem,22rem)_minmax(40rem,1fr)]'>
-         <Sidebar data={chatList} loading={chatListLoading} link='group' />
+         <Sidebar
+            data={chatList}
+            loading={chatListLoading}
+            link='group'
+            el={<CreateGroup />}
+         />
          {id && (
             <Message
                messages={messages}

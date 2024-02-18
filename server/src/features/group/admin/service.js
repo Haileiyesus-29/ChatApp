@@ -8,7 +8,10 @@ export const createNewGroup = async (user, data) => {
 
    const group = new Group({
       name,
-      username,
+      username:
+         username ||
+         `group_${Math.floor(Math.random() * 1000)}` +
+            `${Math.floor(Math.random() * 10000)}`,
       image,
       info,
       owner: user.id,

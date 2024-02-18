@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+   findByUsername,
    getGroup,
    getMembers,
    joinGroup,
@@ -23,6 +24,14 @@ router.get('/', myGroups)
  * @access  private
  */
 router.get('/:groupId', getGroup)
+
+/**
+ * @route   GET /api/group/find/:username
+ * @desc    Get group info by group username
+ * @param   username -- the username of the target group
+ * @access  private
+ */
+router.get('/find/:username', findByUsername)
 
 /**
  * @route   GET /api/group/members/:groupId
