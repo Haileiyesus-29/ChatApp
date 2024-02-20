@@ -58,7 +58,17 @@ function AuthProvider({ children }) {
       }
    }
 
-   const value = { account, loading, login, signup, logout }
+   const update = async (payload, callback) => {
+      try {
+         const response = await api.put('user', payload)
+         setAccount(response.data)
+         callback?.()
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const value = { account, loading, login, signup, logout, update }
    return <authContext.Provider value={value}>{children}</authContext.Provider>
 }
 

@@ -3,7 +3,6 @@ import Container from './ui/layout/Container'
 import Chat from './features/chat/Chat'
 import Group from './features/group/Group'
 import Channel from './features/channel/Channel'
-import Profile from './features/profile/Profile'
 import Login from './features/auth/Login'
 import Register from './features/auth/Register'
 import NotFound from './ui/layout/NotFound'
@@ -28,10 +27,6 @@ const router = createBrowserRouter([
          {
             path: '/channel/*',
             element: <Channel />,
-         },
-         {
-            path: '/profile',
-            element: <Profile />,
          },
       ],
    },
