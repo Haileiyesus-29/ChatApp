@@ -42,8 +42,10 @@ function Group() {
    }, [id, fetchMessages, getContactInfo])
 
    return (
-      <main className='grow grid grid-rows-1 grid-cols-[minmax(18rem,22rem)_minmax(40rem,1fr)]'>
+      // <main className='grid grid-cols-[minmax(18rem,22rem)_minmax(20rem,1fr)] grid-rows-1 grow'>
+      <main className='grid grid-cols-1 md:grid-cols-[minmax(18rem,22rem)_minmax(20rem,1fr)] grid-rows-1 grow'>
          <Sidebar
+            id={id}
             data={chatList}
             loading={chatListLoading}
             link='group'
@@ -57,8 +59,11 @@ function Group() {
                withDetails={true}
             />
          )}
-
-         {!id && <div>select contact to start chatting. </div>}
+         {!id && (
+            <div className={`md:block hidden`}>
+               select contact to start chatting.{' '}
+            </div>
+         )}
       </main>
    )
 }

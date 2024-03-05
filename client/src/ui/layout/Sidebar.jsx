@@ -3,16 +3,20 @@ import Search from '../../features/search/Search'
 import ChatLink from '../messaging/ChatLink'
 
 // eslint-disable-next-line react/prop-types
-function Sidebar({ data = [], loading, link, el }) {
+function Sidebar({ data = [], loading, link, el, id }) {
    return (
-      <aside className='flex flex-col gap-2 py-2 transition'>
+      <aside
+         className={`md:flex flex-col gap-2 py-2 transition ${
+            id ? 'hidden' : 'flex'
+         }`}
+      >
          {/* <Search /> */}
          <ActiveChats />
          {el}
          {loading ? (
             <div>Loading...</div>
          ) : (
-            <section className='flex flex-col gap-1 overflow-y-scroll px-1'>
+            <section className='flex flex-col gap-1 px-1 overflow-y-scroll'>
                {data?.map(chat => (
                   <ChatLink
                      key={chat.id}

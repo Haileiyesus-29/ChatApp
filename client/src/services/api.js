@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = 'http://127.0.0.1:5000/api/' // Replace with your actual server URL
+const baseURL = `${import.meta.env.VITE_SERVER_ADDR}/api/`
 
 const axiosInstance = axios.create({
    baseURL,
@@ -10,10 +10,8 @@ const axiosInstance = axios.create({
    withCredentials: true,
 })
 
-// Common method for handling errors
 const handleError = error => {
    if (error.response) {
-      // The request was made, but the server responded with a status code outside of the 2xx range
       console.error('Response error:', error.response.data)
       return Promise.reject(error.response.data)
    } else if (error.request) {
@@ -28,7 +26,6 @@ const handleError = error => {
 }
 
 const api = {
-   // GET request
    get: async (url, config = {}) => {
       try {
          const response = await axiosInstance.get(url, { config })
@@ -38,7 +35,6 @@ const api = {
       }
    },
 
-   // POST request
    post: async (url, data = {}, config = {}) => {
       try {
          const response = await axiosInstance.post(url, data, config)
@@ -48,7 +44,6 @@ const api = {
       }
    },
 
-   // PUT request
    put: async (url, data = {}, config = {}) => {
       try {
          const response = await axiosInstance.put(url, data, config)
@@ -58,7 +53,6 @@ const api = {
       }
    },
 
-   // DELETE request
    del: async (url, config = {}) => {
       try {
          const response = await axiosInstance.delete(url, config)

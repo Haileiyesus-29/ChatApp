@@ -1,23 +1,35 @@
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import authContext from '../auth/authContext'
 import Image from '../../ui/common/Image'
 
 function Profile() {
-   const { account } = useContext(authContext)
+   const { account, update } = useContext(authContext)
    const [action, setAction] = useState('show')
+   const nameRef = useRef(null)
+   const usernameRef = useRef(null)
+
+   const handleUpdate = async () => {
+      update(
+         {
+            name: nameRef.current.value,
+            username: usernameRef.current.value,
+         },
+         () => setAction('show')
+      )
+   }
 
    return (
       <dialog id='my_modal_3' className='modal'>
-         <div className='modal-box rounded-md'>
+         <div className='rounded-md modal-box'>
             <form method='dialog'>
-               <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>
+               <button className='top-2 right-2 absolute btn btn-circle btn-ghost btn-sm'>
                   ✕
                </button>
             </form>
             {action === 'show' && (
                <div className='flex flex-col gap-6'>
-                  <h3 className='font-bold text-lg text-center'>Profile</h3>
-                  <p className='w-24 h-24 rounded-full overflow-hidden mx-auto'>
+                  <h3 className='font-bold text-center text-lg'>Profile</h3>
+                  <p className='mx-auto rounded-full w-24 h-24 overflow-hidden'>
                      <Image image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
                   </p>
                   <div className='inline-flex flex-col gap-2 mx-auto'>
@@ -34,7 +46,7 @@ function Profile() {
                         <div className='grow'>{account.username}</div>
                      </div>
                      <button
-                        className='btn btn-sm my-4 capitalize'
+                        className='my-4 capitalize btn btn-sm'
                         onClick={() => setAction('update')}
                      >
                         edit profile
@@ -44,7 +56,7 @@ function Profile() {
             )}
             {action === 'update' && (
                <div className='flex flex-col gap-6'>
-                  <h3 className='font-bold text-lg text-center'>
+                  <h3 className='font-bold text-center text-lg'>
                      Edit Profile
                   </h3>
 
@@ -53,8 +65,9 @@ function Profile() {
                         <div className='w-32'>Name</div>
                         <div className='grow'>
                            <input
+                              ref={nameRef}
                               type='text'
-                              className='input input-bordered input-sm'
+                              className='input-bordered input input-sm'
                               defaultValue={account.name}
                            />
                         </div>
@@ -67,8 +80,9 @@ function Profile() {
                         <div className='w-32'>Username</div>
                         <div className='grow'>
                            <input
+                              ref={usernameRef}
                               type='text'
-                              className='input input-bordered input-sm'
+                              className='input-bordered input input-sm'
                               defaultValue={account.username}
                            />
                         </div>
@@ -78,15 +92,18 @@ function Profile() {
                         <div className='grow'>
                            <input
                               type='file'
-                              className='file-input file-input-sm w-full max-w-xs'
+                              className='w-full max-w-xs file-input file-input-sm'
                            />
                         </div>
                      </div>
-                     <button className='btn btn-primary btn-sm capitalize mt-3'>
+                     <button
+                        className='mt-3 capitalize btn btn-primary btn-sm'
+                        onClick={handleUpdate}
+                     >
                         Update profile
                      </button>
                      <button
-                        className='btn btn-sm capitalize mb-3'
+                        className='mb-3 capitalize btn btn-sm'
                         onClick={() => setAction('show')}
                      >
                         get back
