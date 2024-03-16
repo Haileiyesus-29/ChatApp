@@ -4,6 +4,8 @@ services:
    db:
       image: mongo
       container_name: chatapp-db
+      ports:
+         - 27018:27017
       networks:
          - chatapp-network
    api:
