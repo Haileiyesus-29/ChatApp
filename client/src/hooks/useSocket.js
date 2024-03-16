@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 
-const ENDPOINT = 'http://localhost:5000' // Replace with Socket.IO server URL
+const ENDPOINT = import.meta.env.VITE_SERVER_ADDR // Replace with Socket.IO server URL
 const socket = io(ENDPOINT)
 
 function useSocket(connection) {

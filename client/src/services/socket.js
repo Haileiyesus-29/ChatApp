@@ -1,4 +1,4 @@
 import { io } from 'socket.io-client'
-const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = import.meta.env.VITE_SERVER_ADDR
 
 export const socket = io(ENDPOINT)

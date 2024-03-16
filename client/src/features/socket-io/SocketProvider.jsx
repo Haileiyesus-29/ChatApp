@@ -3,7 +3,7 @@ import socketContext from './socketContext'
 import { io } from 'socket.io-client'
 import authContext from '../auth/authContext'
 
-const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = import.meta.env.VITE_SERVER_ADDR
 
 // eslint-disable-next-line react/prop-types
 export default function SocketProvider({ children }) {
