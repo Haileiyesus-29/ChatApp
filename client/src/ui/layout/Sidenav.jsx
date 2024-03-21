@@ -8,9 +8,10 @@ import Icon from '../common/Icon'
 import { NavLink, useNavigate } from 'react-router-dom'
 import authContext from '../../features/auth/authContext'
 import Profile from '../../features/profile/Profile'
+import Image from '../common/Image'
 
 function Sidenav() {
-   const { logout } = useContext(authContext)
+   const { logout, account } = useContext(authContext)
    const [theme, setTheme] = useState('dark')
    const navigate = useNavigate()
 
@@ -20,8 +21,8 @@ function Sidenav() {
 
    return (
       <>
-         <nav className='flex flex-col gap-4 dark:bg-base-200 py-4 px-1'>
-            <div className='inline-flex flex-col items-center  gap-2'>
+         <nav className='flex flex-col gap-4 dark:bg-base-200 px-1 py-4'>
+            <div className='inline-flex flex-col items-center gap-2'>
                <Icon
                   icon={faRightFromBracket}
                   bg={false}
@@ -31,8 +32,8 @@ function Sidenav() {
                />
                {/* <Icon icon={faHome} onClick={() => navigate('/')} /> */}
             </div>
-            <hr className='w-10 mx-auto' />
-            <div className='inline-flex flex-col items-center  gap-2'>
+            <hr className='mx-auto w-10' />
+            <div className='inline-flex flex-col items-center gap-2'>
                <NavLink
                   to='/chat'
                   className={({ isActive }) =>
@@ -52,16 +53,16 @@ function Sidenav() {
                </NavLink>
             </div>
             <div
-               className='inline-flex flex-col items-center  gap-2 mt-auto cursor-pointer'
+               className='inline-flex flex-col items-center gap-2 mt-auto cursor-pointer'
                onClick={() => document.getElementById('my_modal_3').showModal()}
             >
                <div className='avatar'>
-                  <div className='w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2'>
-                     <img src='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
+                  <div className='rounded-full w-10 ring ring-offset-2 ring-offset-base-100 ring-primary'>
+                     <Image image={account.image} />
                   </div>
                </div>
             </div>
-            <label className='swap swap-rotate'>
+            <label className='swap-rotate swap'>
                <input
                   type='checkbox'
                   defaultChecked={true}
@@ -70,7 +71,7 @@ function Sidenav() {
                   }
                />
                <svg
-                  className='swap-on fill-current w-8 h-8'
+                  className='swap-on w-8 h-8 fill-current'
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 24 24'
                >
@@ -78,7 +79,7 @@ function Sidenav() {
                </svg>
 
                <svg
-                  className='swap-off fill-current w-8 h-8'
+                  className='swap-off w-8 h-8 fill-current'
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 24 24'
                >

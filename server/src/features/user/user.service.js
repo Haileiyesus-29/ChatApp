@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises'
 import bcrypt from 'bcryptjs'
 import { hashPassword } from '../../helpers/hashPassword.js'
 import User from '../../models/user.model.js'
@@ -40,15 +41,14 @@ export const createUserAccount = async data => {
 
    const user = new User(account)
    const newUser = await user.save()
-
    if (!newUser) return ERRORS.SERVER_FAILED
-
    newUser.password = undefined
    return { user: newUser }
 }
 
 export const updateUserAccount = async (user, data, file) => {
    const { name, bio, username } = data
+   const prefFile = file?.filename && user.image
 
    Object.assign(user, {
       bio: bio || user.bio,
@@ -56,9 +56,12 @@ export const updateUserAccount = async (user, data, file) => {
       username: username || user.username,
       image: file?.filename || user.image,
    })
+
    const updated = await user.save()
 
    if (!updated) return ERRORS.SERVER_FAILED
+
+   await fs.unlink(`uploads/${prefFile}`)
 
    return { updated }
 }

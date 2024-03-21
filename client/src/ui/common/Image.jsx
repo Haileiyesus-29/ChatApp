@@ -1,11 +1,12 @@
-function Image({ image }) {
+const serverAddr = import.meta.env.VITE_SERVER_ADDR
+
+function Image({ image, className }) {
    return (
-      <span className=''>
-         <img
-            src='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
-            alt='photo'
-         />
-      </span>
+      <img
+         className={`w-full h-full object-cover ${className}`}
+         src={`${serverAddr}/${image}`}
+         alt='image'
+      />
    )
 }
 export default Image

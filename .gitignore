@@ -131,3 +131,6 @@ dist
 
 # local requests
 *.rest
+
+# uploaded files
+uploads

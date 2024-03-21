@@ -1,5 +1,5 @@
 import ActiveChats from '../../features/chat/ActiveChats'
-import Search from '../../features/search/Search'
+// import Search from '../../features/search/Search'
 import ChatLink from '../messaging/ChatLink'
 
 // eslint-disable-next-line react/prop-types

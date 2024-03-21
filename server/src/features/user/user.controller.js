@@ -47,7 +47,6 @@ export async function updateUser(req, res, next) {
    )
    if (error) return next(RESPONSE.error(error))
    res.status(200).json(RESPONSE.success(updated, 200))
-   res.send('successfull')
 }
 
 export async function deleteUser(req, res, next) {

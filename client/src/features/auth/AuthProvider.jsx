@@ -60,7 +60,9 @@ function AuthProvider({ children }) {
 
    const update = async (payload, callback) => {
       try {
-         const response = await api.put('user', payload)
+         const response = await api.put('user', payload, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+         })
          setAccount(response.data)
          callback?.()
       } catch (error) {
