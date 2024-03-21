@@ -18,13 +18,10 @@ function ChatLink({ chat, linkTo }) {
          }`}
       >
          <div className='inline-flex items-center'>
-            <Avatar
-               image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'
-               status={'online'}
-            />
+            <Avatar image={image} status={'online'} />
          </div>
          <div className='flex flex-col justify-between gap-2'>
-            <span className='text leading-tight '>
+            <span className='leading-tight text'>
                {`${fname || name} ${lname ? lname : ''}`}
             </span>
             <span
@@ -37,7 +34,7 @@ function ChatLink({ chat, linkTo }) {
                {text}
             </span>
          </div>
-         <span className='absolute top-[2px] right-2  text-[0.6rem]'>
+         <span className='top-[2px] right-2 absolute text-[0.6rem]'>
             {time}
          </span>
       </Link>

@@ -5,9 +5,9 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 // eslint-disable-next-line react/prop-types
 function Title({ name, image }) {
    return (
-      <div className='p-2 border-b flex gap-2 items-center dark:bg-neutral-content/10'>
+      <div className='p-2 flex gap-2 items-center '>
          <div className='flex items-center'>
-            <Avatar image='https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg' />
+            <Avatar image={image} />
          </div>
          <div className='flex flex-col justify-between'>
             {name && <h3 className=''>{name}</h3>}{' '}

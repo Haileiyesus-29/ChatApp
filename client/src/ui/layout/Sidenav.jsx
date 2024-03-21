@@ -21,7 +21,7 @@ function Sidenav() {
 
    return (
       <>
-         <nav className='flex flex-col gap-4 dark:bg-base-200 px-1 py-4'>
+         <nav className='flex flex-col gap-4 bg-base-100 px-1 py-4'>
             <div className='inline-flex flex-col items-center gap-2'>
                <Icon
                   icon={faRightFromBracket}

@@ -61,7 +61,7 @@ export const updateUserAccount = async (user, data, file) => {
 
    if (!updated) return ERRORS.SERVER_FAILED
 
-   await fs.unlink(`uploads/${prefFile}`)
+   profile && (await fs.unlink(`uploads/${prefFile}`))
 
    return { updated }
 }

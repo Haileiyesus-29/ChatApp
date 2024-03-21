@@ -1,3 +1,4 @@
+import Image from './Image'
 /* eslint-disable react/prop-types */
 function Avatar({ image, status, size = 'sm' }) {
    return (
@@ -8,7 +9,7 @@ function Avatar({ image, status, size = 'sm' }) {
             ${size == 'lg' && 'w-20'}
             rounded-full`}
          >
-            <img src={image} />
+            <Image image={image} />
          </div>
       </div>
    )

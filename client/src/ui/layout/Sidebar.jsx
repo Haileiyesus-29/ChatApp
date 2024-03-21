@@ -11,7 +11,7 @@ function Sidebar({ data = [], loading, link, el, id }) {
          }`}
       >
          {/* <Search /> */}
-         <ActiveChats />
+         {/* <ActiveChats /> */}
          {el}
          {loading ? (
             <div>Loading...</div>

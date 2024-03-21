@@ -14,17 +14,17 @@ function Message({ messages, onMessage, info, withDetails = false }) {
    }, [messages])
 
    return (
-      <section
-         id='message'
-         className='grid grid-cols-1 lg:grid-cols-[5fr_3fr] grid-rows-1'
-      >
+      <section className='grid grid-cols-1 lg:grid-cols-[5fr_3fr] grid-rows-1'>
          <div
             className={`flex-col dark:bg-base-200 lg:flex ${
                view === 'chat' ? 'flex' : 'hidden'
             }`}
          >
             <Title {...info} />
-            <div ref={messageBox} className='py-2 overflow-y-auto'>
+            <div
+               ref={messageBox}
+               className='bg-base-100 py-2 overflow-y-auto grow'
+            >
                {messages.map(message => (
                   <ChatBubble
                      key={message.id}

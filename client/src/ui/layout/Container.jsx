@@ -18,14 +18,14 @@ const queryClient = new QueryClient({
 function Container() {
    const { loading, account } = useContext(authContext)
 
-   if (loading) return <div className='text-3xl font-bold'>Loading...</div>
+   if (loading) return <div className='font-bold text-3xl'>Loading...</div>
    if (!account) return <Navigate to={'/login'} />
    return (
       <QueryClientProvider client={queryClient}>
-         <ReactQueryDevtools initialIsOpen={false} />
+         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
          <ChatProvider>
             <GroupProvider>
-               <div className='flex h-screen max-w-screen-2xl mx-auto'>
+               <div className='flex bg-gray-50 dark:bg-base-200 mx-auto max-w-screen-2xl h-screen'>
                   <Sidenav />
                   <Outlet />
                </div>
