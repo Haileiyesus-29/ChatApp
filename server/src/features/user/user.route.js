@@ -7,6 +7,7 @@ import {
    findUser,
 } from './user.controller.js'
 import { authenticate } from '../../middlewares/authenticate.js'
+import uploader from '../../middlewares/uploader.js'
 const router = Router()
 
 /**
@@ -40,7 +41,7 @@ router.post('/', createUser)
  * @access  private
  * @body   {name, image, bio, username} not all required
  */
-router.put('/', authenticate, updateUser)
+router.put('/', authenticate, uploader('image'), updateUser)
 
 /**
  * @route   DELETE /api/user

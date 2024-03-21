@@ -47,13 +47,15 @@ export const createUserAccount = async data => {
    return { user: newUser }
 }
 
-export const updateUserAccount = async (user, data) => {
-   const { name, bio, image, username } = data
+export const updateUserAccount = async (user, data, file) => {
+   const { name, bio, username } = data
 
-   const updateList = { bio, image, username }
-   if (name) updateList['name'] = name
-
-   Object.assign(user, updateList)
+   Object.assign(user, {
+      bio: bio || user.bio,
+      name: name || user.name,
+      username: username || user.username,
+      image: file?.filename || user.image,
+   })
    const updated = await user.save()
 
    if (!updated) return ERRORS.SERVER_FAILED

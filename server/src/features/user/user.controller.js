@@ -40,10 +40,14 @@ export async function createUser(req, res, next) {
 }
 
 export async function updateUser(req, res, next) {
-   const { error, updated } = await updateUserAccount(req.user, req.body)
+   const { error, updated } = await updateUserAccount(
+      req.user,
+      req.body,
+      req.file
+   )
    if (error) return next(RESPONSE.error(error))
-
    res.status(200).json(RESPONSE.success(updated, 200))
+   res.send('successfull')
 }
 
 export async function deleteUser(req, res, next) {
