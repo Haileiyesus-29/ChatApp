@@ -1,7 +1,8 @@
-import Container from '@/ui/Container'
+import { RouterProvider } from 'react-router-dom'
+import routes from '@/routes'
 
 function App() {
-   return <Container></Container>
+   return <RouterProvider router={routes} />
 }
 
 export default App

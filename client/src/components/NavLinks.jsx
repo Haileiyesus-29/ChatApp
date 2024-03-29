@@ -7,46 +7,47 @@ import {
    User,
    Users,
 } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom'
 
 function NavLinks() {
-   const setClassName = active =>
+   const setClassName = ({ isActive }) =>
       `flex items-center gap-2  px-4 py-3 rounded text-zinc-50/80 cursor-pointer ${
-         active ? 'bg-zinc-200 text-zinc-900' : 'hover:bg-zinc-600/50'
+         isActive ? 'bg-zinc-200 text-zinc-900' : 'hover:bg-zinc-600/50'
       }`
 
    return (
       <aside className='flex flex-col justify-between px-2 py-8'>
          <ul className='flex flex-col gap-2'>
-            <li className={setClassName(true)}>
+            <NavLink to='/' className={setClassName}>
                <MessagesSquare />
                <span>All Chats</span>
-            </li>
-            <li className={setClassName(false)}>
+            </NavLink>
+            <NavLink to='/chat' className={setClassName}>
                <ContactRound />
                <span>Personal</span>
-            </li>
-            <li className={setClassName(false)}>
+            </NavLink>
+            <NavLink to='/group' className={setClassName}>
                <Users />
                <span>Groups</span>
-            </li>
-            <li className={setClassName(false)}>
+            </NavLink>
+            <NavLink to='/channel' className={setClassName}>
                <Podcast />
                <span>Channels</span>
-            </li>
+            </NavLink>
          </ul>
          <ul className='flex flex-col gap-2'>
-            <li className={setClassName(false)}>
+            <NavLink to='/new' className={setClassName}>
                <SquarePen />
                <span>New</span>
-            </li>
-            <li className={setClassName(false)}>
+            </NavLink>
+            <NavLink to='/profile' className={setClassName}>
                <User />
                <span>Profile</span>
-            </li>
-            <li className={setClassName(false)}>
+            </NavLink>
+            <NavLink to='/setting' className={setClassName}>
                <Settings />
                <span>Settings</span>
-            </li>
+            </NavLink>
          </ul>
       </aside>
    )
