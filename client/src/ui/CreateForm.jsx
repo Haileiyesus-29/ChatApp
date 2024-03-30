@@ -2,32 +2,11 @@ import { FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-
-import {
-   Breadcrumb,
-   BreadcrumbItem,
-   BreadcrumbLink,
-   BreadcrumbList,
-   BreadcrumbPage,
-   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
 import { Textarea } from '@/components/ui/textarea'
 
 function CreateForm() {
    return (
-      <main className='flex flex-col bg-zinc-900'>
-         <Breadcrumb className='px-10 py-4'>
-            <BreadcrumbList>
-               <BreadcrumbItem>
-                  <BreadcrumbLink href='/'>New</BreadcrumbLink>
-               </BreadcrumbItem>
-               <BreadcrumbSeparator />
-               <BreadcrumbItem>
-                  <BreadcrumbPage>Group</BreadcrumbPage>
-               </BreadcrumbItem>
-            </BreadcrumbList>
-         </Breadcrumb>
-
+      <>
          <form className='flex flex-col gap-3 mx-auto py-10 min-w-[25rem] max-w-md'>
             <FormItem>
                <Label htmlFor='title'>Title</Label>
@@ -73,7 +52,7 @@ function CreateForm() {
                Create Group
             </Button>
          </form>
-      </main>
+      </>
    )
 }
 export default CreateForm

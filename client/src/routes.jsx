@@ -3,6 +3,9 @@ import Container from '@/ui/Container'
 import ChatList from '@/ui/ChatList'
 import Messages from '@/ui/Messages'
 import CreateForm from '@/ui/CreateForm'
+import Create from '@/ui/Create'
+import CreateChoose from './components/CreateChoose'
+import Profile from './ui/Profile'
 
 const routes = createBrowserRouter([
    {
@@ -39,11 +42,25 @@ const routes = createBrowserRouter([
          },
          {
             path: '/new',
-            element: <CreateForm />,
+            element: <Create />,
+            children: [
+               {
+                  index: true,
+                  element: <CreateChoose />,
+               },
+               {
+                  path: 'channel',
+                  element: <CreateForm />,
+               },
+               {
+                  path: 'group',
+                  element: <CreateForm />,
+               },
+            ],
          },
          {
             path: '/profile',
-            element: <div>Profile</div>,
+            element: <Profile />,
          },
          {
             path: '/setting',

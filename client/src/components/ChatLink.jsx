@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 function ChatLink() {
    return (
       <Link
-         to={`chat/messages`}
+         to={`/chat/messages`}
          className='relative flex items-center gap-2 bg-zinc-950 py-2 pr-10 pl-4 rounded-lg overflow-hidden shrink-0'
       >
          <Avatar className='w-12 h-12'>
