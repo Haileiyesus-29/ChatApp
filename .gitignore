@@ -134,3 +134,6 @@ dist
 
 # uploaded files
 uploads
+
+# environment variables
+*.env
