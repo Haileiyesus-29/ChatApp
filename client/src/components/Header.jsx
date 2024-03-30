@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Link } from 'react-router-dom'
 
 function Header() {
    return (
@@ -16,7 +17,9 @@ function Header() {
             placeholder='Search'
             className='focus-visible:outline-none focus:border-2 focus:border-zinc-500 px-6 rounded-full max-w-80'
          />
-         <Button variant='secondary'>Logout</Button>
+         <Link to='/login'>
+            <Button variant='secondary'>Logout</Button>
+         </Link>
       </header>
    )
 }

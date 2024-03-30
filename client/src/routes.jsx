@@ -4,8 +4,15 @@ import ChatList from '@/ui/ChatList'
 import Messages from '@/ui/Messages'
 import CreateForm from '@/ui/CreateForm'
 import Create from '@/ui/Create'
-import CreateChoose from './components/CreateChoose'
-import Profile from './ui/Profile'
+import CreateChoose from '@/components/CreateChoose'
+import Profile from '@/ui/Profile'
+import Home from '@/pages/Home'
+import Chat from '@/pages/Chat'
+import Login from '@/pages/Login'
+import Signup from '@/pages/Signup'
+import Group from '@/pages/Group'
+import Channel from '@/pages/Channel'
+import Setting from '@/pages/Setting'
 
 const routes = createBrowserRouter([
    {
@@ -14,31 +21,59 @@ const routes = createBrowserRouter([
       children: [
          {
             path: '/',
-            element: <ChatList />,
+            element: <Home />,
+            children: [
+               {
+                  path: '/',
+                  element: <ChatList />,
+               },
+               {
+                  path: ':id',
+                  element: <Messages />,
+               },
+            ],
          },
          {
             path: '/chat',
-            element: <ChatList />,
-         },
-         {
-            path: '/chat/:id',
-            element: <Messages />,
+            element: <Chat />,
+            children: [
+               {
+                  index: true,
+                  element: <ChatList />,
+               },
+               {
+                  path: ':id',
+                  element: <Messages />,
+               },
+            ],
          },
          {
             path: '/group',
-            element: <ChatList />,
-         },
-         {
-            path: '/group/:id',
-            element: <Messages />,
+            element: <Group />,
+            children: [
+               {
+                  index: true,
+                  element: <ChatList />,
+               },
+               {
+                  path: ':id',
+                  element: <Messages />,
+               },
+            ],
          },
          {
             path: '/channel',
-            element: <ChatList />,
-         },
-         {
-            path: '/channel/:id',
-            element: <Messages />,
+            element: <Channel />,
+            children: [
+               {
+                  index: true,
+                  element: <ChatList />,
+               },
+               {
+                  path: ':id',
+                  element: <Messages />,
+               },
+            ],
          },
          {
             path: '/new',
@@ -64,17 +99,17 @@ const routes = createBrowserRouter([
          },
          {
             path: '/setting',
-            element: <div>Setting</div>,
+            element: <Setting />,
          },
       ],
    },
    {
       path: '/login',
-      element: <div>Login</div>,
+      element: <Login />,
    },
    {
-      path: '/register',
-      element: <div>Register</div>,
+      path: '/signup',
+      element: <Signup />,
    },
    {
       path: '*',

@@ -64,6 +64,7 @@
          #0d0922,
          #150825
       );
+      user-select: none;
    }
    #root {
       @apply h-full container overflow-clip;
