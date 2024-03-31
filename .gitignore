@@ -137,3 +137,6 @@ uploads
 
 # environment variables
 *.env
+
+# local api test files
+*.rest
