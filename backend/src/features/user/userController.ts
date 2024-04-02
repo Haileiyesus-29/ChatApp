@@ -1,51 +1,28 @@
-import {Request, Response, NextFunction} from "express"
+import sendResponse from "@/utils/response"
+import * as services from "./userService"
 
-// Get user by
-export const getUserById = (req: Request, res: Response, next: NextFunction) => {
-  // Logic to get user by ID
+export async function getUserById(req, res, next) {
   const userId = req.params.id
-  const user = {
-    id: userId,
-    name: "John Doe",
-    email: "johndoe@example.com",
-  }
-
-  // Send user data as response
-  res.send(user)
+  const {data, error} = await services.findUserById(userId)
+  if (error) return next(error)
+  res.send(sendResponse(data))
 }
 
-//  a new user
-export const createUser = (req: Request, res: Response, next: NextFunction) => {
-  // Logic to create a new user
-  const {name, email} = req.body
-  const newUser = {
-    id: "123",
-    name,
-    email,
-  }
-
-  // Send newly created user as response
-  res.send(newUser)
+export async function createUser(req, res, next) {
+  const {data, error} = await services.createNewUser(req.body)
+  if (error) return next(error)
+  res.send(sendResponse(data))
 }
 
-// Update user by ID
-export const updateUser = (req: Request, res: Response, next: NextFunction) => {
-  // Logic to update user by ID
-  const userId = req.params.id
-  const {name, email} = req.body
-  const updatedUser = {
-    id: userId,
-    name,
-    email,
-  }
-  // Send updated user as response
-  res.send(updatedUser)
+export async function updateUser(req, res, next) {
+  const {data, error} = await services.updateUserAccount(req.body, req.user)
+  if (error) return next(error)
+  res.send(sendResponse(data))
 }
 
-// Delete user by ID
-export const deleteUser = (req: Request, res: Response, next: NextFunction) => {
-  // Logic to delete user by ID
-  const userId = req.params.id
-  // Send success message as response
-  res.send(`User with ID ${userId} has been deleted.`)
+export async function deleteUser(req, res, next) {
+  const {data, error} = await services.deleteUser(req.user)
+  if (error) return next(error)
+
+  res.json(sendResponse(data))
 }
