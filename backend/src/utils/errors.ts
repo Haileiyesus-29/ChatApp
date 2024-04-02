@@ -1,6 +1,6 @@
 import {ErrorType} from "./types"
 
-export const ERRORS: {[key: string]: any} = {
+export const ERRORS = {
   forbidden: <T extends Object | any[]>(errors: T): ErrorType => ({
     statusCode: 403,
     message: "Forbidden",

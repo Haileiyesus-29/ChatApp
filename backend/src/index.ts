@@ -12,6 +12,8 @@ import routes from "@/features/index"
 
 app.use(express.json())
 app.use("/api/v1/users", routes.userRoutes)
+app.use("/api/v1/chat", routes.chatRoutes)
+
 app.use(errorHandler)
 
 if (db) {

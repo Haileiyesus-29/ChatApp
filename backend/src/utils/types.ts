@@ -1,3 +1,4 @@
+import {User} from "@prisma/client"
 import {Request, Response} from "express"
 
 export interface ResponseType<T> {
@@ -19,10 +20,14 @@ export type ReturnType<T> = {
   error: ErrorType | null
 }
 
-export interface ExtendedRequest extends Request {
-  [key: string]: any
+export type AccountResponse = {
+  id: string
+  name: string
+  image: string | null
+  email?: string
+  bio?: string | null
+  username?: string
+  createdAt?: string
 }
 
-export interface ExtendedResponse extends Response {
-  [key: string]: any
-}
+export type ExtendedRequest = Request & {user: User}
