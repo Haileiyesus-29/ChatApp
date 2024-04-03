@@ -1,7 +1,8 @@
 import {User} from "@prisma/client"
-import {Request, Response} from "express"
+import {Request} from "express"
 
 export interface ResponseType<T> {
+  version?: string
   data: T | null
   errors: string[] | null
   statusCode?: number
@@ -9,6 +10,7 @@ export interface ResponseType<T> {
 }
 
 export type ErrorType = {
+  version?: string
   statusCode: number
   message?: string
   data: null
@@ -27,7 +29,7 @@ export type AccountResponse = {
   email?: string
   bio?: string | null
   username?: string
-  createdAt?: string
+  createdAt?: Date
 }
 
 export type ExtendedRequest = Request & {user: User}

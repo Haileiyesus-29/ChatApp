@@ -11,8 +11,10 @@ dotenv.config()
 import routes from "@/features/index"
 
 app.use(express.json())
-app.use("/api/v1/users", routes.userRoutes)
-app.use("/api/v1/chat", routes.chatRoutes)
+app.use("/api/users", routes.userRoutes)
+app.use("/api/chat", routes.chatRoutes)
+app.use("/api/auth", routes.authRoutes)
+app.use("/api/channel", routes.channelRoutes)
 
 app.use(errorHandler)
 

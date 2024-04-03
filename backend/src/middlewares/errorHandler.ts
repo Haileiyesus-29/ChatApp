@@ -1,8 +1,9 @@
+import {ErrorType} from "@/utils/types"
 import {Request, Response, NextFunction} from "express"
 
-const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  //   console.trace(err)
-  res.status(500).json({error: "Internal Server Error"})
+const errorHandler = (err: Error & ErrorType, req: Request, res: Response, next: NextFunction) => {
+  console.trace(err)
+  res.status(err?.statusCode || 500).json(err)
 }
 
 export default errorHandler

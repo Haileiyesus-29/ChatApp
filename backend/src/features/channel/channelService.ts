@@ -46,6 +46,7 @@ export async function deleteChannelWithId(
   user: User,
   channelId: string
 ): Promise<ReturnType<Channel>> {
+  let deletedChannel: Channel | null = null
   const channel = await db.channel.findFirst({
     where: {
       id: channelId,
@@ -60,17 +61,36 @@ export async function deleteChannelWithId(
     return {data: null, error: ERRORS.badRequest("Bad Request")}
   }
 
-  await db.message.deleteMany({
-    where: {
-      chanSenderId: channelId,
-    },
-  })
+  try {
+    await db.$transaction(async db => {
+      deletedChannel = await db.channel.delete({
+        where: {
+          id: channelId,
+        },
+      })
 
-  const deletedChannel = await db.channel.delete({
-    where: {
-      id: channelId,
-    },
-  })
+      await db.message.deleteMany({
+        where: {
+          chanSenderId: channelId,
+        },
+      })
+
+      await db.user.updateMany({
+        where: {
+          channels: {
+            some: {
+              id: channelId,
+            },
+          },
+        },
+        data: {
+          channels: {disconnect: {id: channelId}},
+        } as any,
+      })
+    })
+  } catch (error) {
+    return {data: null, error: ERRORS.serverFailure("Failed to delete channel.")}
+  }
 
   return {data: deletedChannel, error: null}
 }
@@ -222,41 +242,38 @@ export async function createChannel(
 }
 
 export async function joinChannel(user: User, channelId: string): Promise<ReturnType<Channel>> {
-  const channel = await db.channel.findFirst({
-    where: {
-      id: channelId,
-    },
-    select: {
-      ownerId: true,
-      members: {
-        select: {
-          id: true,
+  let updatedChannel: Channel | null = null
+
+  try {
+    await db.$transaction(async db => {
+      // 1, add the user to the channel's members list
+      updatedChannel = await db.channel.update({
+        where: {
+          id: channelId,
         },
-      },
-    },
-  })
-
-  if (
-    !channel ||
-    channel.ownerId === user.id ||
-    channel.members.find(member => member.id === user.id)
-  ) {
-    return {data: null, error: ERRORS.badRequest("Bad Request")}
+        data: {
+          members: {connect: {id: user.id}},
+        },
+      })
+      // 2, add the channel to the user's channels list
+      await db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          channels: {connect: {id: channelId}},
+        },
+      })
+    })
+  } catch (error) {
+    return {data: null, error: ERRORS.serverFailure("Failed to join channel.")}
   }
-
-  const updatedChannel = await db.channel.update({
-    where: {
-      id: channelId,
-    },
-    data: {
-      members: {connect: {id: user.id}},
-    },
-  })
 
   return {data: updatedChannel, error: null}
 }
 
-export async function leaveChannel(user: User, channelId: string): Promise<ReturnType<Channel>> {
+export async function leaveChannel(user: User, channelId: string): Promise<ReturnType<any>> {
+  // 1, find the channel
   const channel = await db.channel.findFirst({
     where: {
       id: channelId,
@@ -271,10 +288,12 @@ export async function leaveChannel(user: User, channelId: string): Promise<Retur
     },
   })
 
+  // 2, check if the channel exists and the user is not the owner
   if (!channel || channel.ownerId === user.id) {
-    return {data: null, error: ERRORS.badRequest("Bad Request")}
+    return {data: null, error: ERRORS.forbidden("Request not allowed")}
   }
 
+  // 3, check if the user is a member of the channel
   const updatedChannel = await db.channel.update({
     where: {
       id: channelId,
@@ -284,5 +303,15 @@ export async function leaveChannel(user: User, channelId: string): Promise<Retur
     },
   })
 
-  return {data: updatedChannel, error: null}
+  // 4, remove the channel from list of channels the user is a member of
+  const updatedUser = await db.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      channels: {disconnect: {id: channelId}},
+    },
+  })
+
+  return {data: "Seccussfully left the channel. ", error: null}
 }

@@ -26,6 +26,7 @@ model User {
   ownGroups     Group[]   @relation("GroupOwner")
   channels      Channel[] @relation("ChannelMembers")
   ownChannels   Channel[] @relation("ChannelOwner")
+
   sentMessages  Message[] @relation("UserSent")
   recMessages   Message[] @relation("UserRec")
   contacts      User[]    @relation("Contact")
@@ -50,12 +51,10 @@ model Channel {
   name         String
   image        String?
   desc         String?
-  createdAt    DateTime  @default(now())
   members      User[]    @relation("ChannelMembers")
   owner        User      @relation("ChannelOwner", fields: [ownerId], references: [id])
   ownerId      String
-  sentMessages Message[] @relation("ChannelRec")
-  RecMessages  Message[] @relation("ChannelSent")
+  messages     Message[] @relation("ChannelSent")
 }
 
 model Message {
@@ -66,18 +65,15 @@ model Message {
   createdAt    DateTime @default(now())
   userSender   User?    @relation("UserSent", fields: [userSenderId], references: [id])
   userSenderId String?
-  userRec      User?    @relation("UserRec", fields: [userId], references: [id])
-  userId       String?
-  groupRec     Group?   @relation("GroupRec", fields: [groupId], references: [id])
-  groupId      String?
-  ChannelRec   Channel? @relation("ChannelRec", fields: [ChannelId], references: [id])
-  ChannelId    String?
+  userRec      User?    @relation("UserRec", fields: [userRecId], references: [id])
+  userRecId    String?
+  groupRec     Group?   @relation("GroupRec", fields: [groupRecId], references: [id])
+  groupRecId      String?
   chanSender   Channel? @relation("ChannelSent", fields: [chanSenderId], references: [id])
   chanSenderId String?
 
-  @@index([userId], name: "user_receiver_index")
-  @@index([groupId], name: "group_receiver_index")
-  @@index([ChannelId], name: "channel_receiver_index")
+  @@index([userRecId], name: "user_receiver_index")
+  @@index([groupRecId], name: "group_receiver_index")
   @@index([userSenderId], name: "user_sender_index")
   @@index([chanSenderId], name: "channel_sender_index")
 }
