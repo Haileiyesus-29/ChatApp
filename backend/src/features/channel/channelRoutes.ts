@@ -1,3 +1,4 @@
+import {authenticate} from "@/middlewares/authenticate"
 /**
  * Express router for handling channel routes.
  *
@@ -11,6 +12,8 @@ import express from "express"
 import * as controller from "./channelController"
 
 const router = express.Router()
+
+router.use(authenticate)
 
 /**
  * Route for creating a new channel.
@@ -83,7 +86,7 @@ router.get("/:id/messages", controller.getMessages)
  *
  * @returns The created message object as JSON.
  */
-router.post("/:id/messages", controller.sendMessage)
+router.post("/messages", controller.sendMessage)
 
 /**
  * Route for joining a channel.

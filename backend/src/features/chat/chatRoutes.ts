@@ -29,6 +29,15 @@ route.post("/", authenticate, controller.sendMessage)
 route.get("/contacts", authenticate, controller.getContacts)
 
 /**
+ * Route for adding user to contacts list.
+ * @name POST /contacts
+ * @function
+ * @memberof module:chatRoutes
+ * @param {string} req.body.contactId
+ */
+route.post("/contacts", authenticate, controller.addToContact)
+
+/**
  * Route for getting the list of chatted contacts.
  * @name GET /chatted
  * @function

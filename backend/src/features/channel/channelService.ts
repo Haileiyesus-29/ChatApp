@@ -1,8 +1,9 @@
 import db from "@/config/db"
 import findByUsername from "@/helpers/findByUsername"
+import {formatMessageResponse} from "@/helpers/formatMessageResponse"
 import {ERRORS} from "@/utils/errors"
-import {ReturnType} from "@/utils/types"
-import {Channel, User} from "@prisma/client"
+import {MessageResponse, ReturnType} from "@/utils/types"
+import {Channel, Message, User} from "@prisma/client"
 
 export async function updateChannelWithId(
   user: User,
@@ -42,6 +43,7 @@ export async function updateChannelWithId(
   return {data: updatedChannel, error: null}
 }
 
+// BUG: Deleting transaction error
 export async function deleteChannelWithId(
   user: User,
   channelId: string
@@ -149,15 +151,16 @@ export async function getMessages(user: User, channelId: string): Promise<Return
 
 export async function sendMessage(
   user: User,
-  channelId: string,
-  messageData: {
-    text?: string
-    emoji?: string
-    images?: string[]
+  data: {
+    channelId: string
+    message: Message
   }
-): Promise<ReturnType<any>> {
-  if (!messageData.text && !messageData.emoji && !messageData.images) {
-    return {data: null, error: ERRORS.badRequest("Invalid message data")}
+): Promise<ReturnType<MessageResponse>> {
+  const channelId = data?.channelId
+  const message = data?.message
+
+  if (!channelId || !(message.text || message.emoji || message.images)) {
+    return {data: null, error: ERRORS.badRequest("Invalid credentials")}
   }
 
   const channel = await db.channel.findFirst({
@@ -173,16 +176,16 @@ export async function sendMessage(
     return {data: null, error: ERRORS.forbidden("Forbidden")}
   }
 
-  const message = await db.message.create({
+  const sentMessage = await db.message.create({
     data: {
       chanSenderId: channelId,
-      text: messageData.text,
-      emoji: messageData.emoji,
-      images: messageData.images,
+      text: message.text,
+      emoji: message.emoji,
+      images: message.images,
     },
   })
 
-  return {data: message, error: null}
+  return {data: formatMessageResponse(sentMessage, "group"), error: null}
 }
 
 export async function getMembers(user: User, channelId: string): Promise<ReturnType<any>> {

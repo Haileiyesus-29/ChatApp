@@ -32,4 +32,13 @@ export type AccountResponse = {
   createdAt?: Date
 }
 
-export type ExtendedRequest = Request & {user: User}
+export type MessageResponse = {
+  id: string
+  text: string | null
+  images: string[]
+  emoji?: string
+  createdAt: Date
+  sender: string
+  receiver: string
+  type: "chat" | "group" | "channel"
+}

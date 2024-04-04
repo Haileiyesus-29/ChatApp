@@ -6,6 +6,7 @@ import {AccountResponse, ReturnType} from "@/utils/types"
 import {ERRORS} from "@/utils/errors"
 import hashPassword from "@/helpers/hashPassword"
 import removePassword from "@/helpers/removePassword"
+import {channel} from "diagnostics_channel"
 
 interface UserInput {
   name?: string
@@ -127,6 +128,7 @@ export async function deleteUser(
     return {data: null, error: ERRORS.forbidden(["Invalid Credentials"])}
   }
 
+  // BUG: Can't fix error for batch update
   try {
     await db.$transaction(async db => {
       // 1, Delete the user
@@ -135,13 +137,81 @@ export async function deleteUser(
           id: userData.id,
         },
         select: {
-          ownChannels: true,
-          ownGroups: true,
+          ownChannels: {
+            select: {
+              id: true,
+              members: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          ownGroups: {
+            select: {
+              id: true,
+              members: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
         },
       })
 
       const listOfChannels = deletedUser.ownChannels.map(channel => channel.id)
       const listOfGroups = deletedUser.ownGroups.map(group => group.id)
+      const listOfChannelMembers = deletedUser.ownChannels
+      const listOfGroupMembers = deletedUser.ownGroups
+
+      const batchUpdateChannelMembers = listOfChannelMembers
+        .map(channel => {
+          const upateFunctions: (() => Promise<any>)[] = [] // Change the type of upateFunctions to an array of functions
+          for (const member of channel.members) {
+            upateFunctions.push(() =>
+              db.user.update({
+                where: {
+                  id: member.id,
+                },
+                data: {
+                  channels: {
+                    disconnect: {
+                      id: channel.id,
+                    },
+                  },
+                },
+              })
+            )
+          }
+          return upateFunctions
+        })
+        .flat()
+
+      const batchUpdateGroupMembers = listOfGroupMembers.map(group => {
+        const upateFunctions: (() => Promise<any>)[] = [] // Change the type of upateFunctions to an array of functions
+        for (const member of group.members) {
+          upateFunctions.push(() =>
+            db.user.update({
+              where: {
+                id: member.id,
+              },
+              data: {
+                groups: {
+                  disconnect: {
+                    id: group.id,
+                  },
+                },
+              },
+            })
+          )
+        }
+        return upateFunctions
+      })
+
+      // Update all members of the deleted channels and groups
+      await Promise.all(batchUpdateChannelMembers)
+      await Promise.all(batchUpdateGroupMembers)
 
       // 2, Delete channels created by the user
       await db.channel.deleteMany({
@@ -161,55 +231,13 @@ export async function deleteUser(
         },
       })
 
-      // 4, Remove user from all deleted channels and groups
-      await db.user.updateMany({
-        where: {
-          OR: [
-            {
-              channels: {
-                some: {
-                  id: {
-                    in: listOfChannels,
-                  },
-                },
-              },
-            },
-            {
-              groups: {
-                some: {
-                  id: {
-                    in: listOfGroups,
-                  },
-                },
-              },
-            },
-          ],
-        },
-        data: {
-          channels: {
-            set: {
-              id: {
-                notIn: listOfChannels,
-              },
-            },
-          },
-          groups: {
-            set: {
-              id: {
-                notIn: listOfGroups,
-              },
-            },
-          },
-        } as any,
-      })
-
-      // 5, Update all messages from the user, userChannels, and userGroups
+      // 4, Update all messages from the user, userChannels, and userGroups
       await db.message.deleteMany({
         where: {
           OR: [
             {userSenderId: userData.id},
-            {userId: userData.id},
-            {groupId: {in: listOfGroups}},
+            {userRecId: userData.id},
+            {groupRecId: {in: listOfGroups}},
             {chanSenderId: {in: listOfChannels}},
           ],
         },

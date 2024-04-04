@@ -9,7 +9,7 @@ export async function getMessages(req, res: Response, next: NextFunction) {
 }
 
 export async function sendMessage(req, res: Response, next: NextFunction) {
-  const {data, error} = await services.sendMessage(req.user, req.params.id, req.body)
+  const {data, error} = await services.sendMessage(req.user, req.body)
   if (error) return next(error)
   res.json(sendResponse(data, 201))
 }
@@ -27,7 +27,7 @@ export async function updateChannel(req, res: Response, next: NextFunction) {
 }
 
 export async function deleteChannel(req, res: Response, next: NextFunction) {
-  const {data, error} = await services.deleteChannelWithId(req.user, req.params.id)
+  const {error} = await services.deleteChannelWithId(req.user, req.params.id)
   if (error) return next(error)
   res.sendStatus(204)
 }
