@@ -5,6 +5,7 @@ import * as controller from "./channelController"
 
 router.use(authenticate)
 
+router.get("/", controller.getChannels)
 /**
  * Route for creating a new channel.
  *

@@ -4,9 +4,6 @@ import {authenticate} from "@/middlewares/authenticate"
 
 const router = Router()
 
-// Create a new user
-router.post("/", userController.createUser)
-
 // Get a specific user by ID
 router.get("/:id", authenticate, userController.getUserById)
 

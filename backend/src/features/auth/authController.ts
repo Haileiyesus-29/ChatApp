@@ -14,7 +14,20 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
   if (!token) return next(ERRORS.serverFailure(["Request failed"]))
 
   res.setHeader("Authorization", `Bearer ${token}`)
+  res.setHeader("Access-Control-Expose-Headers", "Authorization")
   res.json(sendResponse(data))
+}
+
+export async function regusterUser(req, res, next) {
+  const {data, error} = await services.createNewUser(req.body)
+  if (error) return next(error)
+  if (!data?.id) return next(ERRORS.serverFailure(["Request failed"]))
+
+  const token = await generateToken(data.id)
+  if (!token) return next(ERRORS.serverFailure(["Request failed"]))
+
+  res.setHeader("Authorization", `Bearer ${token}`)
+  res.json(sendResponse(data), 201)
 }
 
 export async function verifyUser(req, res: Response, next: NextFunction) {

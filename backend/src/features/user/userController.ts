@@ -10,18 +10,6 @@ export async function getUserById(req, res, next) {
   res.json(sendResponse(data))
 }
 
-export async function createUser(req, res, next) {
-  const {data, error} = await services.createNewUser(req.body)
-  if (error) return next(error)
-  if (!data?.id) return next(ERRORS.serverFailure(["Request failed"]))
-
-  const token = await generateToken(data.id)
-  if (!token) return next(ERRORS.serverFailure(["Request failed"]))
-
-  res.setHeader("Authorization", `Bearer ${token}`)
-  res.json(sendResponse(data))
-}
-
 export async function updateUser(req, res, next) {
   const {data, error} = await services.updateUserAccount(req.user, req.body)
   if (error) return next(error)

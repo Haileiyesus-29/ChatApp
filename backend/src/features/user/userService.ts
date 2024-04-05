@@ -6,7 +6,6 @@ import {AccountResponse, ReturnType} from "@/utils/types"
 import {ERRORS} from "@/utils/errors"
 import hashPassword from "@/helpers/hashPassword"
 import removePassword from "@/helpers/removePassword"
-import {channel} from "diagnostics_channel"
 
 interface UserInput {
   name?: string
@@ -14,43 +13,6 @@ interface UserInput {
   bio?: string
   username?: string
   image?: string
-}
-
-/**
- * Creates a new user in the database.
- * @param payload - The user data to be created.
- * @returns A Promise that resolves to the created user or an error object.
- */
-export async function createNewUser(payload: User): Promise<ReturnType<AccountResponse>> {
-  if (!payload.name || !payload.email || !payload.password)
-    return {data: null, error: ERRORS.badRequest(["Invalid credentials"])}
-
-  const currentUser = await db.user.findFirst({
-    where: {
-      email: payload.email,
-    },
-  })
-
-  if (currentUser) return {data: null, error: ERRORS.badRequest(["Email already registered"])}
-
-  if (payload.username && (await findByUsername(payload.username)))
-    return {data: null, error: ERRORS.badRequest(["Username not available"])}
-
-  const hashedPassword = await hashPassword(payload.password)
-
-  const user = await db.user.create({
-    data: {
-      name: payload.name,
-      email: payload.email,
-      password: hashedPassword,
-      username:
-        payload.username || `user_${parseInt((Math.random() * 1e13).toString()) + Date.now()}`,
-      bio: payload.bio,
-      image: payload.image,
-    },
-  })
-
-  return {data: removePassword(user), error: null}
 }
 
 /**

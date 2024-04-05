@@ -29,6 +29,14 @@ route.post("/", authenticate, controller.sendMessage)
 route.get("/contacts", authenticate, controller.getContacts)
 
 /**
+ * Route for getting the list of chatted contacts.
+ * @name GET /chatted
+ * @function
+ * @memberof module:chatRoutes
+ */
+route.get("/", authenticate, controller.getChattedList)
+
+/**
  * Route for adding user to contacts list.
  * @name POST /contacts
  * @function
@@ -36,14 +44,6 @@ route.get("/contacts", authenticate, controller.getContacts)
  * @param {string} req.body.contactId
  */
 route.post("/contacts", authenticate, controller.addToContact)
-
-/**
- * Route for getting the list of chatted contacts.
- * @name GET /chatted
- * @function
- * @memberof module:chatRoutes
- */
-route.get("/chatted", authenticate, controller.getChattedList)
 
 /**
  * Route for getting the message thread with a specific contact.

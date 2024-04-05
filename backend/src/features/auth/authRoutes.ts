@@ -14,13 +14,22 @@ const router = Router()
 router.post("/login", controller.loginUser)
 
 /**
+ * Route for user registration.
+ *
+ * @route POST /api/auth/register
+ * @group Authentication
+ * @returns {void}
+ */
+router.post("/register", controller.regusterUser)
+
+/**
  * Route for verifying user authentication.
  *
- * @route POST /api/auth/verify
+ * @route GET /api/auth/verify
  * @group Authentication
  * @security JWT
  * @returns {void}
  */
-router.post("/verify", authenticate, controller.verifyUser)
+router.get("/verify", authenticate, controller.verifyUser)
 
 export default router
