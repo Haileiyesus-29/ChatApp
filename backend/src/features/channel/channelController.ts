@@ -2,6 +2,13 @@ import {NextFunction, Request, Response} from "express"
 import * as services from "./channelService"
 import sendResponse from "@/utils/response"
 
+// TODO: implement getChannels function
+export async function getChannels(req, res: Response, next: NextFunction) {
+  const {data, error} = await services.getChannels(req.user)
+  if (error) return next(error)
+  res.json(sendResponse(data, 200))
+}
+
 export async function getMessages(req, res: Response, next: NextFunction) {
   const {data, error} = await services.getMessages(req.user, req.params.id)
   if (error) return next(error)
@@ -44,12 +51,12 @@ export async function getChannelById(req, res: Response, next: NextFunction) {
   res.json(sendResponse(data, 200))
 }
 export async function joinChannel(req, res: Response, next: NextFunction) {
-  const {data, error} = await services.joinChannel(req.user, req.params.id)
+  const {data, error} = await services.joinChannel(req.user, req.body)
   if (error) return next(error)
   res.json(sendResponse(data, 200))
 }
 export async function leaveChannel(req, res: Response, next: NextFunction) {
-  const {data, error} = await services.leaveChannel(req.user, req.params.id)
+  const {data, error} = await services.leaveChannel(req.user, req.body)
   if (error) return next(error)
   res.sendStatus(204)
 }

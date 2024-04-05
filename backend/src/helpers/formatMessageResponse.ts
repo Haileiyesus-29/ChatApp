@@ -10,7 +10,7 @@ export function formatMessageResponse(
     text: message.text,
     images: message.images,
     createdAt: message.createdAt,
-    sender: message.userSenderId! || message.userRecId!,
+    sender: message.userSenderId! || message.chanSenderId!,
     receiver: message.userRecId! || message.groupRecId!,
     type,
   }

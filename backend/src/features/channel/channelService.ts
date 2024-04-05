@@ -42,7 +42,6 @@ export async function updateChannelWithId(
 
   return {data: updatedChannel, error: null}
 }
-
 // BUG: Deleting transaction error
 export async function deleteChannelWithId(
   user: User,
@@ -97,6 +96,28 @@ export async function deleteChannelWithId(
   return {data: deletedChannel, error: null}
 }
 
+export async function getChannels(user: User): Promise<ReturnType<Channel[]>> {
+  const userData = await db.user.findFirst({
+    where: {
+      id: user.id,
+    },
+    select: {
+      channels: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          desc: true,
+          ownerId: true,
+          image: true,
+        },
+      },
+    },
+  })
+
+  return {data: userData?.channels ?? null, error: null}
+}
+
 export async function getChannelById(channelId: string): Promise<ReturnType<Channel>> {
   const channel = await db.channel.findFirst({
     where: {
@@ -124,7 +145,7 @@ export async function getMessages(user: User, channelId: string): Promise<Return
   })
 
   if (
-    user.id !== memberList?.ownerId ||
+    user.id !== memberList?.ownerId &&
     !memberList?.members.find(member => member.id === user.id)
   ) {
     return {data: null, error: ERRORS.forbidden("Forbidden")}
@@ -185,7 +206,7 @@ export async function sendMessage(
     },
   })
 
-  return {data: formatMessageResponse(sentMessage, "group"), error: null}
+  return {data: formatMessageResponse(sentMessage, "channel"), error: null}
 }
 
 export async function getMembers(user: User, channelId: string): Promise<ReturnType<any>> {
@@ -244,7 +265,13 @@ export async function createChannel(
   return {data: channel, error: null}
 }
 
-export async function joinChannel(user: User, channelId: string): Promise<ReturnType<Channel>> {
+export async function joinChannel(
+  user: User,
+  data: {channelId: string}
+): Promise<ReturnType<Channel>> {
+  const channelId = data?.channelId
+  if (!channelId) return {data: null, error: ERRORS.badRequest(["Invalid credentials"])}
+
   let updatedChannel: Channel | null = null
 
   try {
@@ -275,8 +302,14 @@ export async function joinChannel(user: User, channelId: string): Promise<Return
   return {data: updatedChannel, error: null}
 }
 
-export async function leaveChannel(user: User, channelId: string): Promise<ReturnType<any>> {
-  // 1, find the channel
+export async function leaveChannel(
+  user: User,
+  body: {channelId: string}
+): Promise<ReturnType<any>> {
+  const channelId = body?.channelId
+
+  if (!channelId) return {data: null, error: ERRORS.badRequest(["Invalid credentials"])}
+
   const channel = await db.channel.findFirst({
     where: {
       id: channelId,
@@ -291,30 +324,33 @@ export async function leaveChannel(user: User, channelId: string): Promise<Retur
     },
   })
 
-  // 2, check if the channel exists and the user is not the owner
   if (!channel || channel.ownerId === user.id) {
     return {data: null, error: ERRORS.forbidden("Request not allowed")}
   }
 
-  // 3, check if the user is a member of the channel
-  const updatedChannel = await db.channel.update({
-    where: {
-      id: channelId,
-    },
-    data: {
-      members: {disconnect: {id: user.id}},
-    },
-  })
+  try {
+    await db.$transaction(async () => {
+      await db.channel.update({
+        where: {
+          id: channelId,
+        },
+        data: {
+          members: {disconnect: {id: user.id}},
+        },
+      })
 
-  // 4, remove the channel from list of channels the user is a member of
-  const updatedUser = await db.user.update({
-    where: {
-      id: user.id,
-    },
-    data: {
-      channels: {disconnect: {id: channelId}},
-    },
-  })
+      await db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          channels: {disconnect: {id: channelId}},
+        },
+      })
+    })
+  } catch (error) {
+    return {data: null, error: ERRORS.serverFailure(["Failed to process the request"])}
+  }
 
   return {data: "Seccussfully left the channel. ", error: null}
 }

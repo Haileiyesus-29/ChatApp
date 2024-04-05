@@ -1,17 +1,7 @@
-import {authenticate} from "@/middlewares/authenticate"
-/**
- * Express router for handling channel routes.
- *
- * @remarks
- * This router handles various CRUD operations related to channels.
- *
- * @packageDocumentation
- */
-
 import express from "express"
-import * as controller from "./channelController"
-
 const router = express.Router()
+import {authenticate} from "@/middlewares/authenticate"
+import * as controller from "./channelController"
 
 router.use(authenticate)
 
@@ -25,7 +15,6 @@ router.use(authenticate)
  * @returns The created channel object as JSON.
  */
 router.post("/", controller.createChannel)
-
 /**
  * Route for retrieving a channel by its ID.
  *
@@ -35,7 +24,6 @@ router.post("/", controller.createChannel)
  * @returns The channel object as JSON.
  */
 router.get("/:id", controller.getChannelById)
-
 /**
  * Route for updating a channel.
  *
@@ -46,7 +34,6 @@ router.get("/:id", controller.getChannelById)
  * @returns The updated channel object as JSON.
  */
 router.put("/:id", controller.updateChannel)
-
 /**
  * Route for deleting a channel.
  *
@@ -56,7 +43,6 @@ router.put("/:id", controller.updateChannel)
  * @returns A success message as JSON.
  */
 router.delete("/:id", controller.deleteChannel)
-
 /**
  * Route for retrieving the members of a channel.
  *
@@ -66,7 +52,6 @@ router.delete("/:id", controller.deleteChannel)
  * @returns The list of channel members as JSON.
  */
 router.get("/:id/members", controller.getMembers)
-
 /**
  * Route for retrieving the messages of a channel.
  *
@@ -76,7 +61,6 @@ router.get("/:id/members", controller.getMembers)
  * @returns The list of channel messages as JSON.
  */
 router.get("/:id/messages", controller.getMessages)
-
 /**
  * Route for sending a message to a channel.
  *
@@ -87,7 +71,6 @@ router.get("/:id/messages", controller.getMessages)
  * @returns The created message object as JSON.
  */
 router.post("/messages", controller.sendMessage)
-
 /**
  * Route for joining a channel.
  *
@@ -96,8 +79,7 @@ router.post("/messages", controller.sendMessage)
  *
  * @returns A success message as JSON.
  */
-router.post("/:id/join", controller.joinChannel)
-
+router.post("/join", controller.joinChannel)
 /**
  * Route for leaving a channel.
  *
@@ -106,6 +88,5 @@ router.post("/:id/join", controller.joinChannel)
  *
  * @returns A success message as JSON.
  */
-router.post("/:id/leave", controller.leaveChannel)
-
+router.post("/leave", controller.leaveChannel)
 export default router
