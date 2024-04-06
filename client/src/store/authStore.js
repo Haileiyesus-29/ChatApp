@@ -5,16 +5,18 @@ import { create } from 'zustand'
 const useAuth = create(set => ({
    account: null,
    loading: true,
-   setLoading: status => set(state => ({ ...state, loading: status })),
-   setToken: token => set(state => ({ ...state, token })),
-
-   login: async payload => {
+   login: async (payload, cb) => {
       set({ loading: true })
       const response = await api.post(ENDPOINT.LOGIN(), payload)
-      if (!response?.data) return
-      const token = response.headers.getAuthorization()?.split(' ')[1]
-      localStorage.setItem('token', token)
-      set({ account: response.data.data, loading: false })
+      if (response.token) {
+         localStorage.setItem('token', response.token)
+         set({ account: response, loading: false })
+      } else
+         return cb?.('root', {
+            type: 'manual',
+            message: response.errors.join(),
+         })
+      set({ account: response.data, loading: false })
    },
 
    logout: async () => {
@@ -22,14 +24,21 @@ const useAuth = create(set => ({
       set({ account: null })
    },
 
-   register: async payload => {
+   register: async (payload, cb) => {
+      console.log(payload)
       set({ loading: true })
       const response = await api.post(ENDPOINT.REGISTER(), payload)
       set({ loading: false })
-      if (!response?.data.data) return
-      const token = response.headers.getAuthorization()?.split(' ')[1]
-      localStorage.setItem('token', token)
-      set({ account: response.data.data, loading: false })
+
+      if (!response.token || response.errors) {
+         localStorage.setItem('token', response.token)
+      } else
+         return cb?.('root', {
+            type: 'manual',
+            message: response.errors.join(),
+         })
+
+      set({ account: response.data, loading: false })
    },
 
    verify: async () => {
@@ -38,8 +47,8 @@ const useAuth = create(set => ({
          Authorization: `Bearer ${localStorage.getItem('token')}`,
       })
       set({ loading: false })
-      if (!response?.data.data) return
-      set({ account: response.data.data, loading: false })
+      if (response.errors) return
+      set({ account: response.data, loading: false })
    },
 }))
 

@@ -13,7 +13,6 @@ export async function getGroups(req, res: Response, next: NextFunction) {
   if (error) return next(error)
   res.json(sendResponse(data, 200))
 }
-
 export async function createGroup(req, res: Response, next: NextFunction) {
   const {data, error} = await services.createGroup(req.user, req.body)
   if (error) return next(error)

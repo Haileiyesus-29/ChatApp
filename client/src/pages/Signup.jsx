@@ -3,57 +3,97 @@ import { FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
+import useAuth from '@/store/authStore'
 import AuthContainer from '@/ui/AuthContainer'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { z } from 'zod'
+
+const schema = z.object({
+   name: z.string().trim().max(20).min(3),
+   email: z.string().email(),
+   password: z.string().regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+      message:
+         'Password must contain at least 8 characters, one letter and one number',
+   }),
+})
 
 function Signup() {
+   const { register: signup } = useAuth()
+   const {
+      register,
+      handleSubmit,
+      setError,
+      formState: { errors, isSubmitting },
+   } = useForm({
+      resolver: zodResolver(schema),
+   })
+
    return (
       <AuthContainer>
-         <form className='flex flex-col gap-4 bg-zinc-900 px-4 py-6 border rounded w-full max-w-sm'>
+         <form
+            onSubmit={handleSubmit(data => signup(data, setError))}
+            className='flex flex-col gap-4 bg-zinc-900 px-4 py-6 border rounded w-full max-w-sm'
+         >
             <h2 className='font-semibold text-2xl text-center'>Signup</h2>
+            {errors.root && (
+               <p className='bg-red-400/20 px-2 py-1 border border-red-600/50 rounded text-red-600 text-sm'>
+                  {errors.root?.message}
+               </p>
+            )}
             <FormItem>
                <Label htmlFor='name'>Name</Label>
                <Input
+                  {...register('name')}
                   id='name'
                   name='name'
                   type='text'
-                  placeholder='Name'
+                  placeholder='e.g, John Doe'
                   className='focus-visible:border-zinc-300'
                />
+               {errors.name && (
+                  <p className='bg-red-400/20 px-2 py-1 border border-red-600/50 rounded text-red-600 text-sm'>
+                     {errors.name?.message}
+                  </p>
+               )}
             </FormItem>
 
             <FormItem>
-               <Label htmlFor='title'>Email</Label>
+               <Label htmlFor='email'>Email</Label>
                <Input
-                  id='title'
-                  name='title'
-                  type='text'
-                  placeholder='Name'
+                  {...register('email')}
+                  id='email'
+                  name='email'
+                  type='email'
+                  placeholder='e.g, John@example.com'
                   className='focus-visible:border-zinc-300'
                />
+               {errors.email && (
+                  <p className='bg-red-400/20 px-2 py-1 border border-red-600/50 rounded text-red-600 text-sm'>
+                     {errors.email?.message}
+                  </p>
+               )}
             </FormItem>
             <FormItem>
-               <Label htmlFor='username'>Password</Label>
+               <Label htmlFor='password'>Password</Label>
                <Input
-                  id='username'
-                  name='username'
+                  {...register('password')}
+                  id='password'
+                  name='password'
                   type='password'
                   placeholder='Password'
                   className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
                />
+               {errors.password && (
+                  <p className='bg-red-400/20 px-2 py-1 border border-red-600/50 rounded text-red-600 text-sm'>
+                     {errors.password?.message}
+                  </p>
+               )}
             </FormItem>
-            <FormItem>
-               <Label htmlFor='username'>Confirm Password</Label>
-               <Input
-                  id='username'
-                  name='username'
-                  type='password'
-                  placeholder='Password'
-                  className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
-               />
-            </FormItem>
-            <Button type='submit' className='w-full'>
-               Create Account
+
+            <Button disabled={isSubmitting} type='submit' className='w-full'>
+               {isSubmitting ? 'Loading...' : 'Signup'}
             </Button>
             <Separator />
             <Button type='button' className='flex gap-2 w-full'>

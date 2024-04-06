@@ -1,9 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import useAuth from '@/store/authStore'
 import { Link } from 'react-router-dom'
 
 function Header() {
+   const { logout } = useAuth(state => state)
+
    return (
       <header className='flex justify-between items-center col-span-full px-3 py-1'>
          <h1 className='flex items-center gap-2 rounded-md font-semibold text-xl'>
@@ -17,9 +20,9 @@ function Header() {
             placeholder='Search'
             className='focus-visible:outline-none focus:border-2 focus:border-zinc-500 px-6 rounded-full max-w-80'
          />
-         <Link to='/login'>
-            <Button variant='secondary'>Logout</Button>
-         </Link>
+         <Button onClick={logout} variant='secondary'>
+            Logout
+         </Button>
       </header>
    )
 }

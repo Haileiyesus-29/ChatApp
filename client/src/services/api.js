@@ -1,42 +1,84 @@
-import axios from 'axios'
 const BASE_URL = import.meta.env.VITE_API_URL
 
-const axiosInstance = axios.create({
-   baseURL: BASE_URL,
-   headers: {
-      'Content-Type': 'application/json',
-   },
-})
+const defaultConfig = {
+   'Content-Type': 'application/json',
+   Accept: 'application/json',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+   'Access-Control-Allow-Headers':
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+   'Access-Control-Allow-Credentials': 'true',
+}
 
 const api = {
    get: async (endpoint, config = {}) => {
       try {
-         return await axiosInstance.get(endpoint, { headers: config })
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'GET',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+         })
+         return await response.json()
       } catch (error) {
-         console.log(error)
+         console.error(error)
       }
    },
 
-   post: async (endpoint, data = {}, config = {}) => {
+   post: async (endpoint, payload = {}, config = {}) => {
       try {
-         return await axiosInstance.post(endpoint, data, { headers: config })
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'POST',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+            body: JSON.stringify(payload),
+         })
+         const data = await response.json()
+         if (response.headers.get('Authorization')) {
+            const token = response.headers.get('Authorization').split(' ')[1]
+            data['token'] = token
+         }
+         return data
       } catch (error) {
-         console.log(error)
+         console.error(error)
       }
    },
 
-   put: async (endpoint, data = {}, config = {}) => {
+   put: async (endpoint, payload = {}, config = {}) => {
       try {
-         return await axiosInstance.put(endpoint, data, { headers: config })
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'PUT',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+            body: JSON.stringify(payload),
+         })
+         return await response.json()
       } catch (error) {
-         console.log(error)
+         console.error(error)
       }
    },
-   delete: async (endpoint, data = {}, config = {}) => {
+   delete: async (endpoint, payload = {}, config = {}) => {
       try {
-         return await axiosInstance.put(endpoint, data, { headers: config })
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'DELETE',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+            body: JSON.stringify(payload),
+         })
+         return await response.json()
       } catch (error) {
-         console.log(error)
+         console.error(error)
       }
    },
 }
