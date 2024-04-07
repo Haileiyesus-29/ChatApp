@@ -60,6 +60,7 @@ export async function getContactList(user: User): Promise<ReturnType<any[]>> {
       name: chattedPerson.name,
       image: chattedPerson.image,
       username: chattedPerson.username,
+      type: "chat",
       lastMessage: {
         id: message.id,
         text: message.text,
@@ -165,6 +166,7 @@ export async function sendMessage(
 
 export async function getChattedAccounts(user: User): Promise<ReturnType<any[]>> {
   const id = user.id
+
   const messages = await db.message.findMany({
     where: {
       OR: [
@@ -172,49 +174,36 @@ export async function getChattedAccounts(user: User): Promise<ReturnType<any[]>>
         {AND: [{userSenderId: {not: null}}, {userRecId: id}]},
       ],
     },
-    select: {
-      text: true,
-      emoji: true,
-      images: true,
-      createdAt: true,
-      userSender: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-        },
-      },
-      userRec: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-        },
-      },
-    },
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      userSender: {select: {id: true, name: true, image: true}},
+      userRec: {select: {id: true, name: true, image: true}},
+    },
   })
 
-  let chattedUsers = {}
-
-  for (const message of messages) {
+  const chattedUsers = messages.reduce((acc, message) => {
     const chattedPerson: {id: string; name: string; image: string | null} =
       message.userSender?.id === id ? message.userRec! : message.userSender!
 
-    if (chattedUsers[chattedPerson.id]) continue
+    if (acc[chattedPerson.id]) return acc
 
-    chattedUsers[chattedPerson.id] = {
+    acc[chattedPerson.id] = {
       id: chattedPerson.id,
       name: chattedPerson.name,
       image: chattedPerson.image,
-      text: message.text,
-      emoji: message.emoji,
-      images: message.images,
-      createdAt: message.createdAt,
+      type: "chat",
+      lastMessage: {
+        text: message.text,
+        emoji: message.emoji,
+        images: message.images,
+        createdAt: message.createdAt,
+      },
     }
-  }
+
+    return acc
+  }, {})
 
   const arrayOfUsers = Object.values(chattedUsers).sort((a: any, b: any) =>
     a.createdAt > b.createdAt ? -1 : 1

@@ -7,7 +7,6 @@ import jwt, {JwtPayload} from "jsonwebtoken"
 export async function authenticate(req: any, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization
   const token = authHeader?.split(" ").at(1)!
-
   if (!token) {
     return next(ERRORS.badRequest(["Invalid token"]))
   }

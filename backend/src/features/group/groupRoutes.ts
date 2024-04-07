@@ -5,6 +5,13 @@ import * as controller from "./groupController"
 const router = express.Router()
 
 router.use(authenticate)
+
+/**
+ * Route for retrieving all groups.
+ *
+ * @returns The list of groups as JSON.
+ */
+router.get("/", controller.getGroups)
 /**
  * Route for creating a new group.
  *

@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import paths from '@/paths'
 import { Check, CheckCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -19,7 +18,7 @@ function ChatLink({ user }) {
 
    return (
       <Link
-         to={paths.chatMessage(user.id)}
+         to={`/${user.type}/${user.id}`}
          className='relative flex items-center gap-2 bg-zinc-950 py-2 pr-10 pl-4 rounded-lg overflow-hidden shrink-0'
       >
          <Avatar className='w-12 h-12'>
@@ -35,7 +34,7 @@ function ChatLink({ user }) {
                <Check />
             </span> */}
 
-            <h3 className='text-lg'>Mike Tyson</h3>
+            <h3 className='text-lg'>{user.name}</h3>
             <p className='text-zinc-100/60 truncate leading-none overflow-hidden'>
                {user.lastMessage?.text}
             </p>

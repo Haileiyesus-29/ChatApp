@@ -6,7 +6,7 @@ import {MessageResponse, ReturnType} from "@/utils/types"
 import {Group, Message, User} from "@prisma/client"
 
 // GET groups
-export async function getGroups(user: User): Promise<ReturnType<Group[]>> {
+export async function getGroups(user: User): Promise<ReturnType<any[]>> {
   const userData = await db.user.findFirst({
     where: {
       id: user.id,
@@ -18,15 +18,41 @@ export async function getGroups(user: User): Promise<ReturnType<Group[]>> {
           name: true,
           username: true,
           image: true,
-          desc: true,
           ownerId: true,
         },
       },
     },
   })
   const groups = userData?.groups ?? []
+  const groupIds = userData?.groups.map(group => group.id)
 
-  return {data: groups, error: null}
+  // find group's last messages
+  const lastMessages = await db.message.findMany({
+    where: {
+      groupRecId: {
+        in: groupIds,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+
+  const groupsWithLastMessages = groups.map(group => {
+    const lastMessage = lastMessages.find(message => message.groupRecId === group.id)
+    return {
+      ...group,
+      type: "group",
+      lastMessage: {
+        text: lastMessage?.text,
+        emoji: lastMessage?.emoji,
+        images: lastMessage?.images,
+        createdAt: lastMessage?.createdAt,
+      },
+    }
+  })
+
+  return {data: groupsWithLastMessages, error: null}
 }
 
 export async function updateGroup(
@@ -168,11 +194,11 @@ export async function getMessages(
 export async function sendMessage(
   user: User,
   data: {
-    groupId: string
+    recipientId: string
     message: Message
   }
 ): Promise<ReturnType<MessageResponse>> {
-  const groupId = data?.groupId
+  const groupId = data?.recipientId
   const message = data?.message
 
   if (!groupId || !(message.text || message.emoji || message.images)) {

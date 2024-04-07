@@ -96,7 +96,7 @@ export async function deleteChannelWithId(
   return {data: deletedChannel, error: null}
 }
 
-export async function getChannels(user: User): Promise<ReturnType<Channel[]>> {
+export async function getChannels(user: User): Promise<ReturnType<any[]>> {
   const userData = await db.user.findFirst({
     where: {
       id: user.id,
@@ -107,15 +107,53 @@ export async function getChannels(user: User): Promise<ReturnType<Channel[]>> {
           id: true,
           name: true,
           username: true,
-          desc: true,
-          ownerId: true,
           image: true,
+          ownerId: true,
         },
       },
     },
   })
 
-  return {data: userData?.channels ?? null, error: null}
+  const channels = userData?.channels ?? []
+  const channelIds = channels.map(channel => channel.id)
+
+  const channelLastMessages = await db.message.findMany({
+    where: {
+      chanSenderId: {
+        in: channelIds,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+
+  const channelLastMessagesMap = channelLastMessages.reduce((acc, message) => {
+    const thisChannel = channels.find(channel => channel.id === message.chanSenderId)
+
+    acc[message.chanSenderId!] = {
+      id: message.chanSenderId,
+      name: thisChannel?.name,
+      username: thisChannel?.username,
+      image: thisChannel?.image,
+      ownerId: thisChannel?.ownerId,
+      type: "channel",
+      lastMessage: {
+        text: message.text,
+        emoji: message.emoji,
+        images: message.images,
+        createdAt: message.createdAt,
+      },
+    }
+    return acc
+  }, {})
+
+  const orderedChannels = Object.values(channelLastMessagesMap).sort(
+    (a: any, b: any) =>
+      new Date(b.lastMessage.createdAt).getTime() - new Date(a.lastMessage.createdAt).getTime()
+  )
+
+  return {data: orderedChannels ?? null, error: null}
 }
 
 export async function getChannelById(channelId: string): Promise<ReturnType<Channel>> {
@@ -129,7 +167,10 @@ export async function getChannelById(channelId: string): Promise<ReturnType<Chan
   return {data: channel, error: null}
 }
 
-export async function getMessages(user: User, channelId: string): Promise<ReturnType<any>> {
+export async function getMessages(
+  user: User,
+  channelId: string
+): Promise<ReturnType<MessageResponse[]>> {
   const memberList = await db.channel.findFirst({
     where: {
       id: channelId,
@@ -155,29 +196,25 @@ export async function getMessages(user: User, channelId: string): Promise<Return
     where: {
       chanSenderId: channelId,
     },
-    select: {
-      id: true,
-      emoji: true,
-      createdAt: true,
-      text: true,
-      images: true,
-    },
     orderBy: {
       createdAt: "asc",
     },
   })
 
-  return {data: messages, error: null}
+  return {
+    data: messages.map(message => formatMessageResponse({...message}, "channel")),
+    error: null,
+  }
 }
 
 export async function sendMessage(
   user: User,
   data: {
-    channelId: string
+    recipientId: string
     message: Message
   }
 ): Promise<ReturnType<MessageResponse>> {
-  const channelId = data?.channelId
+  const channelId = data?.recipientId
   const message = data?.message
 
   if (!channelId || !(message.text || message.emoji || message.images)) {
