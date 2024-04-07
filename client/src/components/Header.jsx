@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import useAuth from '@/store/authStore'
+import useAuth from '@/store/useAuth'
 import { Link } from 'react-router-dom'
 
 function Header() {

@@ -27,7 +27,9 @@ export async function regusterUser(req, res, next) {
   if (!token) return next(ERRORS.serverFailure(["Request failed"]))
 
   res.setHeader("Authorization", `Bearer ${token}`)
-  res.json(sendResponse(data), 201)
+  res.setHeader("Access-Control-Expose-Headers", "Authorization")
+
+  res.json(sendResponse(data, 201))
 }
 
 export async function verifyUser(req, res: Response, next: NextFunction) {

@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import useAuth from '@/store/authStore'
+import useAuth from '@/store/useAuth'
 
 const schema = z.object({
    email: z.string().email().trim(),

@@ -4,21 +4,85 @@ import {ERRORS} from "@/utils/errors"
 import {AccountResponse, MessageResponse, ReturnType} from "@/utils/types"
 import {Message, User} from "@prisma/client"
 
-export async function getContactList(user: User): Promise<ReturnType<AccountResponse[]>> {
+export async function getContactList(user: User): Promise<ReturnType<any[]>> {
   const id = user.id
-  const contacts = await db.user.findFirst({
+
+  // 1, Fetch user data with contacts
+  const userData = await db.user.findFirst({
     where: {id},
     select: {
+      id: true,
       contacts: {
         select: {
           id: true,
           name: true,
           image: true,
+          username: true,
         },
       },
     },
   })
-  return {data: contacts?.contacts ?? [], error: null}
+
+  const contacts = userData?.contacts ?? []
+  const contactIds = contacts.map(contact => contact.id)
+
+  // 2. Fetch all messages with user and contacts
+  const userMessages = await db.message.findMany({
+    where: {
+      OR: [
+        {
+          AND: [{userSenderId: {equals: userData?.id}}, {userRecId: {in: contactIds}}],
+        },
+        {
+          AND: [{userRecId: {equals: userData?.id}}, {userSenderId: {in: contactIds}}],
+        },
+      ],
+    },
+    include: {
+      userSender: {select: {id: true, name: true, image: true, username: true}},
+      userRec: {select: {id: true, name: true, image: true, username: true}},
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+
+  // 3. Compute last message with each contact
+  const chattedContacts = {}
+  for (let message of userMessages) {
+    const chattedPerson: {id: string; name: string; image: string | null; username: string} =
+      message.userSender?.id === id ? message.userRec! : message.userSender!
+
+    if (chattedContacts[chattedPerson.id]) continue
+
+    chattedContacts[chattedPerson.id] = {
+      id: chattedPerson.id,
+      name: chattedPerson.name,
+      image: chattedPerson.image,
+      username: chattedPerson.username,
+      lastMessage: {
+        id: message.id,
+        text: message.text,
+        emoji: message.emoji,
+        images: message.images,
+        createdAt: message.createdAt,
+      },
+    }
+  }
+
+  // 4. Convert object to array and sort by last message date
+  const contactsWithLastMessage = Object.values(chattedContacts).sort((a: any, b: any) =>
+    a.lastMessage.createdAt > b.lastMessage.createdAt ? -1 : 1
+  )
+
+  // 5, Merge contacts without messages with contacts with messages
+  for (let contact of contacts) {
+    if (!contactsWithLastMessage.find((item: any) => item.id === contact.id)) {
+      contactsWithLastMessage.push({...contact, lastMessage: null})
+    }
+  }
+
+  return {data: contactsWithLastMessage ?? [], error: null}
 }
 
 export async function addContact(user: User, data: {contactId: string}): Promise<ReturnType<any>> {
@@ -51,7 +115,7 @@ export async function addContact(user: User, data: {contactId: string}): Promise
 export async function getChatMessageThread(
   user: User,
   contactId: string
-): Promise<ReturnType<any>> {
+): Promise<ReturnType<MessageResponse[]>> {
   const messages = await db.message.findMany({
     where: {
       OR: [
@@ -59,19 +123,12 @@ export async function getChatMessageThread(
         {userSenderId: contactId, userRecId: user.id},
       ],
     },
-    select: {
-      id: true,
-      text: true,
-      emoji: true,
-      images: true,
-      createdAt: true,
-    },
     orderBy: {
-      createdAt: "desc",
+      createdAt: "asc",
     },
   })
 
-  return {data: messages, error: null}
+  return {data: messages.map(msg => formatMessageResponse(msg, "chat")), error: null}
 }
 
 export async function sendMessage(

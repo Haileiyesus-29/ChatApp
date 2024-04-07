@@ -140,3 +140,6 @@ uploads
 
 # local api test files
 *.rest
+
+# text editor files and folders
+.vscode

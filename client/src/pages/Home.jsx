@@ -1,6 +1,10 @@
+import useChat from '@/store/useChat'
 import { Outlet } from 'react-router-dom'
 
 function Home() {
-   return <Outlet context={{ count: 9 }} />
+   const { chatList, loading } = useChat(store => store)
+   console.log(chatList)
+
+   return <Outlet context={{ chatList, loading }} />
 }
 export default Home
