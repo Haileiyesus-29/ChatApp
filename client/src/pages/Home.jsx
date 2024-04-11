@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 
 function Home() {
    const { chatList, loading } = useChat(store => store)
-   console.log(chatList)
+   // console.log(chatList)
 
    return <Outlet context={{ chatList, loading }} />
 }

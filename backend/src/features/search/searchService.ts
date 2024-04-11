@@ -2,7 +2,7 @@ import db from "@/config/db"
 import {ReturnType} from "@/utils/types"
 import {Channel, Group, User} from "@prisma/client"
 
-export async function searchUserAccount(query: string): Promise<ReturnType<User[]>> {
+export async function searchUserAccount(query: string): Promise<ReturnType<any[]>> {
   const results = await db.user.findMany({
     where: {
       AND: [
@@ -23,6 +23,12 @@ export async function searchUserAccount(query: string): Promise<ReturnType<User[
           ],
         },
       ],
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      image: true,
     },
     take: 10,
   })

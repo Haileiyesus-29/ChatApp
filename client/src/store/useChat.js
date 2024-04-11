@@ -8,7 +8,7 @@ const useChat = create(set => ({
    messages: {},
    fetchChatList: async () => {
       set(store => ({ ...store, loading: true }))
-      const response = await api.get(ENDPOINT.GET_CONTACTS())
+      const response = await api.get(ENDPOINT.GET_ALL_CHATS())
       if (!response.data) return
       set(store => ({ ...store, loading: false, chatList: response.data }))
    },

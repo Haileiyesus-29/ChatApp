@@ -98,6 +98,15 @@ const useGroup = create(set => ({
          chatList: store.chatList.filter(group => group.id !== id),
       }))
    },
+   joinGroup: async (payload, cb) => {
+      const response = await api.post(ENDPOINT.JOIN_GROUP(), payload)
+      cb?.(response)
+      if (!response.data || response.error) return
+      set(store => ({
+         ...store,
+         chatList: [response.data, ...store.chatList],
+      }))
+   },
 }))
 
 export default useGroup

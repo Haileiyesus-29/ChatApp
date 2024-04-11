@@ -101,6 +101,15 @@ const useChannel = create(set => ({
          chatList: store.chatList.filter(channel => channel.id !== id),
       }))
    },
+   joinChannel: async (payload, cb) => {
+      const response = await api.post(ENDPOINT.JOIN_CHANNEL(), payload)
+      cb?.()
+      if (!response.data || response.error) return
+      set(store => ({
+         ...store,
+         chatList: [response.data, ...store.chatList],
+      }))
+   },
 }))
 
 export default useChannel

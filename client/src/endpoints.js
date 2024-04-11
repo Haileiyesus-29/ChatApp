@@ -10,7 +10,7 @@ export const ENDPOINT = {
    VERIFY: () => '/api/auth/verify',
 
    // Chat endpoints
-   GET_ALL_CHATS: () => '/api/chats',
+   GET_ALL_CHATS: () => '/api/chat',
    GET_CHAT_THREAD: id => `/api/chat/${id}`,
    SEND_CHAT_MESSAGE: () => '/api/chat',
    GET_CONTACTS: () => '/api/chat/contacts',
