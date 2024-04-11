@@ -70,6 +70,34 @@ const useGroup = create(set => ({
          chatList: [response.data, ...store.chatList],
       }))
    },
+   getGroupInfo: async id => {
+      const response = await api.get(ENDPOINT.GET_GROUP(id))
+      if (!response.data) return
+      return response.data
+   },
+   updateGroup: async (id, payload, cb) => {
+      const response = await api.put(ENDPOINT.UPDATE_GROUP(id), payload)
+      cb?.(response)
+      if (!response.data || response.error) return
+      set(store => ({
+         ...store,
+         chatList: store.chatList.map(group => {
+            if (group.id === id) {
+               return { ...group, ...payload }
+            }
+            return group
+         }),
+      }))
+   },
+   deleteGroup: async (id, cb) => {
+      const response = await api.delete(ENDPOINT.DELETE_GROUP(id))
+      cb?.(response)
+      if (!response.data || response.error) return
+      set(store => ({
+         ...store,
+         chatList: store.chatList.filter(group => group.id !== id),
+      }))
+   },
 }))
 
 export default useGroup

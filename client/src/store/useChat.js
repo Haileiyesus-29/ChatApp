@@ -61,6 +61,11 @@ const useChat = create(set => ({
          },
       }))
    },
+   getChatInfo: async id => {
+      const response = await api.get(ENDPOINT.GET_USER(id))
+      if (!response.data) return
+      return response.data
+   },
 }))
 
 export default useChat

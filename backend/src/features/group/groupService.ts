@@ -23,7 +23,10 @@ export async function getGroups(user: User): Promise<ReturnType<any[]>> {
       },
     },
   })
-  const groups = userData?.groups ?? []
+  const groups = userData?.groups.reduce((acc, group) => {
+    acc[group.id] = {...group, type: "group", lastMessage: null}
+    return acc
+  }, {})
   const groupIds = userData?.groups.map(group => group.id)
 
   // find group's last messages
@@ -38,21 +41,35 @@ export async function getGroups(user: User): Promise<ReturnType<any[]>> {
     },
   })
 
-  const groupsWithLastMessages = groups.map(group => {
-    const lastMessage = lastMessages.find(message => message.groupRecId === group.id)
-    return {
-      ...group,
-      type: "group",
-      lastMessage: {
-        text: lastMessage?.text,
-        emoji: lastMessage?.emoji,
-        images: lastMessage?.images,
-        createdAt: lastMessage?.createdAt,
-      },
+  const groupsWithLastMessages = lastMessages.reduce((acc, message) => {
+    const currGroup = acc[message.groupRecId!]
+    if (
+      !currGroup.lastMessage ||
+      new Date(currGroup.lastMessage.createdAt) > new Date(message.createdAt)
+    ) {
+      acc[message.groupRecId!] = {
+        id: currGroup.id,
+        name: currGroup.name,
+        username: currGroup.username,
+        image: currGroup.image,
+        ownerId: currGroup.ownerId,
+        type: "group",
+        lastMessage: {
+          text: message.text,
+          emoji: message.emoji,
+          images: message.images,
+          createdAt: message.createdAt,
+        },
+      }
     }
-  })
+    return acc
+  }, groups || {})
 
-  return {data: groupsWithLastMessages, error: null}
+  const orderedContacts = Object.values(groupsWithLastMessages).sort((a: any, b: any) =>
+    a.lastMessage?.createdAt > b.lastMessage?.createdAt ? -1 : 1
+  )
+
+  return {data: orderedContacts, error: null}
 }
 
 export async function updateGroup(
@@ -153,6 +170,14 @@ export async function getGroupById(groupId: string): Promise<ReturnType<Group>> 
   const group = await db.group.findFirst({
     where: {
       id: groupId,
+    },
+    include: {
+      _count: {
+        select: {
+          members: true,
+          messages: true,
+        },
+      },
     },
   })
   if (!group) return {data: null, error: ERRORS.notFound("Group not found")}

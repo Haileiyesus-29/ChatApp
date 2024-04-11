@@ -6,6 +6,7 @@ import CreateForm from '@/ui/CreateForm'
 import Create from '@/ui/Create'
 import CreateChoose from '@/components/CreateChoose'
 import Profile from '@/ui/Profile'
+import About from '@/ui/About'
 import Home from '@/pages/Home'
 import Chat from '@/pages/Chat'
 import Login from '@/pages/Login'
@@ -31,6 +32,10 @@ const routes = createBrowserRouter([
                   path: ':id',
                   element: <Messages />,
                },
+               {
+                  path: 'about/:id',
+                  element: <About />,
+               },
             ],
          },
          {
@@ -44,6 +49,10 @@ const routes = createBrowserRouter([
                {
                   path: ':id',
                   element: <Messages />,
+               },
+               {
+                  path: 'about/:id',
+                  element: <About />,
                },
             ],
          },
@@ -59,6 +68,10 @@ const routes = createBrowserRouter([
                   path: ':id',
                   element: <Messages />,
                },
+               {
+                  path: 'about/:id',
+                  element: <About />,
+               },
             ],
          },
          {
@@ -72,6 +85,10 @@ const routes = createBrowserRouter([
                {
                   path: ':id',
                   element: <Messages />,
+               },
+               {
+                  path: 'about/:id',
+                  element: <About />,
                },
             ],
          },

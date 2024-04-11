@@ -33,8 +33,8 @@ const useChannel = create(set => ({
                return channel
             })
             .sort((a, b) => {
-               const aDate = new Date(a.lastMessage.createdAt)
-               const bDate = new Date(b.lastMessage.createdAt)
+               const aDate = new Date(a.lastMessage?.createdAt)
+               const bDate = new Date(b.lastMessage?.createdAt)
                return bDate - aDate
             }),
          messages: {
@@ -67,6 +67,38 @@ const useChannel = create(set => ({
       set(store => ({
          ...store,
          chatList: [response.data, ...store.chatList],
+      }))
+   },
+   getChannelInfo: async id => {
+      const response = await api.get(ENDPOINT.GET_CHANNEL(id))
+      if (!response.data) return
+      return response.data
+   },
+   updateChannel: async (id, payload, cb) => {
+      const response = await api.put(ENDPOINT.UPDATE_CHANNEL(id), payload)
+      cb?.(response)
+      if (!response.data || response.error) return
+      set(store => ({
+         ...store,
+         chatList: store.chatList.map(channel =>
+            channel.id === id
+               ? {
+                    ...channel,
+                    name: payload.name,
+                    image: payload.image,
+                    username: payload.username,
+                 }
+               : channel
+         ),
+      }))
+   },
+   deleteChannel: async (id, cb) => {
+      const response = await api.delete(ENDPOINT.DELETE_CHANNEL(id))
+      cb?.(response)
+      if (!response.data || response.error) return
+      set(store => ({
+         ...store,
+         chatList: store.chatList.filter(channel => channel.id !== id),
       }))
    },
 }))

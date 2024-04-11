@@ -35,10 +35,12 @@ function Messages() {
    return (
       <main className='flex flex-col justify-between gap-1 h-full overflow-hidden'>
          <ChatTitle user={user} />
-         <section className='flex flex-col justify-end items-start bg-zinc-900 p-2 oveflow-y-auto grow'>
-            {messages[id]?.map(message => (
-               <PersonalChatBubble key={message.id} message={message} />
-            ))}
+         <section className='bg-zinc-900 p-2 overflow-y-auto grow'>
+            <div className='flex flex-col justify-end items-start mt-auto min-h-full'>
+               {messages[id]?.map(message => (
+                  <PersonalChatBubble key={message.id} message={message} />
+               ))}
+            </div>
          </section>
          {showForm && (
             <form

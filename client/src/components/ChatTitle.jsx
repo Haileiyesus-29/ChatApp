@@ -1,5 +1,8 @@
+/* eslint-disable react/prop-types */
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { EllipsisVertical } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import paths from '@/paths'
 
 function ChatTitle({ user }) {
    return (
@@ -8,15 +11,15 @@ function ChatTitle({ user }) {
             <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
             <AvatarFallback>Profile Image</AvatarFallback>
          </Avatar>
-         <div className='flex flex-col justify-between overflow-hidden grow'>
+         <Link
+            to={paths.about(user.id, user?.type || 'chat')}
+            className='flex flex-col justify-between overflow-hidden grow'
+         >
             <h3 className='text-lg'>{user?.name}</h3>
             <p className='text-zinc-100/60 truncate leading-none overflow-hidden'>
                Last seen 2 hours ago
             </p>
-         </div>
-         <div className='flex justify-center items-center hover:bg-zinc-700/70 rounded-sm w-8 h-8 cursor-pointer'>
-            <EllipsisVertical />
-         </div>
+         </Link>
       </section>
    )
 }

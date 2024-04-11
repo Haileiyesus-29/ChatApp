@@ -114,10 +114,15 @@ export async function getChannels(user: User): Promise<ReturnType<any[]>> {
     },
   })
 
-  const channels = userData?.channels ?? []
-  const channelIds = channels.map(channel => channel.id)
+  const channels =
+    userData?.channels.reduce((acc, channel) => {
+      acc[channel.id] = {...channel, lastMessage: null, type: "channel"}
+      return acc
+    }, {}) ?? {}
 
-  const channelLastMessages = await db.message.findMany({
+  const channelIds = userData?.channels.map(channel => channel.id) ?? []
+
+  const allChannelsMessages = await db.message.findMany({
     where: {
       chanSenderId: {
         in: channelIds,
@@ -128,29 +133,33 @@ export async function getChannels(user: User): Promise<ReturnType<any[]>> {
     },
   })
 
-  const channelLastMessagesMap = channelLastMessages.reduce((acc, message) => {
-    const thisChannel = channels.find(channel => channel.id === message.chanSenderId)
-
-    acc[message.chanSenderId!] = {
-      id: message.chanSenderId,
-      name: thisChannel?.name,
-      username: thisChannel?.username,
-      image: thisChannel?.image,
-      ownerId: thisChannel?.ownerId,
-      type: "channel",
-      lastMessage: {
-        text: message.text,
-        emoji: message.emoji,
-        images: message.images,
-        createdAt: message.createdAt,
-      },
+  const channelsWithLastMessages = allChannelsMessages.reduce((acc, message) => {
+    const currAccount = acc[message.chanSenderId!]
+    if (
+      !currAccount.lastMessage ||
+      new Date(currAccount.lastMessage.createdAt) < new Date(message.createdAt)
+    ) {
+      acc[message.chanSenderId!] = {
+        id: currAccount.id,
+        name: currAccount.name,
+        username: currAccount.username,
+        image: currAccount.image,
+        ownerId: currAccount.ownerId,
+        type: "channel",
+        lastMessage: {
+          text: message.text,
+          emoji: message.emoji,
+          images: message.images,
+          createdAt: message.createdAt,
+        },
+      }
     }
     return acc
-  }, {})
+  }, channels)
 
-  const orderedChannels = Object.values(channelLastMessagesMap).sort(
+  const orderedChannels = Object.values(channelsWithLastMessages).sort(
     (a: any, b: any) =>
-      new Date(b.lastMessage.createdAt).getTime() - new Date(a.lastMessage.createdAt).getTime()
+      new Date(b.lastMessage?.createdAt).getTime() - new Date(a.lastMessage?.createdAt).getTime()
   )
 
   return {data: orderedChannels ?? null, error: null}
@@ -160,6 +169,14 @@ export async function getChannelById(channelId: string): Promise<ReturnType<Chan
   const channel = await db.channel.findFirst({
     where: {
       id: channelId,
+    },
+    include: {
+      _count: {
+        select: {
+          messages: true,
+          members: true,
+        },
+      },
     },
   })
   if (!channel) return {data: null, error: ERRORS.notFound("Channel not found")}

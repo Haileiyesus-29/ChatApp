@@ -8,11 +8,20 @@ function Group() {
       chatList,
       fetchGroupThread: fetchChatThread,
       sendMessage,
+      getGroupInfo: getInfo,
    } = useGroup(store => store)
 
    return (
       <Outlet
-         context={{ chatList, loading, fetchChatThread, messages, sendMessage }}
+         context={{
+            chatList,
+            loading,
+            fetchChatThread,
+            messages,
+            sendMessage,
+            getInfo,
+            type: 'group',
+         }}
       />
    )
 }
