@@ -25,6 +25,7 @@ app.use("/api/chat", routes.chatRoutes)
 app.use("/api/auth", routes.authRoutes)
 app.use("/api/channel", routes.channelRoutes)
 app.use("/api/group", routes.grouRoutes)
+app.use("/api/search", routes.searchRoutes)
 
 app.use(errorHandler)
 

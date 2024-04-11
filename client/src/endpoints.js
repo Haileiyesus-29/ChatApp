@@ -39,4 +39,10 @@ export const ENDPOINT = {
    SEND_GROUP_MESSAGE: () => `/api/group/messages`,
    JOIN_GROUP: () => `/api/group/join`,
    LEAVE_GROUP: () => `/api/group/leave`,
+
+   // search endpoints
+   SEARCH: query => `/api/search?q=${query}`,
+   SEARCH_USERS: query => `/api/search/users?q=${query}`,
+   SEARCH_CHANNELS: query => `/api/search/channels?q=${query}`,
+   SEARCH_GROUPS: query => `/api/search/groups?q=${query}`,
 }

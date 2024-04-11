@@ -77,7 +77,7 @@ function About() {
                   )}
                </ul>
             </div>
-            <div className='bg-zinc-100/10 p-4 border'>
+            {/* <div className='bg-zinc-100/10 p-4 border'>
                <h2 className='text-xl'>About</h2>
                <p className='py-4'>
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos
@@ -93,7 +93,7 @@ function About() {
                   dolorum, voluptatem voluptate quidem cumque doloribus
                   aspernatur.
                </p>
-            </div>
+            </div> */}
          </section>
       </main>
    )

@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import useAuth from '@/store/useAuth'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -18,21 +17,22 @@ const schema = z.object({
    username: z
       .string()
       .min(5, { message: 'username must be atleast 5 characters' })
-      .max(32, { message: "username can't be more than 32 characters" }),
+      .max(32, { message: "username can't be more than 32 characters" })
+      .regex(/^[a-zA-Z0-9_]+$/, {
+         message: 'username can only contain letters, numbers, and underscores',
+      }),
    bio: z.string().max(255),
 })
 
 function Profile() {
-   const { account } = useAuth(store => store)
-   const [disabled, setDisabled] = useState({
-      name: true,
-      username: true,
-      email: true,
-      bio: true,
-   })
+   const { account, updateProfile } = useAuth(store => store)
+   const [disabled, setDisabled] = useState(true)
+
    const {
       register,
       handleSubmit,
+      setValue,
+      setError,
       formState: { isSubmitting, errors },
    } = useForm({
       defaultValues: {
@@ -45,7 +45,38 @@ function Profile() {
    })
 
    const onSubmit = data => {
-      console.log(data)
+      updateProfile(data, setError)
+   }
+
+   const showButtons = () => {
+      if (disabled) {
+         return (
+            <Button
+               variant='secondary'
+               className='w-full'
+               type='button'
+               onClick={() => setDisabled(false)}
+            >
+               Edit
+            </Button>
+         )
+      } else {
+         return (
+            <Button
+               onClick={() => {
+                  setDisabled(true)
+                  setValue('name', account?.name)
+                  setValue('username', account?.username)
+                  setValue('bio', account?.bio)
+               }}
+               variant='secondary'
+               className='w-full'
+               type='button'
+            >
+               Cancel
+            </Button>
+         )
+      }
    }
 
    return (
@@ -69,58 +100,35 @@ function Profile() {
             onSubmit={handleSubmit(onSubmit)}
             className='flex flex-col gap-4 grow'
          >
+            {errors.root && (
+               <span className='text-red-500'>{errors.root.message}</span>
+            )}
             <FormItem>
                <Label htmlFor='username'>Name</Label>
-               <div className='flex items-center'>
-                  <Input
-                     {...register('name')}
-                     id='name'
-                     name='name'
-                     type='text'
-                     placeholder='Name'
-                     disabled={disabled.name}
-                     className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
-                  />
-                  <span
-                     onClick={() =>
-                        setDisabled(prev => ({
-                           ...prev,
-                           name: false,
-                        }))
-                     }
-                     className='px-1 text-zinc-400 hover:text-zinc-50 transition cursor-pointer'
-                  >
-                     <Pencil size='20px' />
-                  </span>
-               </div>
+               <Input
+                  {...register('name')}
+                  id='name'
+                  name='name'
+                  type='text'
+                  placeholder='Name'
+                  disabled={disabled}
+                  className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
+               />
                {errors.name && (
                   <span className='text-red-500'>{errors.name.message}</span>
                )}
             </FormItem>
             <FormItem>
                <Label htmlFor='username'>Username</Label>
-               <div className='flex items-center'>
-                  <Input
-                     {...register('username')}
-                     id='username'
-                     name='username'
-                     type='text'
-                     placeholder='Username'
-                     disabled={disabled.username}
-                     className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
-                  />
-                  <span
-                     onClick={() =>
-                        setDisabled(prev => ({
-                           ...prev,
-                           username: false,
-                        }))
-                     }
-                     className='px-1 text-zinc-400 hover:text-zinc-50 transition cursor-pointer'
-                  >
-                     <Pencil size='20px' />
-                  </span>
-               </div>
+               <Input
+                  {...register('username')}
+                  id='username'
+                  name='username'
+                  type='text'
+                  placeholder='Username'
+                  disabled={disabled}
+                  className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
+               />
                {errors.username && (
                   <span className='text-red-500'>
                      {errors.username.message}
@@ -135,56 +143,29 @@ function Profile() {
                   type='email'
                   placeholder='Email'
                   value={account?.email}
-                  disabled={disabled.email}
+                  disabled={disabled}
                   className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
                />
             </FormItem>
             <FormItem>
                <Label htmlFor='bio'>Bio</Label>
-               <div className='flex items-start'>
-                  <Textarea
-                     {...register('bio')}
-                     id='bio'
-                     name='bio'
-                     placeholder='Bio'
-                     disabled={disabled.bio}
-                     className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
-                  />
-                  <span
-                     onClick={() =>
-                        setDisabled(prev => ({
-                           ...prev,
-                           bio: false,
-                        }))
-                     }
-                     className='px-1 py-3 text-zinc-400 hover:text-zinc-50 transition cursor-pointer'
-                  >
-                     <Pencil size='20px' />
-                  </span>
-               </div>
+               <Textarea
+                  {...register('bio')}
+                  id='bio'
+                  name='bio'
+                  placeholder='Bio'
+                  disabled={disabled}
+                  className='focus-visible:border-zinc-300 focus-visible:ring-0 focus-visible:outline-none'
+               />
             </FormItem>
             <div className='flex gap-4'>
+               {showButtons()}
                <Button
-                  variant='secondary'
-                  className='w-full'
-                  type='button'
-                  onClick={() =>
-                     setDisabled({
-                        bio: true,
-                        name: true,
-                        email: true,
-                        username: true,
-                     })
-                  }
-               >
-                  Cancel
-               </Button>
-               <Button
-                  disabled={!Object.values(disabled).includes(false)}
+                  disabled={disabled || isSubmitting}
                   type='submit'
                   className='w-full'
                >
-                  Update
+                  {isSubmitting ? 'Updating...' : 'Update'}
                </Button>
             </div>
          </form>

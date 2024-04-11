@@ -41,7 +41,11 @@ export async function updateUserAccount(
   userData: User,
   payload: UserInput
 ): Promise<ReturnType<AccountResponse>> {
-  if (payload.username && (await findByUsername(payload.username)))
+  if (
+    payload.username &&
+    (await findByUsername(payload.username)) &&
+    payload.username !== userData.username
+  )
     return {data: null, error: ERRORS.badRequest(["Username already in use"])}
 
   let hashedPassword: string | undefined
@@ -53,11 +57,11 @@ export async function updateUserAccount(
       id: userData.id,
     },
     data: {
-      name: payload.name,
+      name: payload?.name,
       password: hashedPassword,
-      username: payload.username,
-      bio: payload.bio,
-      image: payload.image,
+      username: payload?.username,
+      bio: payload?.bio,
+      image: payload?.image,
     },
   })
 

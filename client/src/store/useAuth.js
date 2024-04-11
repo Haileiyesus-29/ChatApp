@@ -50,6 +50,20 @@ const useAuth = create(set => ({
       if (response.errors) return
       set({ account: response.data, loading: false })
    },
+
+   updateProfile: async (payload, cb) => {
+      set({ loading: true })
+      const response = await api.put(ENDPOINT.UPDATE_USER(), payload)
+      set({ loading: false })
+
+      if (response.errors) {
+         return cb?.('root', {
+            message: response.errors.join(),
+         })
+      }
+
+      set({ account: response.data, loading: false })
+   },
 }))
 
 export default useAuth
