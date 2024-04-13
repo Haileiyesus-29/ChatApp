@@ -1,0 +1,49 @@
+import { io } from 'socket.io-client'
+
+class SocketClient {
+   static #instance = null
+   #socket
+
+   constructor() {
+      this.#socket = io(import.meta.env.VITE_API_URL, {
+         withCredentials: true,
+         reconnectionAttempts: 5,
+         reconnectionDelay: 1000,
+         autoConnect: false,
+         auth: {
+            token: localStorage.getItem('token'),
+         },
+      })
+
+      this.#socket.on('connect', () => {
+         console.log('Connected to server')
+      })
+
+      this.#socket.on('disconnect', () => {
+         console.log('Disconnected from server')
+      })
+
+      this.#socket.on('chat:message', data => {
+         console.log('chat:message', data)
+      })
+   }
+
+   get socket() {
+      return this.#socket
+   }
+
+   disconnect() {
+      this.#socket?.disconnect()
+   }
+
+   static get instance() {
+      if (!this.#instance) {
+         this.#instance = new SocketClient()
+      }
+      return this.#instance
+   }
+}
+
+const instance = SocketClient.instance
+
+export default instance

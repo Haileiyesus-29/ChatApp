@@ -13,7 +13,7 @@ export async function authenticate(req: any, res: Response, next: NextFunction) 
 
   const secretKey = process.env.JWT_SECRET_KEY
   if (!secretKey) {
-    return next(ERRORS.badRequest(["Invalid token"]))
+    return next(ERRORS.serverFailure(["Failed to authenticate user"]))
   }
 
   let verified: JwtPayload

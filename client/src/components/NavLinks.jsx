@@ -44,10 +44,10 @@ function NavLinks() {
                <User />
                <span>Profile</span>
             </NavLink>
-            <NavLink to='/setting' className={setClassName}>
+            {/* <NavLink to='/setting' className={setClassName}>
                <Settings />
                <span>Settings</span>
-            </NavLink>
+            </NavLink> */}
          </ul>
       </aside>
    )

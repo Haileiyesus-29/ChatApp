@@ -2,12 +2,16 @@
 import SearchResult from '@/components/SearchResult'
 import React, { useMemo } from 'react'
 
-function Search({ searchResults, loading, setSearchInput }) {
+function Search({
+   searchResults: { users, groups, channels },
+   loading,
+   setSearchInput,
+}) {
    const renderUserResults = useMemo(() => {
       return (
          <ul className='flex flex-col gap-2'>
             <div className='px-3 text-lg'>Users</div>
-            {searchResults.users.map(user => (
+            {users.map(user => (
                <SearchResult
                   key={user.id}
                   account={user}
@@ -17,13 +21,13 @@ function Search({ searchResults, loading, setSearchInput }) {
             ))}
          </ul>
       )
-   }, [searchResults.users])
+   }, [users, setSearchInput])
 
    const renderGroupResults = useMemo(() => {
       return (
          <ul className='flex flex-col gap-2'>
             <div className='px-3 text-lg'>Groups</div>
-            {searchResults.groups.map(group => (
+            {groups.map(group => (
                <SearchResult
                   key={group.id}
                   account={group}
@@ -33,13 +37,13 @@ function Search({ searchResults, loading, setSearchInput }) {
             ))}
          </ul>
       )
-   }, [searchResults.groups])
+   }, [groups, setSearchInput])
 
    const renderChannelResults = useMemo(() => {
       return (
          <ul className='flex flex-col gap-2'>
             <div className='px-3 text-lg'>Channels</div>
-            {searchResults.channels.map(channel => (
+            {channels.map(channel => (
                <SearchResult
                   key={channel.id}
                   account={channel}
@@ -49,18 +53,18 @@ function Search({ searchResults, loading, setSearchInput }) {
             ))}
          </ul>
       )
-   }, [searchResults.channels])
+   }, [channels, setSearchInput])
 
    return (
       <div className='flex flex-col bg-zinc-50/10 shadow-lg backdrop-blur backdrop-brightness-50 p-4 rounded-lg w-full h-full overflow-hidden'>
          <h2 className='pb-6 text-2xl text-center'>Search results</h2>
          <section className='flex flex-col gap-4 overflow-y-auto grow'>
-            {searchResults.users.length > 0 && renderUserResults}
-            {searchResults.groups.length > 0 && renderGroupResults}
-            {searchResults.channels.length > 0 && renderChannelResults}
-            {searchResults.users.length === 0 &&
-               searchResults.groups.length === 0 &&
-               searchResults.channels.length === 0 && (
+            {users.length > 0 && renderUserResults}
+            {groups.length > 0 && renderGroupResults}
+            {channels.length > 0 && renderChannelResults}
+            {users.length === 0 &&
+               groups.length === 0 &&
+               channels.length === 0 && (
                   <p className='my-10 text-center text-lg'>
                      {loading ? 'Fetching Results...' : 'No results found'}
                   </p>

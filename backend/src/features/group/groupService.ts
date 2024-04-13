@@ -210,7 +210,7 @@ export async function getMessages(
       groupRecId: groupId,
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: "asc",
     },
   })
   return {data: messages.map(message => formatMessageResponse(message, "group")), error: null}

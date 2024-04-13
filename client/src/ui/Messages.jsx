@@ -3,34 +3,44 @@ import PersonalChatBubble from '@/components/PersonalChatBubble'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import useAuth from '@/store/useAuth'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useOutletContext, useParams } from 'react-router-dom'
+import { SendHorizontal } from 'lucide-react'
 
 function Messages() {
    const { id } = useParams()
    const { account } = useAuth(store => store)
-   const { messages, fetchChatThread, chatList, sendMessage } =
+   const { messages, fetchChatThread, chatList, sendMessage, getInfo } =
       useOutletContext()
-   useEffect(() => {
-      if (!messages[id]) fetchChatThread(id)
-   }, [fetchChatThread, id, messages])
-
-   const user = chatList.find(chat => chat.id === id) ?? {}
-
    const {
       register,
       handleSubmit,
       setValue,
       formState: { isSubmitting },
    } = useForm({ defaultValues: { text: '' } })
+   const [user, setUser] = useState(
+      () => chatList.find(chat => chat.id === id) ?? {}
+   )
 
    const onSubmit = async data => {
       await sendMessage({ recipientId: id, message: data })
       setValue('text', '')
    }
 
-   const showForm = user.type !== 'channel' || user?.ownerId === account.id
+   useEffect(() => {
+      if (!messages[id]) fetchChatThread(id)
+   }, [fetchChatThread, id, messages])
+
+   useEffect(() => {
+      if (!user.id) {
+         getInfo(id).then(setUser)
+      }
+   }, [getInfo, id, user.id])
+
+   const showForm =
+      (user.type === 'channel' && user?.ownerId === account.id) ||
+      user.type !== 'channel'
 
    return (
       <main className='flex flex-col justify-between gap-1 h-full overflow-hidden'>
@@ -57,7 +67,7 @@ function Messages() {
                   type='submit'
                   variant='secondary'
                >
-                  Send
+                  <SendHorizontal />
                </Button>
             </form>
          )}
