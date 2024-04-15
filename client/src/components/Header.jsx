@@ -8,7 +8,7 @@ import Search from '@/ui/Search'
 import { useEffect, useState } from 'react'
 
 function Header() {
-   const { logout } = useAuth(state => state)
+   const { logout, account } = useAuth(state => state)
    const [searchInput, setSearchInput] = useState('')
    const [searchResults, setSearchResults] = useState({
       users: [],
@@ -48,7 +48,7 @@ function Header() {
                <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
                <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <p>Mike Tyson</p>
+            <p>{account.name}</p>
          </h1>
          <Input
             value={searchInput}

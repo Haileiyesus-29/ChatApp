@@ -1,6 +1,7 @@
 import {NextFunction, Response} from "express"
 import * as service from "./chatService"
 import sendResponse from "@/utils/response"
+import SocketManager from "@/features/socket/socket"
 
 export async function getContacts(req, res: Response, next: NextFunction) {
   const {data, error} = await service.getContactList(req.user)
@@ -20,6 +21,7 @@ export async function sendMessage(req, res: Response, next: NextFunction) {
   const {data, error} = await service.sendMessage(req.user, req.body)
   if (error) return next(error)
 
+  SocketManager.instance.sendToUser(req.user.id, req.body.recipientId, data)
   res.json(sendResponse(data, 201))
 }
 

@@ -213,8 +213,8 @@ export async function getMessages(
     where: {
       chanSenderId: channelId,
     },
-    orderBy: {
-      createdAt: "asc",
+    include: {
+      userSender: true,
     },
   })
 
@@ -257,6 +257,9 @@ export async function sendMessage(
       text: message.text,
       emoji: message.emoji,
       images: message.images,
+    },
+    include: {
+      userSender: true,
     },
   })
 

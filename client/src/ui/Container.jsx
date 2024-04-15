@@ -5,7 +5,6 @@ import NavLinks from '@/components/NavLinks'
 import useAuth from '@/store/useAuth'
 import { useEffect } from 'react'
 import Provider from '@/Provider'
-import instance from '@/services/socket'
 
 function Container() {
    const { loading, account, verify } = useAuth(state => state)
@@ -13,15 +12,6 @@ function Container() {
    useEffect(() => {
       verify()
    }, [verify])
-
-   useEffect(() => {
-      if (account) {
-         instance.socket.connect()
-      }
-      return () => {
-         instance?.socket.disconnect()
-      }
-   }, [account])
 
    const renderMainComponents = () => (
       <>

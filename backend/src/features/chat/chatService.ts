@@ -124,12 +124,12 @@ export async function getChatMessageThread(
         {userSenderId: contactId, userRecId: user.id},
       ],
     },
-    orderBy: {
-      createdAt: "asc",
-    },
   })
 
-  return {data: messages.map(msg => formatMessageResponse(msg, "chat")), error: null}
+  return {
+    data: messages.map(msg => formatMessageResponse({...msg, userSender: null}, "chat")),
+    error: null,
+  }
 }
 
 export async function sendMessage(
@@ -161,7 +161,7 @@ export async function sendMessage(
     },
   })
 
-  return {data: formatMessageResponse(newMessage, "chat"), error: null}
+  return {data: formatMessageResponse({...newMessage, userSender: null}, "chat"), error: null}
 }
 
 export async function getChattedAccounts(user: User): Promise<ReturnType<any[]>> {

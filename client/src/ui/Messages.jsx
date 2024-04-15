@@ -3,12 +3,13 @@ import PersonalChatBubble from '@/components/PersonalChatBubble'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import useAuth from '@/store/useAuth'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useOutletContext, useParams } from 'react-router-dom'
 import { SendHorizontal } from 'lucide-react'
 
 function Messages() {
+   const messageBox = useRef()
    const { id } = useParams()
    const { account } = useAuth(store => store)
    const { messages, fetchChatThread, chatList, sendMessage, getInfo } =
@@ -29,6 +30,10 @@ function Messages() {
    }
 
    useEffect(() => {
+      messageBox.current.scrollTop = messageBox.current.scrollHeight
+   }, [messages])
+
+   useEffect(() => {
       if (!messages[id]) fetchChatThread(id)
    }, [fetchChatThread, id, messages])
 
@@ -45,7 +50,10 @@ function Messages() {
    return (
       <main className='flex flex-col justify-between gap-1 h-full overflow-hidden'>
          <ChatTitle user={user} />
-         <section className='bg-zinc-900 p-2 overflow-y-auto grow'>
+         <section
+            ref={messageBox}
+            className='bg-zinc-900 p-2 overflow-y-auto grow'
+         >
             <div className='flex flex-col justify-end items-start mt-auto min-h-full'>
                {messages[id]?.map(message => (
                   <PersonalChatBubble key={message.id} message={message} />

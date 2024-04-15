@@ -1,6 +1,7 @@
 import {NextFunction, Response} from "express"
 import * as services from "./groupService"
 import sendResponse from "@/utils/response"
+import SocketManager from "../socket/socket"
 
 export async function getMessages(req, res: Response, next: NextFunction) {
   const {data, error} = await services.getMessages(req.user, req.params.id)
@@ -52,6 +53,8 @@ export async function leaveGroup(req, res: Response, next: NextFunction) {
 export async function sendMessage(req, res: Response, next: NextFunction) {
   const {data, error} = await services.sendMessage(req.user, req.body)
   if (error) return next(error)
+
+  SocketManager.instance.sendToGroup(req.body.recipientId, data)
   res.json(sendResponse(data, 201))
 }
 

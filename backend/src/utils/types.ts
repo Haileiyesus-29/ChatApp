@@ -41,4 +41,10 @@ export type MessageResponse = {
   sender: string
   receiver: string
   type: "chat" | "group" | "channel"
+  user: {
+    id: string
+    name: string
+    username: string
+    image: string | null
+  } | null
 }

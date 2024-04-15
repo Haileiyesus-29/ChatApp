@@ -2,7 +2,7 @@ import {Server, Socket} from "socket.io"
 import {JwtPayload} from "jsonwebtoken"
 import jwt from "jsonwebtoken"
 import db from "@/config/db"
-import {send} from "process"
+import {MessageResponse} from "@/utils/types"
 
 type UserConnection = {
   activeSessions: Socket[]
@@ -114,10 +114,10 @@ class SocketManager {
     const receiverSockets = receiverConnections?.activeSessions ?? []
 
     senderSockets.forEach(socket => {
-      socket.emit("user:message", data)
+      socket.emit("chat:message", data)
     })
     receiverSockets.forEach(socket => {
-      socket.emit("user:message", data)
+      socket.emit("chat:message", data)
     })
   }
 

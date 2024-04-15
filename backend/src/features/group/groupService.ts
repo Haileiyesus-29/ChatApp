@@ -209,8 +209,15 @@ export async function getMessages(
     where: {
       groupRecId: groupId,
     },
-    orderBy: {
-      createdAt: "asc",
+    include: {
+      userSender: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          username: true,
+        },
+      },
     },
   })
   return {data: messages.map(message => formatMessageResponse(message, "group")), error: null}
@@ -222,7 +229,7 @@ export async function sendMessage(
     recipientId: string
     message: Message
   }
-): Promise<ReturnType<MessageResponse>> {
+): Promise<ReturnType<any>> {
   const groupId = data?.recipientId
   const message = data?.message
 
@@ -253,8 +260,21 @@ export async function sendMessage(
       emoji: message.emoji,
       images: message.images,
     },
+    include: {
+      userSender: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          username: true,
+        },
+      },
+    },
   })
-  return {data: formatMessageResponse(sentMessage, "group"), error: null}
+  return {
+    data: {...formatMessageResponse(sentMessage, "group"), user: sentMessage.userSender},
+    error: null,
+  }
 }
 
 export async function getMembers(user: User, groupId: string): Promise<ReturnType<any>> {

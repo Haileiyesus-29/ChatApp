@@ -7,7 +7,6 @@ class SocketClient {
    constructor() {
       this.#socket = io(import.meta.env.VITE_API_URL, {
          withCredentials: true,
-         reconnectionAttempts: 5,
          reconnectionDelay: 1000,
          autoConnect: false,
          auth: {
@@ -21,10 +20,6 @@ class SocketClient {
 
       this.#socket.on('disconnect', () => {
          console.log('Disconnected from server')
-      })
-
-      this.#socket.on('chat:message', data => {
-         console.log('chat:message', data)
       })
    }
 
