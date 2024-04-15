@@ -23,15 +23,34 @@ const useGroup = create(set => ({
    sendMessage: async payload => {
       const response = await api.post(ENDPOINT.SEND_GROUP_MESSAGE(), payload)
       if (!response.data || response.error) return
+      // set(store => ({
+      //    ...store,
+      //    chatList: store.chatList
+      //       .map(group => {
+      //          if (group.id === payload.recipientId) {
+      //             return { ...group, lastMessage: response.data }
+      //          }
+      //          return group
+      //       })
+      //       .sort((a, b) => {
+      //          const aDate = new Date(a.lastMessage.createdAt)
+      //          const bDate = new Date(b.lastMessage.createdAt)
+      //          return bDate - aDate
+      //       }),
+      //    messages: {
+      //       ...store.messages,
+      //       [payload.recipientId]: [
+      //          ...(store.messages[payload.recipientId] ?? []),
+      //          response.data,
+      //       ],
+      //    },
+      // }))
+   },
+   newMessage: async msg => {
       set(store => ({
          ...store,
          chatList: store.chatList
-            .map(group => {
-               if (group.id === payload.recipientId) {
-                  return { ...group, lastMessage: response.data }
-               }
-               return group
-            })
+            .map(g => (g.id === msg.receiver ? { ...g, lastMessage: msg } : g))
             .sort((a, b) => {
                const aDate = new Date(a.lastMessage.createdAt)
                const bDate = new Date(b.lastMessage.createdAt)
@@ -39,25 +58,7 @@ const useGroup = create(set => ({
             }),
          messages: {
             ...store.messages,
-            [payload.recipientId]: [
-               ...(store.messages[payload.recipientId] ?? []),
-               response.data,
-            ],
-         },
-      }))
-   },
-   newMessage: async (msg, user) => {
-      set(store => ({
-         ...store,
-         chatList: store.chatList.map(group => {
-            if (group.id === msg.groupId) {
-               return { ...group, lastMessage: msg }
-            }
-            return group
-         }),
-         messages: {
-            ...store.messages,
-            [msg.groupId]: [...(store.messages[msg.groupId] ?? []), msg],
+            [msg.receiver]: [...(store.messages[msg.receiver] ?? []), msg],
          },
       }))
    },

@@ -29,15 +29,12 @@ export async function getGroups(user: User): Promise<ReturnType<any[]>> {
   }, {})
   const groupIds = userData?.groups.map(group => group.id)
 
-  // find group's last messages
+  // find group's messages
   const lastMessages = await db.message.findMany({
     where: {
       groupRecId: {
         in: groupIds,
       },
-    },
-    orderBy: {
-      createdAt: "desc",
     },
   })
 
@@ -45,14 +42,13 @@ export async function getGroups(user: User): Promise<ReturnType<any[]>> {
     const currGroup = acc[message.groupRecId!]
     if (
       !currGroup.lastMessage ||
-      new Date(currGroup.lastMessage.createdAt) > new Date(message.createdAt)
+      new Date(currGroup.lastMessage.createdAt) < new Date(message.createdAt)
     ) {
       acc[message.groupRecId!] = {
         id: currGroup.id,
         name: currGroup.name,
         username: currGroup.username,
         image: currGroup.image,
-        ownerId: currGroup.ownerId,
         type: "group",
         lastMessage: {
           text: message.text,

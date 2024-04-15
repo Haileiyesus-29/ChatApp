@@ -13,7 +13,8 @@ function Provider({ children }) {
       setUserId,
    } = useChat(store => store)
 
-   const { fetchChatList: fetchGroupList } = useGroup(store => store)
+   const { fetchChatList: fetchGroupList, newMessage: newGroupMessage } =
+      useGroup(store => store)
    const { fetchChatList: fetchChannelList } = useChannel(store => store)
    const { account } = useAuth(store => store)
 
@@ -52,14 +53,14 @@ function Provider({ children }) {
 
    useEffect(() => {
       const listener = message => {
-         console.log(message)
+         newGroupMessage(message)
       }
       instance.socket.on('group:message', listener)
 
       return () => {
          instance.socket.off('group:message', listener)
       }
-   }, [])
+   }, [newGroupMessage])
 
    return <>{children}</>
 }
