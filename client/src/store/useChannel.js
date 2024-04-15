@@ -23,15 +23,14 @@ const useChannel = create(set => ({
    sendMessage: async payload => {
       const response = await api.post(ENDPOINT.SEND_CHANNEL_MESSAGE(), payload)
       if (!response.data || response.error) return
+   },
+   newMessage: async msg => {
       set(store => ({
          ...store,
          chatList: store.chatList
-            .map(channel => {
-               if (channel.id === payload.recipientId) {
-                  return { ...channel, lastMessage: response.data }
-               }
-               return channel
-            })
+            .map(ch =>
+               ch.id === msg.sender ? { ...ch, lastMessage: msg } : ch
+            )
             .sort((a, b) => {
                const aDate = new Date(a.lastMessage?.createdAt)
                const bDate = new Date(b.lastMessage?.createdAt)
@@ -39,26 +38,9 @@ const useChannel = create(set => ({
             }),
          messages: {
             ...store.messages,
-            [payload.recipientId]: [
-               ...(store.messages[payload.recipientId] ?? []),
-               response.data,
-            ],
+            [msg.sender]: [...(store.messages[msg.sender] ?? []), msg],
          },
       }))
-   },
-   newMessage: async (msg, user) => {
-      set({
-         chatList: chatList.map(channel => {
-            if (channel.id === msg.channelId) {
-               return { ...channel, lastMessage: msg }
-            }
-            return channel
-         }),
-         messages: {
-            ...messages,
-            [msg.channelId]: [...(messages[msg.channelId] ?? []), msg],
-         },
-      })
    },
    createChannel: async (payload, cb) => {
       const response = await api.post(ENDPOINT.CREATE_CHANNEL(), payload)

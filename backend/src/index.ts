@@ -35,19 +35,11 @@ app.use("/api/search", routes.searchRoutes)
 app.use(errorHandler)
 
 if (db) {
-  server.listen(PORT, () => console.log(`Server running on http://127.0.0.1:${PORT}`))
+  server.listen({port: PORT, host: "192.168.25.202"}, () =>
+    console.log(`Server running`, server.address())
+  )
 } else {
   console.log("database connection failed")
 }
-
-// SocketManager.init(server)
-// const io = SocketManager.getInstance
-
-// io.on("connection", socket => {
-//   console.log(`User connected: ${socket.id}`)
-//   socket.on("disconnect", () => {
-//     console.log(`User disconnected: ${socket.id}`)
-//   })
-// })
 
 export default app

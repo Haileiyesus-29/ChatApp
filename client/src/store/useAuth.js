@@ -8,15 +8,15 @@ const useAuth = create(set => ({
    login: async (payload, cb) => {
       set({ loading: true })
       const response = await api.post(ENDPOINT.LOGIN(), payload)
-      if (response.token) {
-         localStorage.setItem('token', response.token)
+      if (response?.token) {
+         localStorage.setItem('token', response?.token)
          set({ account: response, loading: false })
       } else
          return cb?.('root', {
             type: 'manual',
-            message: response.errors.join(),
+            message: response?.errors.join(),
          })
-      set({ account: response.data, loading: false })
+      set({ account: response?.data, loading: false })
    },
 
    logout: async () => {
@@ -30,15 +30,15 @@ const useAuth = create(set => ({
       const response = await api.post(ENDPOINT.REGISTER(), payload)
       set({ loading: false })
 
-      if (!response.token || response.errors) {
-         localStorage.setItem('token', response.token)
+      if (!response?.token || response?.errors) {
+         localStorage.setItem('token', response?.token)
       } else
          return cb?.('root', {
             type: 'manual',
-            message: response.errors.join(),
+            message: response?.errors.join(),
          })
 
-      set({ account: response.data, loading: false })
+      set({ account: response?.data, loading: false })
    },
 
    verify: async () => {
@@ -47,8 +47,8 @@ const useAuth = create(set => ({
          Authorization: `Bearer ${localStorage.getItem('token')}`,
       })
       set({ loading: false })
-      if (response.errors) return
-      set({ account: response.data, loading: false })
+      if (response?.errors) return
+      set({ account: response?.data, loading: false })
    },
 
    updateProfile: async (payload, cb) => {
@@ -56,13 +56,13 @@ const useAuth = create(set => ({
       const response = await api.put(ENDPOINT.UPDATE_USER(), payload)
       set({ loading: false })
 
-      if (response.errors) {
+      if (response?.errors) {
          return cb?.('root', {
-            message: response.errors.join(),
+            message: response?.errors.join(),
          })
       }
 
-      set({ account: response.data, loading: false })
+      set({ account: response?.data, loading: false })
    },
 }))
 

@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express"
 import * as services from "./channelService"
 import sendResponse from "@/utils/response"
+import SocketManager from "../socket/socket"
 
 // TODO: implement getChannels function
 export async function getChannels(req, res: Response, next: NextFunction) {
@@ -18,6 +19,8 @@ export async function getMessages(req, res: Response, next: NextFunction) {
 export async function sendMessage(req, res: Response, next: NextFunction) {
   const {data, error} = await services.sendMessage(req.user, req.body)
   if (error) return next(error)
+
+  SocketManager.instance.sendToChannel(req.body.recipientId, data)
   res.json(sendResponse(data, 201))
 }
 

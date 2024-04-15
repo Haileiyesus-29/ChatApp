@@ -25,7 +25,7 @@ function Container() {
    if (!loading && !account) return <Navigate to='/login' />
    return (
       <Provider>
-         <div className='gap-2 grid grid-cols-[minmax(4rem,_16rem),1fr] grid-rows-[min-content,1fr] bg-black mx-auto p-4 rounded-xl w-full max-w-screen-lg h-full overflow-hidden'>
+         <div className='gap-2 grid grid-cols-[4rem,1fr] md:grid-cols-[minmax(4rem,_16rem),1fr] grid-rows-[min-content,1fr] bg-black mx-auto p-4 lg:rounded-xl w-full max-w-screen-lg h-full overflow-hidden'>
             {loading ? renderLoading() : renderMainComponents()}
          </div>
       </Provider>

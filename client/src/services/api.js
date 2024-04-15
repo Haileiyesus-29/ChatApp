@@ -23,7 +23,7 @@ const api = {
          })
          return await response.json()
       } catch (error) {
-         console.error(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
 
@@ -45,7 +45,7 @@ const api = {
          }
          return data
       } catch (error) {
-         console.error(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
 
@@ -62,7 +62,7 @@ const api = {
          })
          return await response.json()
       } catch (error) {
-         console.error(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
    delete: async (endpoint, payload = {}, config = {}) => {
@@ -78,7 +78,7 @@ const api = {
          })
          return await response.json()
       } catch (error) {
-         console.error(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
 }

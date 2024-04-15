@@ -20,29 +20,29 @@ function NavLinks() {
          <ul className='flex flex-col gap-2'>
             <NavLink to='/' className={setClassName}>
                <MessagesSquare />
-               <span>All Chats</span>
+               <span className='md:block hidden'>All Chats</span>
             </NavLink>
             <NavLink to='/chat' className={setClassName}>
                <ContactRound />
-               <span>Personal</span>
+               <span className='md:block hidden'>Personal</span>
             </NavLink>
             <NavLink to='/group' className={setClassName}>
                <Users />
-               <span>Groups</span>
+               <span className='md:block hidden'>Groups</span>
             </NavLink>
             <NavLink to='/channel' className={setClassName}>
                <Podcast />
-               <span>Channels</span>
+               <span className='md:block hidden'>Channels</span>
             </NavLink>
          </ul>
          <ul className='flex flex-col gap-2'>
             <NavLink to='/new' className={setClassName}>
                <SquarePen />
-               <span>New</span>
+               <span className='md:block hidden'>New</span>
             </NavLink>
             <NavLink to='/profile' className={setClassName}>
                <User />
-               <span>Profile</span>
+               <span className='md:block hidden'>Profile</span>
             </NavLink>
             {/* <NavLink to='/setting' className={setClassName}>
                <Settings />
