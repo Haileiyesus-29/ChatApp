@@ -63,7 +63,7 @@ function Messages() {
          {showForm && (
             <form
                onSubmit={handleSubmit(onSubmit)}
-               className='flex items-center gap-1 px-1'
+               className='flex items-center gap-1 px-1 py-2'
             >
                <Input
                   {...register('text', { required: true })}

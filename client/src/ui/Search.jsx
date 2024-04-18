@@ -56,7 +56,8 @@ function Search({
    }, [channels, setSearchInput])
 
    return (
-      <div className='flex flex-col bg-zinc-50/10 shadow-lg backdrop-blur backdrop-brightness-50 p-4 rounded-lg w-full h-full overflow-hidden'>
+      // <div className='flex flex-col bg-zinc-50/10 shadow-lg backdrop-blur backdrop-brightness-50 p-4 rounded-lg w-full h-full overflow-hidden'>
+      <div className='flex flex-col bg-zinc-950 shadow-lg p-4 rounded-lg w-full h-full overflow-hidden'>
          <h2 className='pb-6 text-2xl text-center'>Search results</h2>
          <section className='flex flex-col gap-4 overflow-y-auto grow'>
             {users.length > 0 && renderUserResults}

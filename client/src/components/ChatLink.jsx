@@ -21,7 +21,7 @@ function ChatLink({ user }) {
          to={`/${user.type}/${user.id}`}
          className='relative flex items-center gap-2 bg-zinc-950 py-2 pr-10 pl-4 rounded-lg overflow-hidden shrink-0'
       >
-         <Avatar className='w-12 h-12'>
+         <Avatar className='w-8 h-8'>
             <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
             <AvatarFallback>Profile Image</AvatarFallback>
          </Avatar>
@@ -34,8 +34,8 @@ function ChatLink({ user }) {
                <Check />
             </span> */}
 
-            <h3 className='text-lg'>{user.name}</h3>
-            <p className='text-zinc-100/60 truncate leading-none overflow-hidden'>
+            <h3 className='truncate overflow-hidden'>{user.name}</h3>
+            <p className='text-sm text-zinc-100/60 truncate leading-none overflow-hidden'>
                {user.lastMessage?.text}
             </p>
          </div>

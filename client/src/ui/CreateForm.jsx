@@ -50,7 +50,7 @@ function CreateForm() {
    return (
       <form
          onSubmit={handleSubmit(onSubmit)}
-         className='flex flex-col gap-3 mx-auto py-10 min-w-[25rem] max-w-md'
+         className='flex flex-col gap-3 mx-auto py-10 p-2 w-full max-w-md'
       >
          {errors.root && (
             <span className='block border-2 bg-red-400/20 p-1 border-red-700/70 rounded-md text-red-500 text-sm'>

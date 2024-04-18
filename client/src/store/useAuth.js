@@ -25,13 +25,13 @@ const useAuth = create(set => ({
    },
 
    register: async (payload, cb) => {
-      console.log(payload)
       set({ loading: true })
       const response = await api.post(ENDPOINT.REGISTER(), payload)
       set({ loading: false })
 
       if (!response?.token || response?.errors) {
          localStorage.setItem('token', response?.token)
+         cb?.()
       } else
          return cb?.('root', {
             type: 'manual',

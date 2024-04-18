@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ENDPOINT } from '@/endpoints'
 import api from '@/services/api'
@@ -8,7 +7,7 @@ import Search from '@/ui/Search'
 import { useEffect, useState } from 'react'
 
 function Header() {
-   const { logout, account } = useAuth(state => state)
+   const { account } = useAuth(state => state)
    const [searchInput, setSearchInput] = useState('')
    const [searchResults, setSearchResults] = useState({
       users: [],
@@ -42,9 +41,11 @@ function Header() {
    }, [searchInput])
 
    return (
-      <header className='relative flex justify-between items-center col-span-full px-3 py-1'>
-         <h1 className='flex items-center gap-2 rounded-md font-semibold text-xl'>
-            <Avatar className='w-14 h-14'>
+      <header className='relative flex justify-between items-center gap-2 col-span-full px-3 py-2'>
+         {/* <h1 className='flex items-center gap-2 rounded-md font-semibold text-xl'> */}
+         <h1 className='flex items-center gap-2 rounded-md font shrink-0 text'>
+            {/* <Avatar className='w-14 h-14'> */}
+            <Avatar className='w-10 h-10'>
                <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
                <AvatarFallback>CN</AvatarFallback>
             </Avatar>
@@ -54,13 +55,11 @@ function Header() {
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
             placeholder='Search'
-            className='focus-visible:outline-none focus:border-2 focus:border-zinc-500 px-6 rounded-full max-w-80'
+            // className='focus-visible:outline-none order-1 focus:border-2 focus:border-zinc-500 mx-auto px-6 rounded-full max-w-80'
+            className='focus-visible:outline-none order-1 focus:border-2 focus:border-zinc-500 mx-auto px-6 rounded-full max-w-80'
          />
-         <Button onClick={logout} variant='secondary'>
-            Logout
-         </Button>
          {searchInput && (
-            <div className='top-full right-32 z-10 absolute m-4 w-full max-w-md h-[80svh] transition-all'>
+            <div className='top-full left-1/2 z-20 absolute w-11/12 max-w-md h-[90svh] transition-all -translate-x-1/2 md:-translate-x-28'>
                <Search
                   searchResults={searchResults}
                   loading={loading}

@@ -80,8 +80,8 @@ function Profile() {
    }
 
    return (
-      <main className='flex gap-4 bg-zinc-900 p-4'>
-         <form className='flex flex-col gap-2 basis-1/3'>
+      <main className='flex md:flex-row flex-col gap-4 bg-zinc-900 p-4 overflow-x-auto'>
+         <form className='flex flex-col gap-2 max-w-sm basis-1/3'>
             <img
                src='https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg'
                alt='profile image'

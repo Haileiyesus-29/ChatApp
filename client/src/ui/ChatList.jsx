@@ -5,7 +5,7 @@ function ChatList() {
    const { chatList } = useOutletContext()
 
    return (
-      <main className='flex flex-col gap-2 bg-zinc-900 px-4 py-2 h-full overflow-y-auto'>
+      <main className='flex flex-col gap-1 bg-zinc-900 p-1 h-full overflow-y-auto'>
          {(chatList ?? []).map(chat => (
             <ChatLink key={chat.id} user={chat} />
          ))}

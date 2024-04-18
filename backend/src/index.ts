@@ -35,9 +35,7 @@ app.use("/api/search", routes.searchRoutes)
 app.use(errorHandler)
 
 if (db) {
-  server.listen({port: PORT, host: "192.168.25.202"}, () =>
-    console.log(`Server running`, server.address())
-  )
+  server.listen(PORT, () => console.log(`Server running`, server.address()))
 } else {
   console.log("database connection failed")
 }

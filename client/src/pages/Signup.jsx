@@ -7,7 +7,7 @@ import useAuth from '@/store/useAuth'
 import AuthContainer from '@/ui/AuthContainer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -21,6 +21,7 @@ const schema = z.object({
 
 function Signup() {
    const { register: signup } = useAuth()
+   const navigate = useNavigate()
    const {
       register,
       handleSubmit,
@@ -30,10 +31,23 @@ function Signup() {
       resolver: zodResolver(schema),
    })
 
+   const onSignup = async data => {
+      try {
+         await signup(data, args => {
+            if (args) setError(args)
+            else navigate('/')
+         })
+         navigate('/')
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
    return (
       <AuthContainer>
+         signup
          <form
-            onSubmit={handleSubmit(data => signup(data, setError))}
+            onSubmit={handleSubmit(onSignup)}
             className='flex flex-col gap-4 bg-zinc-900 px-4 py-6 border rounded w-full max-w-sm'
          >
             <h2 className='font-semibold text-2xl text-center'>Signup</h2>
