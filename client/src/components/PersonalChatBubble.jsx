@@ -1,4 +1,7 @@
 import useAuth from '@/store/useAuth'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Link } from 'react-router-dom'
+import paths from '@/paths'
 
 /* eslint-disable react/prop-types */
 function PersonalChatBubble({ message }) {
@@ -19,6 +22,39 @@ function PersonalChatBubble({ message }) {
          </span>
       )
 
+   if (message.type === 'group' && !sent)
+      return (
+         <div className='flex items-end gap-2'>
+            <Link to={paths.chatMessage(message.user.id)} className='py-1'>
+               <Avatar className='w-10 h-10'>
+                  <AvatarImage
+                     src='https://github.com/shadcn.png'
+                     alt='@shadcn'
+                  />
+                  <AvatarFallback>Profile Image</AvatarFallback>
+               </Avatar>
+            </Link>
+            <div className=''>
+               <h4 className='text-sm font-semibold text-zinc-300/80'>
+                  {message.user.name}
+               </h4>
+               <div className={setClassName(sent)}>
+                  <p className='grow'>{message.text}</p>
+                  <span
+                     className={`text-xs ${
+                        sent ? 'text-zinc-900/80' : 'text-zinc-200/80'
+                     }`}
+                  >
+                     {new Date(message.createdAt).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                     })}
+                  </span>
+               </div>
+            </div>
+         </div>
+      )
+
    return (
       <div className={setClassName(sent)}>
          <p className='grow'>{message.text}</p>
@@ -36,3 +72,19 @@ function PersonalChatBubble({ message }) {
    )
 }
 export default PersonalChatBubble
+
+// return (
+//    <div className={setClassName(sent)}>
+//       <p className='grow'>{message.text}</p>
+//       <span
+//          className={`text-xs ${
+//             sent ? 'text-zinc-900/80' : 'text-zinc-200/80'
+//          }`}
+//       >
+//          {new Date(message.createdAt).toLocaleTimeString('en-US', {
+//             hour: '2-digit',
+//             minute: '2-digit',
+//          })}
+//       </span>
+//    </div>
+// )

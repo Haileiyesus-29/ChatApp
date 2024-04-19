@@ -12,7 +12,7 @@ function ChatTitle({ user }) {
             <AvatarFallback>Profile Image</AvatarFallback>
          </Avatar>
          <Link
-            to={paths.about(user.id, user?.type || 'chat')}
+            to={paths.about(user?.id, user?.type || 'chat')}
             className='flex flex-col justify-between overflow-hidden grow'
          >
             <h3 className='text-lg'>{user?.name}</h3>

@@ -14,20 +14,11 @@ function Messages() {
    const { account } = useAuth(store => store)
    const { messages, fetchChatThread, chatList, sendMessage, getInfo } =
       useOutletContext()
-   const {
-      register,
-      handleSubmit,
-      setValue,
-      formState: { isSubmitting },
-   } = useForm({ defaultValues: { text: '' } })
    const [user, setUser] = useState(
-      () => chatList.find(chat => chat.id === id) ?? {}
+      () => chatList.find(chat => chat.id === id) ?? null
    )
 
-   const onSubmit = async data => {
-      await sendMessage({ recipientId: id, message: data })
-      setValue('text', '')
-   }
+   const [loading, setLoading] = useState(true)
 
    useEffect(() => {
       messageBox.current.scrollTop = messageBox.current.scrollHeight
@@ -38,14 +29,32 @@ function Messages() {
    }, [fetchChatThread, id, messages])
 
    useEffect(() => {
-      if (!user.id) {
-         getInfo(id).then(setUser)
+      if (!user?.id) {
+         getInfo(id)
+            .then(setUser)
+            .then(() => setLoading(false))
+      } else {
+         setLoading(false)
       }
-   }, [getInfo, id, user.id])
+   }, [getInfo, id, user?.id])
+
+   if (!user && !loading) return <h1>Not Found</h1>
+
+   const {
+      register,
+      handleSubmit,
+      setValue,
+      formState: { isSubmitting },
+   } = useForm({ defaultValues: { text: '' } })
+
+   const onSubmit = async data => {
+      await sendMessage({ recipientId: id, message: data })
+      setValue('text', '')
+   }
 
    const showForm =
-      (user.type === 'channel' && user?.ownerId === account.id) ||
-      user.type !== 'channel'
+      (user?.type === 'channel' && user?.ownerId === account.id) ||
+      user?.type !== 'channel'
 
    return (
       <main className='flex flex-col justify-between gap-1 h-full overflow-hidden'>
