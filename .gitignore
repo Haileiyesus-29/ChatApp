@@ -134,3 +134,12 @@ dist
 
 # uploaded files
 uploads
+
+# environment variables
+*.env
+
+# local api test files
+*.rest
+
+# text editor files and folders
+.vscode

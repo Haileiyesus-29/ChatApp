@@ -1,15 +1,8 @@
 import { RouterProvider } from 'react-router-dom'
-import router from './router'
-import AuthProvider from './features/auth/AuthProvider'
-import SocketProvider from './features/socket-io/SocketProvider'
+import routes from '@/routes'
 
 function App() {
-   return (
-      <AuthProvider>
-         <SocketProvider>
-            <RouterProvider router={router} />
-         </SocketProvider>
-      </AuthProvider>
-   )
+   return <RouterProvider router={routes} />
 }
+
 export default App

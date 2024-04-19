@@ -1,64 +1,84 @@
-import axios from 'axios'
+const BASE_URL = import.meta.env.VITE_API_URL
 
-const baseURL = `${import.meta.env.VITE_SERVER_ADDR}/api/`
-
-const axiosInstance = axios.create({
-   baseURL,
-   headers: {
-      'Content-Type': 'application/json',
-   },
-   withCredentials: true,
-})
-
-const handleError = error => {
-   if (error.response) {
-      console.error('Response error:', error.response.data)
-      return Promise.reject(error.response.data)
-   } else if (error.request) {
-      // The request was made, but no response was received
-      console.error('No response received:', error.request)
-      return Promise.reject('No response received')
-   } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error('Request setup error:', error.message)
-      return Promise.reject(error.message)
-   }
+const defaultConfig = {
+   'Content-Type': 'application/json',
+   Accept: 'application/json',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+   'Access-Control-Allow-Headers':
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+   'Access-Control-Allow-Credentials': 'true',
 }
 
 const api = {
-   get: async (url, config = {}) => {
+   get: async (endpoint, config = {}) => {
       try {
-         const response = await axiosInstance.get(url, { config })
-         return response.data
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'GET',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+         })
+         return await response.json()
       } catch (error) {
-         return handleError(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
 
-   post: async (url, data = {}, config = {}) => {
+   post: async (endpoint, payload = {}, config = {}) => {
       try {
-         const response = await axiosInstance.post(url, data, config)
-         return response.data
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'POST',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+            body: JSON.stringify(payload),
+         })
+         const data = await response.json()
+         if (response.headers.get('Authorization')) {
+            const token = response.headers.get('Authorization').split(' ')[1]
+            data['token'] = token
+         }
+         return data
       } catch (error) {
-         return handleError(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
 
-   put: async (url, data = {}, config = {}) => {
+   put: async (endpoint, payload = {}, config = {}) => {
       try {
-         const response = await axiosInstance.put(url, data, config)
-         return response.data
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'PUT',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+            body: JSON.stringify(payload),
+         })
+         return await response.json()
       } catch (error) {
-         return handleError(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
-
-   del: async (url, config = {}) => {
+   delete: async (endpoint, payload = {}, config = {}) => {
       try {
-         const response = await axiosInstance.delete(url, config)
-         return response.data
+         const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'DELETE',
+            headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`,
+               ...defaultConfig,
+               ...config,
+            },
+            body: JSON.stringify(payload),
+         })
+         return await response.json()
       } catch (error) {
-         return handleError(error)
+         console.error('Failed to fetch data from the server.')
       }
    },
 }
