@@ -49,7 +49,7 @@ function Header() {
                <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
                <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <p>{account.name}</p>
+            <p className="hidden md:block">{account.name}</p>
          </h1>
          <Input
             value={searchInput}
