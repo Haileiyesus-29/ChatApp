@@ -1,20 +1,20 @@
-version: '3'
+version: '3.7'
 
 services:
    db:
-      image: mongo
+      image: postgres
       container_name: chatapp-db
       ports:
-         - 27018:27017
+         - '5433:5432'
       networks:
          - chatapp-network
    api:
-      build: ./server
+      build: ./backend
       container_name: chatapp-api
       ports:
          - '5000:5000'
       volumes:
-         - './server:/app'
+         - './backend:/app'
          - '/app/node_modules'
       depends_on:
          - db
@@ -24,7 +24,7 @@ services:
       build: ./client
       container_name: chatapp-ui
       ports:
-         - '5173:5173'
+         - '5500:5500'
       volumes:
          - './client:/app'
          - '/app/node_modules'

@@ -29,15 +29,13 @@ const useAuth = create(set => ({
       const response = await api.post(ENDPOINT.REGISTER(), payload)
       set({ loading: false })
 
-      if (!response?.token || response?.errors) {
+      if (!response?.errors && response?.token) {
          localStorage.setItem('token', response?.token)
          cb?.()
-      } else
-         return cb?.('root', {
-            type: 'manual',
-            message: response?.errors.join(),
-         })
-
+      } else {
+         console.log(response.errors)
+         return cb?.(response.errors.join())
+      }
       set({ account: response?.data, loading: false })
    },
 

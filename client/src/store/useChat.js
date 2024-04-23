@@ -25,51 +25,30 @@ const useChat = create(set => ({
    sendMessage: async payload => {
       const response = await api.post(ENDPOINT.SEND_CHAT_MESSAGE(), payload)
       if (!response.data || response.error) return
-      // set(store => ({
-      //    ...store,
-      //    chatList: store.chatList
-      //       .map(chat => {
-      //          if (chat.id === payload.recipientId) {
-      //             return { ...chat, lastMessage: response.data }
-      //          }
-      //          return chat
-      //       })
-      //       .sort((a, b) => {
-      //          const aDate = new Date(a.lastMessage.createdAt)
-      //          const bDate = new Date(b.lastMessage.createdAt)
-      //          return bDate - aDate
-      //       }),
-      //    messages: {
-      //       ...store.messages,
-      //       [payload.recipientId]: [
-      //          ...(store.messages[payload.recipientId] ?? []),
-      //          response.data,
-      //       ],
-      //    },
-      // }))
    },
    newMessage: async message => {
       set(store => {
          let chatId =
             message.sender === store.userId ? message.receiver : message.sender
+         let isChatted = store.chatList.find(chat => chat.id === chatId)
+         let chatList = isChatted
+            ? store.chatList
+            : [
+                 {
+                    id: chatId,
+                    ...message.user,
+                    lastMessage: message,
+                 },
+                 ...store.chatList,
+              ]
 
          return {
             ...store,
-            chatList: store.chatList
-               .map(chat => {
-                  if (
-                     chat.id === message.receiver ||
-                     chat.id === message.sender
-                  ) {
-                     return { ...chat, lastMessage: message }
-                  }
-                  return chat
-               })
-               .sort((a, b) => {
-                  const aDate = new Date(a.lastMessage.createdAt)
-                  const bDate = new Date(b.lastMessage.createdAt)
-                  return bDate - aDate
-               }),
+            chatList: chatList.sort((a, b) => {
+               const aDate = new Date(a.lastMessage.createdAt)
+               const bDate = new Date(b.lastMessage.createdAt)
+               return bDate - aDate
+            }),
             messages: {
                ...store.messages,
                [chatId]: [

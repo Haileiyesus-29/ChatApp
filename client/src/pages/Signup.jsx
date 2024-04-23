@@ -32,20 +32,21 @@ function Signup() {
    })
 
    const onSignup = async data => {
-      try {
-         await signup(data, args => {
-            if (args) setError(args)
-            else navigate('/')
+      // try {
+      await signup(data, message => {
+         setError('root', {
+            type: 'manual',
+            message,
          })
          navigate('/')
-      } catch (error) {
-         console.log(error)
-      }
+      })
+      // } catch (error) {
+      //    console.log(error)
+      // }
    }
 
    return (
       <AuthContainer>
-         signup
          <form
             onSubmit={handleSubmit(onSignup)}
             className='flex flex-col gap-4 bg-zinc-900 px-4 py-6 border rounded w-full max-w-sm'

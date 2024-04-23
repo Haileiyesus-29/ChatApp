@@ -161,7 +161,16 @@ export async function sendMessage(
     },
   })
 
-  return {data: formatMessageResponse({...newMessage, userSender: null}, "chat"), error: null}
+  return {
+    data: formatMessageResponse(
+      {
+        ...newMessage,
+        userSender: {id: user.id, image: user.id, name: user.name, username: user.username},
+      },
+      "chat"
+    ),
+    error: null,
+  }
 }
 
 export async function getChattedAccounts(user: User): Promise<ReturnType<any[]>> {
