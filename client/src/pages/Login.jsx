@@ -74,7 +74,7 @@ function Login() {
                {isSubmitting ? 'Loading...' : 'Login'}
             </Button>
             <Separator />
-            <Button type='button' className='flex gap-2 w-full'>
+            {/* <Button type='button' className='flex gap-2 w-full'>
                <img
                   className='w-6 h-6'
                   src='https://www.svgrepo.com/show/475656/google-color.svg'
@@ -82,7 +82,7 @@ function Login() {
                   alt='google logo'
                />
                <span className='text-center'>Login with Google</span>
-            </Button>
+            </Button> */}
             <p className='text-sm text-zinc-'>
                didn&apos;t have an account?
                <Link to='/signup' className='px-2 text-blue-700'>

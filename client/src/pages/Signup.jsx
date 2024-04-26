@@ -111,7 +111,7 @@ function Signup() {
                {isSubmitting ? 'Loading...' : 'Signup'}
             </Button>
             <Separator />
-            <Button type='button' className='flex gap-2 w-full'>
+            {/* <Button type='button' className='flex gap-2 w-full'>
                <img
                   className='w-6 h-6'
                   src='https://www.svgrepo.com/show/475656/google-color.svg'
@@ -119,7 +119,7 @@ function Signup() {
                   alt='google logo'
                />
                <span className='text-center'>Signup with Google</span>
-            </Button>
+            </Button> */}
             <p className='text-sm text-zinc-200/80'>
                already have an account?
                <Link to='/login' className='px-2 text-blue-700'>
