@@ -25,7 +25,9 @@ const schema = z.object({
 })
 
 function Profile() {
-   const { account, updateProfile } = useAuth(store => store)
+   const { account, updateProfile, updateProfilePicture } = useAuth(
+      store => store
+   )
    const [disabled, setDisabled] = useState(true)
 
    const {
@@ -48,6 +50,7 @@ function Profile() {
       updateProfile(data, setError)
    }
 
+   const [image, setImage] = useState(null)
    const showButtons = () => {
       if (disabled) {
          return (
@@ -79,17 +82,32 @@ function Profile() {
       }
    }
 
+   const onPictureUpdate = e => {
+      e.preventDefault()
+      if (image) updateProfilePicture(image)
+   }
+
+   console.log(image)
    return (
       <main className='flex md:flex-row flex-col gap-4 bg-zinc-900 p-4 overflow-x-auto'>
-         <form className='flex flex-col gap-2 max-w-sm basis-1/3'>
+         <form
+            onSubmit={onPictureUpdate}
+            type='multipart/form-data'
+            className='flex flex-col gap-2 max-w-sm basis-1/3'
+         >
             <img
                src='https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg'
                alt='profile image'
             />
-            <Input type='file' id='image' name='image' />
+            <Input
+               type='file'
+               id='image'
+               name='image'
+               onChange={e => setImage(e.target.files)}
+            />
             <Button
-               disabled={true}
-               type='button'
+               disabled={image === null}
+               type='submit'
                variant='secondary'
                className='w-full'
             >

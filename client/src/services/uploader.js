@@ -3,27 +3,33 @@ import { ENDPOINT } from '../endpoints'
 
 async function uploadFiles(files) {
    const sig = await api.get(ENDPOINT.UPDATE_PROFILE_PICTURE())
-   const config = {
-      headers: {
-         'Content-Type': 'multipart/form-data',
-      },
-   }
-   const formData = new FormData()
+   const sigData = sig.data
+
+   if (!sigData) return console.error('Failed to get signed url')
 
    const requests = []
 
+   const formData = new FormData()
    for (const file of files) {
       formData.append('file', file)
-      formData.append('api_key', sig.api_key)
-      formData.append('timestamp', sig.timestamp)
-      formData.append('signature', sig.signature)
+      formData.append('api_key', sigData.apiKey)
+      formData.append('timestamp', sigData.timestamp)
+      formData.append('signature', sigData.signature)
+      formData.append('folder', sigData.folder)
+      formData.append('eager', sigData.eager)
 
       requests.push(
-         api.post(ENDPOINT.UPDATE_PROFILE_PICTURE(), formData, config)
+         fetch(sigData.url, {
+            method: 'POST',
+            body: formData,
+         })
       )
    }
 
-   return Promise.all(requests)
+   const response = await Promise.all(requests)
+   const data = await Promise.all(response.map(res => res.text()))
+
+   return JSON.parse(data)
 }
 
 export default uploadFiles

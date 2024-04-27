@@ -61,7 +61,6 @@ export async function updateUserAccount(
       password: hashedPassword,
       username: payload?.username,
       bio: payload?.bio,
-      image: payload?.image,
     },
   })
 
@@ -223,16 +222,18 @@ export async function deleteUser(
  * @param payload - The updated user data.
  * @returns A Promise that resolves to the updated user or an error object.
  */
-export async function updateProfilePicture(
-  userData: User,
-  payload: UserInput
-): Promise<ReturnType<AccountResponse>> {
+export async function updateProfilePicture(data): Promise<ReturnType<AccountResponse>> {
+  const folder = data?.folder
+  if (!folder) return {data: null, error: ERRORS.badRequest(["Folder is required"])}
+
+  const userId = folder.split("/").pop()
+
   const user = await db.user.update({
     where: {
-      id: userData.id,
+      id: userId,
     },
     data: {
-      image: payload?.image,
+      image: data.secure_url,
     },
   })
 

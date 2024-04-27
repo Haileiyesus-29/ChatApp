@@ -1,5 +1,6 @@
 import { ENDPOINT } from '@/endpoints'
 import api from '@/services/api'
+import uploadFiles from '@/services/uploader'
 import { create } from 'zustand'
 
 const useAuth = create(set => ({
@@ -61,6 +62,11 @@ const useAuth = create(set => ({
       }
 
       set({ account: response?.data, loading: false })
+   },
+   updateProfilePicture: async image => {
+      const response = await uploadFiles(image)
+      console.log(response)
+      // set({ account: response?.data })
    },
 }))
 

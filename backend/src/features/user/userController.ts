@@ -1,7 +1,5 @@
 import sendResponse from "@/utils/response"
 import * as services from "./userService"
-import generateToken from "@/helpers/generateToken"
-import {ERRORS} from "@/utils/errors"
 import genUploadSignature from "@/helpers/genUploadSingature"
 
 export async function getUserById(req, res, next) {
@@ -18,7 +16,7 @@ export async function updateUser(req, res, next) {
 }
 
 export async function updateProfilePicture(req, res, next) {
-  const {data, error} = await services.updateProfilePicture(req.user, req.body)
+  const {data, error} = await services.updateProfilePicture(req.body)
   if (error) return next(error)
 
   res.json(sendResponse(data))
@@ -31,8 +29,8 @@ export async function deleteUser(req, res, next) {
   res.json(sendResponse(data))
 }
 
-export async function getSignedUrl(req, res, next) {
-  const data = genUploadSignature()
+export async function getSignedUrl(req, res) {
+  const data = genUploadSignature({id: req.user.id})
 
   res.json(sendResponse(data))
 }

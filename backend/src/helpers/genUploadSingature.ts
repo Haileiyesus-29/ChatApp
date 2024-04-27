@@ -1,12 +1,15 @@
 import cloudinary from "@/config/cloudinaryConfig"
 
-function genUploadSignature(
-  editConfig = {width: 300, height: 300, crop: "pad"},
-  folder = "profile_pictures"
-) {
+function genUploadSignature({
+  eager = "c_pad,h_300,w_400|c_crop,h_200,w_260",
+  folder = "chatapp/profile_pictures",
+  id,
+}) {
   const timestamp = Math.round(Date.now() / 1000)
+  const customFolder = `${folder}/${id}`
+
   const signature = cloudinary.utils.api_sign_request(
-    {timestamp, eager: [editConfig], folder},
+    {timestamp, eager, folder: customFolder},
     cloudinary.config().api_secret!
   )
 
@@ -15,8 +18,11 @@ function genUploadSignature(
   return {
     signature,
     timestamp,
+    folder: customFolder,
+    eager,
     apiKey: cloudinary.config().api_key,
-    url: `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+
+    url: `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
   }
 }
 
