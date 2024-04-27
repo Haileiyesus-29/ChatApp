@@ -3,6 +3,7 @@ export const ENDPOINT = {
    GET_USER: id => `/api/user/${id}`,
    UPDATE_USER: () => `/api/user`,
    DELETE_USER: () => `/api/user`,
+   UPDATE_PROFILE_PICTURE: () => `/api/user/signedurl`,
 
    // auth endpoints
    LOGIN: () => '/api/auth/login',

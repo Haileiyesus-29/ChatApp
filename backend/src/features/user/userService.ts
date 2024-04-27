@@ -216,3 +216,25 @@ export async function deleteUser(
 
   return {data: userData, error: null}
 }
+
+/**
+ * Updates a user's profile picture.
+ * @param userData - The existing user data.
+ * @param payload - The updated user data.
+ * @returns A Promise that resolves to the updated user or an error object.
+ */
+export async function updateProfilePicture(
+  userData: User,
+  payload: UserInput
+): Promise<ReturnType<AccountResponse>> {
+  const user = await db.user.update({
+    where: {
+      id: userData.id,
+    },
+    data: {
+      image: payload?.image,
+    },
+  })
+
+  return {data: removePassword(user), error: null}
+}
