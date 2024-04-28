@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs"
+import jwt, {JwtPayload} from "jsonwebtoken"
 import db from "@/config/db"
 import {ERRORS} from "@/utils/errors"
 import {AccountResponse, ReturnType} from "@/utils/types"
@@ -61,4 +62,32 @@ export async function createNewUser(payload: User): Promise<ReturnType<AccountRe
   })
 
   return {data: removePassword(user), error: null}
+}
+
+/**
+ * Refreshes the user token.
+ * @param payload - The user data to be refreshed.
+ * @returns A Promise that resolves to the refreshed user or an error object.
+ */
+export async function refreshToken(payload: {
+  refToken: string
+}): Promise<ReturnType<AccountResponse>> {
+  if (!payload.refToken) return {data: null, error: ERRORS.badRequest(["Invalid token"])}
+
+  let verified: JwtPayload
+  try {
+    verified = jwt.verify(payload.refToken, process.env.JWT_REFRESH_KEY!) as JwtPayload
+  } catch (error) {
+    return {data: null, error: ERRORS.badRequest(["Invalid token"])}
+  }
+
+  const user = await db.user.findFirst({
+    where: {
+      id: verified.id,
+    },
+  })
+
+  if (!user) return {data: null, error: ERRORS.badRequest(["Invalid token"])}
+
+  return {data: {...removePassword(user)}, error: null}
 }

@@ -3,6 +3,8 @@ import "express-async-errors"
 import dotenv from "dotenv"
 import express, {Express} from "express"
 import cors from "cors"
+import cookieParser from "cookie-parser"
+
 import routes from "@/features/index"
 import db from "@/config/db"
 import errorHandler from "./middlewares/errorHandler"
@@ -17,10 +19,11 @@ const PORT = process.env.PORT || 5000
 const server = http.createServer(app)
 SocketManager.init(server)
 
+app.use(cookieParser())
 app.use(
   cors({
-    // origin: process.env.CLIENT_URL,
-    origin: "*",
+    origin: process.env.CLIENT_URL,
+    // origin: "*",
     credentials: true,
   })
 )

@@ -9,19 +9,18 @@ const useAuth = create(set => ({
    login: async (payload, cb) => {
       set({ loading: true })
       const response = await api.post(ENDPOINT.LOGIN(), payload)
-      if (response?.token) {
-         localStorage.setItem('token', response?.token)
-         set({ account: response, loading: false })
-      } else
+      if (response.errors) {
          return cb?.('root', {
             type: 'manual',
             message: response?.errors.join(),
          })
+      }
+      sessionStorage.setItem('token', response?.token)
       set({ account: response?.data, loading: false })
    },
 
    logout: async () => {
-      localStorage.removeItem('token')
+      sessionStorage.removeItem('token')
       set({ account: null })
    },
 
@@ -31,7 +30,7 @@ const useAuth = create(set => ({
       set({ loading: false })
 
       if (!response?.errors && response?.token) {
-         localStorage.setItem('token', response?.token)
+         sessionStorage.setItem('token', response?.token)
          cb?.()
       } else {
          console.log(response.errors)
@@ -42,11 +41,10 @@ const useAuth = create(set => ({
 
    verify: async () => {
       set({ loading: true })
-      const response = await api.get(ENDPOINT.VERIFY(), {
-         Authorization: `Bearer ${localStorage.getItem('token')}`,
-      })
+      const response = await api.get(ENDPOINT.VERIFY())
       set({ loading: false })
       if (response?.errors) return
+      sessionStorage.setItem('token', response?.token)
       set({ account: response?.data, loading: false })
    },
 

@@ -1,4 +1,3 @@
-import {authenticate} from "@/middlewares/authenticate"
 import {Router} from "express"
 import * as controller from "./authController"
 
@@ -20,7 +19,7 @@ router.post("/login", controller.loginUser)
  * @group Authentication
  * @returns {void}
  */
-router.post("/register", controller.regusterUser)
+router.post("/register", controller.registerUser)
 
 /**
  * Route for verifying user authentication.
@@ -30,6 +29,6 @@ router.post("/register", controller.regusterUser)
  * @security JWT
  * @returns {void}
  */
-router.get("/verify", authenticate, controller.verifyUser)
+router.get("/verify", controller.verifyUser)
 
 export default router
