@@ -75,6 +75,7 @@ export async function refreshToken(payload: {
   if (!payload.refToken) return {data: null, error: ERRORS.badRequest(["Invalid token"])}
 
   let verified: JwtPayload
+
   try {
     verified = jwt.verify(payload.refToken, process.env.JWT_REFRESH_KEY!) as JwtPayload
   } catch (error) {

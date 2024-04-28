@@ -10,7 +10,7 @@ class SocketClient {
          reconnectionDelay: 1000,
          autoConnect: false,
          auth: {
-            token: localStorage.getItem('token'),
+            token: sessionStorage.getItem('token'),
          },
       })
 
@@ -25,10 +25,6 @@ class SocketClient {
 
    get socket() {
       return this.#socket
-   }
-
-   disconnect() {
-      this.#socket?.disconnect()
    }
 
    static get instance() {

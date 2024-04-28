@@ -31,4 +31,14 @@ router.post("/register", controller.registerUser)
  */
 router.get("/verify", controller.verifyUser)
 
+/**
+ * Route for user logout.
+ *
+ * @route POST /api/auth/logout
+ * @group Authentication
+ * @security JWT
+ * @returns {void}
+ */
+router.post("/logout", controller.logoutUser)
+
 export default router

@@ -26,7 +26,6 @@ function Container() {
    return (
       <Provider>
          <div className='grid grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] bg-black mx-auto lg:rounded-xl w-full max-w-screen-lg h-full overflow-hidden'>
-            {/* <div className='gap-2 grid grid-cols-[4rem,1fr] md:grid-cols-[minmax(4rem,_16rem),1fr] grid-rows-[min-content,1fr] bg-black mx-auto lg:rounded-xl w-full max-w-screen-lg h-full overflow-hidden'> */}
             {loading ? renderLoading() : renderMainComponents()}
          </div>
       </Provider>

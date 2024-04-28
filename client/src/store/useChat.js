@@ -11,12 +11,12 @@ const useChat = create(set => ({
    fetchChatList: async () => {
       set(store => ({ ...store, loading: true }))
       const response = await api.get(ENDPOINT.GET_ALL_CHATS())
-      if (!response.data) return
+      if (!response?.data) return
       set(store => ({ ...store, loading: false, chatList: response.data }))
    },
    fetchChatThread: async id => {
       const response = await api.get(ENDPOINT.GET_CHAT_THREAD(id))
-      if (!response.data) return
+      if (!response?.data) return
       set(store => ({
          ...store,
          messages: { ...store.messages, [id]: response.data },
@@ -24,7 +24,7 @@ const useChat = create(set => ({
    },
    sendMessage: async payload => {
       const response = await api.post(ENDPOINT.SEND_CHAT_MESSAGE(), payload)
-      if (!response.data || response.error) return
+      if (!response?.data || response.error) return
    },
    newMessage: async message => {
       set(store => {
@@ -63,7 +63,6 @@ const useChat = create(set => ({
    },
    getChatInfo: async id => {
       const response = await api.get(ENDPOINT.GET_USER(id))
-      if (!response.data) return
       return response.data
    },
 }))

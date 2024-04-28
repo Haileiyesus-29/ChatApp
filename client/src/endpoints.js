@@ -9,6 +9,7 @@ export const ENDPOINT = {
    LOGIN: () => '/api/auth/login',
    REGISTER: () => '/api/auth/register',
    VERIFY: () => '/api/auth/verify',
+   LOGOUT: () => '/api/auth/logout',
 
    // Chat endpoints
    GET_ALL_CHATS: () => '/api/chat',

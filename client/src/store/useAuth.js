@@ -21,6 +21,9 @@ const useAuth = create(set => ({
 
    logout: async () => {
       sessionStorage.removeItem('token')
+      const response = await api.post(ENDPOINT.LOGOUT())
+      if (response?.errors) return
+
       set({ account: null })
    },
 
@@ -33,7 +36,6 @@ const useAuth = create(set => ({
          sessionStorage.setItem('token', response?.token)
          cb?.()
       } else {
-         console.log(response.errors)
          return cb?.(response.errors.join())
       }
       set({ account: response?.data, loading: false })

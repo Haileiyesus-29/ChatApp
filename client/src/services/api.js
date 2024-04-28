@@ -1,5 +1,5 @@
+import { ENDPOINT } from '@/endpoints'
 import axios from 'axios'
-
 const BASE_URL = import.meta.env.VITE_API_URL
 
 const getConfig = custom => ({
@@ -9,7 +9,7 @@ const getConfig = custom => ({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
       'Access-Control-Allow-Credentials': 'true',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       ...custom,
    },
    withCredentials: true,
@@ -23,7 +23,9 @@ const api = {
          const response = await axios.get(getPath(endpoint), getConfig())
          return response.data
       } catch (error) {
-         handleError(error)
+         await handleError(error)
+         // Retry the request after verifying the token
+         return (await axios.get(getPath(endpoint), getConfig())).data
       }
    },
 
@@ -36,7 +38,11 @@ const api = {
          )
          return response.data
       } catch (error) {
-         handleError(error)
+         await handleError(error)
+         // Retry the request after verifying the token
+         return (
+            await axios.post(getPath(endpoint), payload, getConfig(config))
+         ).data
       }
    },
 
@@ -49,7 +55,10 @@ const api = {
          )
          return response.data
       } catch (error) {
-         handleError(error)
+         await handleError(error)
+         // Retry the request after verifying the token
+         return (await axios.put(getPath(endpoint), payload, getConfig(config)))
+            .data
       }
    },
 
@@ -58,13 +67,30 @@ const api = {
          const response = await axios.delete(getPath(endpoint), getConfig())
          return response.data
       } catch (error) {
-         handleError(error)
+         await handleError(error)
+         // Retry the request after verifying the token
+         return (await axios.delete(getPath(endpoint), getConfig())).data
       }
    },
 }
 
-function handleError(err) {
-   console.log(err)
+async function handleError(err) {
+   if (err.response?.data.errors?.includes('Invalid token')) {
+      try {
+         const response = await axios.get(
+            getPath(ENDPOINT.VERIFY()),
+            getConfig()
+         )
+         if (response.data) {
+            sessionStorage.setItem('token', `${response.data.token}`)
+         } else {
+            throw new Error('Invalid token')
+         }
+      } catch (error) {
+         console.error(error)
+      }
+   } else {
+      console.error(err)
+   }
 }
-
 export default api
