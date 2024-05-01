@@ -23,10 +23,7 @@ function About() {
       <main className='flex items-center gap-2 bg-zinc-900 p-2 h-full overflow-y-auto'>
          <section className='flex md:flex-row flex-col bg-zinc-950 rounded h-full overflow-y-auto grow'>
             <div className='p-4 max-w-xs basis-1/3'>
-               <img
-                  src='https://media.istockphoto.com/id/1316420668/vector/user-icon-human-person-symbol-social-profile-icon-avatar-login-sign-web-user-symbol.jpg?s=612x612&w=0&k=20&c=AhqW2ssX8EeI2IYFm6-ASQ7rfeBWfrFFV4E87SaFhJE='
-                  alt=''
-               />
+               <img src={info.image || 'default_profile.jpg'} alt={info.name} />
             </div>
             <div className='p-4 grow'>
                <h1 className='border-zinc-50 text-3xl'>{info.name}</h1>

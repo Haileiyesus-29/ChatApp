@@ -63,10 +63,14 @@ const useAuth = create(set => ({
       set({ account: response?.data, loading: false })
    },
 
-   updateProfilePicture: async image => {
+   updateProfilePicture: async (image, cb) => {
       const response = await uploadFiles(image)
-      console.log(response)
-      // set({ account: response?.data })
+      if (!response) return
+      set(store => ({
+         ...store,
+         account: { ...store.account, image: response?.data?.secure_url },
+      }))
+      cb?.()
    },
 }))
 

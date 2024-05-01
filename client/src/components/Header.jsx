@@ -44,7 +44,10 @@ function Header() {
       <header className='relative flex justify-between items-center gap-2 col-span-full px-3 py-2'>
          <h1 className='flex items-center gap-2 rounded-md font shrink-0 text'>
             <Avatar className='w-10 h-10'>
-               <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
+               <AvatarImage
+                  src={account.image || 'default_profile.jpg'}
+                  alt={account.name}
+               />
                <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <p className='md:block hidden'>{account.name}</p>

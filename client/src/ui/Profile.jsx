@@ -7,6 +7,7 @@ import useAuth from '@/store/useAuth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -29,6 +30,7 @@ function Profile() {
       store => store
    )
    const [disabled, setDisabled] = useState(true)
+   const navigate = useNavigate()
 
    const {
       register,
@@ -84,10 +86,9 @@ function Profile() {
 
    const onPictureUpdate = e => {
       e.preventDefault()
-      if (image) updateProfilePicture(image)
+      if (image) updateProfilePicture(image, () => navigate('/'))
    }
 
-   console.log(image)
    return (
       <main className='flex md:flex-row flex-col gap-4 bg-zinc-900 p-4 overflow-x-auto'>
          <form
@@ -96,8 +97,8 @@ function Profile() {
             className='flex flex-col gap-2 max-w-sm basis-1/3'
          >
             <img
-               src='https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg'
-               alt='profile image'
+               src={account?.image || 'default_profile.jpg'}
+               alt={account?.name}
             />
             <Input
                type='file'
