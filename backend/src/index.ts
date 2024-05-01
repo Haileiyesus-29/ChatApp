@@ -38,10 +38,14 @@ app.use("/api/search", routes.searchRoutes)
 
 app.use(errorHandler)
 
-if (db) {
-  server.listen(PORT, () => console.log(`Server running`, server.address()))
-} else {
-  console.log("database connection failed")
+try {
+  if (db) {
+    db.$connect()
+    console.log("Database connected")
+    server.listen(PORT, () => console.log(`Server running`, server.address()))
+  }
+} catch (error) {
+  console.log("error", error)
 }
 
 export default app

@@ -20,13 +20,25 @@ function Container() {
          <Outlet />
       </>
    )
-   const renderLoading = () => <div>Loading...</div>
 
-   if (!loading && !account) return <Navigate to='/login' />
+   // TODO: Create a loading component
+   const renderLoading = () => (
+      <div className='bg-black mx-auto lg:rounded-xl w-full max-w-screen-lg h-full overflow-hidden'>
+         <div className='flex justify-center items-center w-full h-full'>
+            <div className='flex flex-col justify-center items-center'>
+               <div className='border-gray-900 border-t-2 border-b-2 rounded-full w-32 h-32 animate-spin'></div>
+               <div className='mt-4 text-lg text-white'>Loading...</div>
+            </div>
+         </div>
+      </div>
+   )
+
+   if (loading) return renderLoading()
+   if (!account) return <Navigate to='/login' />
    return (
       <Provider>
          <div className='grid grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] bg-black mx-auto lg:rounded-xl w-full max-w-screen-lg h-full overflow-hidden'>
-            {loading ? renderLoading() : renderMainComponents()}
+            {renderMainComponents()}
          </div>
       </Provider>
    )
