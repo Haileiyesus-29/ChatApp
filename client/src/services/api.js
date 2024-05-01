@@ -18,6 +18,12 @@ const getConfig = custom => ({
 
 const getPath = endpoint => `${BASE_URL}${endpoint}`
 
+const dontTryEndponits = [
+   ENDPOINT.LOGIN(),
+   ENDPOINT.REGISTER(),
+   ENDPOINT.VERIFY(),
+]
+
 const api = {
    request: async (method, endpoint, payload = {}, config = {}) => {
       try {
@@ -26,10 +32,16 @@ const api = {
             payload,
             getConfig(config)
          )
-         if (response.data) return response.data
 
-         if (response.data.errors?.includes('Invalid token')) {
-            console.log('Invalid token error detected')
+         return response.data
+      } catch (err) {
+         const errorData = err.response.data
+
+         if (dontTryEndponits.includes(endpoint)) {
+            return errorData
+         }
+
+         if (errorData.errors?.includes('Invalid token')) {
             await axios.get(getPath(ENDPOINT.VERIFY()), getConfig())
          }
 
@@ -39,13 +51,32 @@ const api = {
             getConfig(config)
          )
          return retry.data
+      }
+   },
+
+   get: async (endpoint, config = {}) => {
+      try {
+         const response = await axios.get(getPath(endpoint), getConfig(config))
+
+         return response.data
       } catch (err) {
-         console.error(err)
+         const errorData = err.response.data
+
+         if (dontTryEndponits.includes(endpoint)) {
+            return errorData
+         }
+
+         if (errorData.errors?.includes('Invalid token')) {
+            await axios.get(getPath(ENDPOINT.VERIFY()), getConfig())
+         }
+
+         const retry = await axios.get(getPath(endpoint), getConfig(config))
+         return retry.data
       }
    },
 }
 
-const methods = ['get', 'post', 'put', 'delete']
+const methods = ['post', 'put', 'delete']
 
 methods.forEach(method => {
    api[method] = async (endpoint, payload = {}, config = {}) => {

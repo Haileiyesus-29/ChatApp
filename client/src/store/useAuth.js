@@ -11,7 +11,6 @@ const useAuth = create(set => ({
       const response = await api.post(ENDPOINT.LOGIN(), payload)
       if (response.errors) {
          return cb?.('root', {
-            type: 'manual',
             message: response?.errors.join(),
          })
       }
@@ -47,7 +46,7 @@ const useAuth = create(set => ({
       set({ loading: false })
       if (response?.errors) return
       sessionStorage.setItem('token', response?.token)
-      set({ account: response?.data, loading: false })
+      set({ account: response?.data })
    },
 
    updateProfile: async (payload, cb) => {
@@ -63,6 +62,7 @@ const useAuth = create(set => ({
 
       set({ account: response?.data, loading: false })
    },
+
    updateProfilePicture: async image => {
       const response = await uploadFiles(image)
       console.log(response)
