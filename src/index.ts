@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import express, {Express} from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import path from "path"
 
 import routes from "@/features/index"
 import db from "@/config/db"
@@ -28,6 +29,12 @@ app.use("/api/auth", routes.authRoutes)
 app.use("/api/channel", routes.channelRoutes)
 app.use("/api/group", routes.grouRoutes)
 app.use("/api/search", routes.searchRoutes)
+
+app.use(express.static(path.join(__dirname, "../client/dist")))
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"))
+})
 
 app.use(errorHandler)
 
