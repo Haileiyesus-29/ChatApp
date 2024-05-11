@@ -6,7 +6,7 @@ COPY package.json .
 
 RUN npm install
 
-ENV DATABASE_URL=postgres://avnadmin:AVNS_HwvX939fS7ZLQcMiQqH@mydb-haileiyesus29-7b18.e.aivencloud.com:18166/chatapp?sslmode=require
+ENV DATABASE_URL=postgres://postgres:@localhost:5432/chatapp
 
 COPY prisma . 
 
