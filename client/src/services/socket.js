@@ -5,9 +5,9 @@ class SocketClient {
    #socket
 
    constructor() {
-      this.#socket = io(import.meta.env.VITE_API_URL, {
+      this.#socket = io({
          withCredentials: true,
-         reconnectionDelay: 1000,
+         reconnectionDelay: 3000,
          autoConnect: false,
          auth: {
             token: sessionStorage.getItem('token'),

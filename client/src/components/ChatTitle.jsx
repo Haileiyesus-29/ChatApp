@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { EllipsisVertical } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import paths from '@/paths'
 
@@ -9,8 +8,8 @@ function ChatTitle({ user }) {
       <section className='flex justify-between items-center gap-2 bg-zinc-950 p-2 rounded-t-lg'>
          <Avatar className='w-12 h-12'>
             <AvatarImage
-               src={user.image || 'default_profile.jpg'}
-               alt={user.name}
+               src={user?.image || 'default_profile.jpg'}
+               alt={user?.name}
             />
             <AvatarFallback>Profile Image</AvatarFallback>
          </Avatar>

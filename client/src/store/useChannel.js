@@ -2,7 +2,7 @@ import { ENDPOINT } from '@/endpoints'
 import api from '@/services/api'
 import { create } from 'zustand'
 
-const useChannel = create(set => ({
+const useChannel = create((set, getStore) => ({
    loading: true,
    chatList: [],
    messages: {},
@@ -25,21 +25,26 @@ const useChannel = create(set => ({
       if (!response.data || response.error) return
    },
    newMessage: async msg => {
+      const currState = getStore()
+      const chatList = currState.chatList
+         .map(ch => (ch.id === msg.sender ? { ...ch, lastMessage: msg } : ch))
+         .sort((a, b) => {
+            const aDate = new Date(a.lastMessage.createdAt)
+            const bDate = new Date(b.lastMessage.createdAt)
+            return bDate - aDate
+         })
+
+      let messages
+      if (currState.messages[msg.sender]) {
+         messages = [...currState.messages[msg.sender]].push(msg)
+      } else {
+         messages = await api.get(ENDPOINT.GET_CHANNEL_MESSAGES(msg.sender))
+      }
+
       set(store => ({
          ...store,
-         chatList: store.chatList
-            .map(ch =>
-               ch.id === msg.sender ? { ...ch, lastMessage: msg } : ch
-            )
-            .sort((a, b) => {
-               const aDate = new Date(a.lastMessage?.createdAt)
-               const bDate = new Date(b.lastMessage?.createdAt)
-               return bDate - aDate
-            }),
-         messages: {
-            ...store.messages,
-            [msg.sender]: [...(store.messages[msg.sender] ?? []), msg],
-         },
+         chatList,
+         messages,
       }))
    },
    createChannel: async (payload, cb) => {

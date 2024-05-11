@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import api from '@/services/api'
 import { ENDPOINT } from '@/endpoints'
 
-const useGroup = create(set => ({
+const useGroup = create((set, getState) => ({
    loading: true,
    chatList: [],
    messages: {},
@@ -23,43 +23,33 @@ const useGroup = create(set => ({
    sendMessage: async payload => {
       const response = await api.post(ENDPOINT.SEND_GROUP_MESSAGE(), payload)
       if (!response.data || response.error) return
-      // set(store => ({
-      //    ...store,
-      //    chatList: store.chatList
-      //       .map(group => {
-      //          if (group.id === payload.recipientId) {
-      //             return { ...group, lastMessage: response.data }
-      //          }
-      //          return group
-      //       })
-      //       .sort((a, b) => {
-      //          const aDate = new Date(a.lastMessage.createdAt)
-      //          const bDate = new Date(b.lastMessage.createdAt)
-      //          return bDate - aDate
-      //       }),
-      //    messages: {
-      //       ...store.messages,
-      //       [payload.recipientId]: [
-      //          ...(store.messages[payload.recipientId] ?? []),
-      //          response.data,
-      //       ],
-      //    },
-      // }))
    },
    newMessage: async msg => {
+      const currState = getState()
+      const chatList = currState.chatList
+         .map(g => {
+            if (g.id === msg.receiver) {
+               return { ...g, lastMessage: msg }
+            }
+            return g
+         })
+         .sort((a, b) => {
+            const aDate = new Date(a.lastMessage.createdAt)
+            const bDate = new Date(b.lastMessage.createdAt)
+            return bDate - aDate
+         })
+
+      let messages
+      if (currState.messages[msg.receiver]) {
+         messages = [...currState.messages[msg.receiver]].push(msg)
+      } else {
+         messages = await api.get(ENDPOINT.GET_GROUP_MESSAGES(msg.receiver))
+      }
+
       set(store => ({
          ...store,
-         chatList: store.chatList
-            .map(g => (g.id === msg.receiver ? { ...g, lastMessage: msg } : g))
-            .sort((a, b) => {
-               const aDate = new Date(a.lastMessage.createdAt)
-               const bDate = new Date(b.lastMessage.createdAt)
-               return bDate - aDate
-            }),
-         messages: {
-            ...store.messages,
-            [msg.receiver]: [...(store.messages[msg.receiver] ?? []), msg],
-         },
+         chatList,
+         messages,
       }))
    },
    createGroup: async (payload, cb) => {

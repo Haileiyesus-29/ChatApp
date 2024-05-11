@@ -1,7 +1,7 @@
 import { ENDPOINT } from '@/endpoints'
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL
+// const BASE_URL = import.meta.env.VITE_API_URL
 
 const getConfig = custom => ({
    headers: {
@@ -16,7 +16,7 @@ const getConfig = custom => ({
    withCredentials: true,
 })
 
-const getPath = endpoint => `${BASE_URL}${endpoint}`
+// const getPath = endpoint => `${BASE_URL}${endpoint}`
 
 const dontTryEndponits = [
    ENDPOINT.LOGIN(),
@@ -28,7 +28,7 @@ const api = {
    request: async (method, endpoint, payload = {}, config = {}) => {
       try {
          const response = await axios[method](
-            getPath(endpoint),
+            endpoint,
             payload,
             getConfig(config)
          )
@@ -42,21 +42,17 @@ const api = {
          }
 
          if (errorData.errors?.includes('Invalid token')) {
-            await axios.get(getPath(ENDPOINT.VERIFY()), getConfig())
+            await axios.get(ENDPOINT.VERIFY()), getConfig()
          }
 
-         const retry = await axios[method](
-            getPath(endpoint),
-            payload,
-            getConfig(config)
-         )
+         const retry = await axios[method](endpoint, payload, getConfig(config))
          return retry.data
       }
    },
 
    get: async (endpoint, config = {}) => {
       try {
-         const response = await axios.get(getPath(endpoint), getConfig(config))
+         const response = await axios.get(endpoint, getConfig(config))
 
          return response.data
       } catch (err) {
@@ -67,10 +63,10 @@ const api = {
          }
 
          if (errorData.errors?.includes('Invalid token')) {
-            await axios.get(getPath(ENDPOINT.VERIFY()), getConfig())
+            await axios.get(ENDPOINT.VERIFY()), getConfig()
          }
 
-         const retry = await axios.get(getPath(endpoint), getConfig(config))
+         const retry = await axios.get(endpoint, getConfig(config))
          return retry.data
       }
    },
