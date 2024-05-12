@@ -1,5 +1,5 @@
-import db from "@/config/db"
-import {ReturnType} from "@/utils/types"
+import db from "../../config/db"
+import {ReturnType} from "../../utils/types"
 import {Channel, Group, User} from "@prisma/client"
 
 export async function searchUserAccount(query: string): Promise<ReturnType<any[]>> {

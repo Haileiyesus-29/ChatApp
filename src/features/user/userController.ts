@@ -1,6 +1,6 @@
-import sendResponse from "@/utils/response"
+import sendResponse from "../../utils/response"
 import * as services from "./userService"
-import genUploadSignature from "@/helpers/genUploadSingature"
+import genUploadSignature from "../../helpers/genUploadSingature"
 
 export async function getUserById(req, res, next) {
   const userId = req.params.id

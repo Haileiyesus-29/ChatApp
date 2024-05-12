@@ -1,7 +1,7 @@
 import {Server, Socket} from "socket.io"
 import {JwtPayload} from "jsonwebtoken"
 import jwt from "jsonwebtoken"
-import db from "@/config/db"
+import db from "../../config/db"
 
 type UserConnection = {
   activeSessions: Socket[]

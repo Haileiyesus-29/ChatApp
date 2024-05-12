@@ -1,6 +1,6 @@
 import {NextFunction, Response} from "express"
 import * as services from "./groupService"
-import sendResponse from "@/utils/response"
+import sendResponse from "../../utils/response"
 import SocketManager from "../socket/socket"
 
 export async function getMessages(req, res: Response, next: NextFunction) {

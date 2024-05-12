@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs"
 import {User} from "@prisma/client"
-import db from "@/config/db"
-import findByUsername from "@/helpers/findByUsername"
-import {AccountResponse, ReturnType} from "@/utils/types"
-import {ERRORS} from "@/utils/errors"
-import hashPassword from "@/helpers/hashPassword"
-import removePassword from "@/helpers/removePassword"
+import db from "../../config/db"
+import findByUsername from "../../helpers/findByUsername"
+import {AccountResponse, ReturnType} from "../../utils/types"
+import {ERRORS} from "../../utils/errors"
+import hashPassword from "../../helpers/hashPassword"
+import removePassword from "../../helpers/removePassword"
 
 interface UserInput {
   name?: string

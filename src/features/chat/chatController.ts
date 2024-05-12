@@ -1,7 +1,7 @@
 import {NextFunction, Response} from "express"
 import * as service from "./chatService"
-import sendResponse from "@/utils/response"
-import SocketManager from "@/features/socket/socket"
+import sendResponse from "../../utils/response"
+import SocketManager from "../socket/socket"
 
 export async function getContacts(req, res: Response, next: NextFunction) {
   const {data, error} = await service.getContactList(req.user)

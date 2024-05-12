@@ -4,18 +4,22 @@ WORKDIR /app
 
 COPY package.json .
 
+COPY client/package.json ./client/package.json
+
 RUN npm install
 
-ENV DATABASE_URL=postgres://postgres:@localhost:5432/chatapp
+RUN cd client && npm install
 
 COPY prisma . 
 
 RUN npx prisma generate
 
-RUN npx prisma migrate dev --name init 
-
 COPY . .
+
+RUN cd client && npm run build
+
+RUN npm run build
 
 EXPOSE 5000
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]

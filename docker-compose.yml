@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:alpine
+    container_name: chatapp-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chatapp
+    ports:
+      - "5432:5432"
+    networks:
+      - chatapp-network
+  app:
+    build: .
+    container_name: chatapp
+    env_file:
+      - path: ./.env.docker
+        required: true
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./:/app"
+      - "/app/node_modules"
+      - "/app/client/node_modules"
+    depends_on:
+      - db
+    networks:
+      - chatapp-network
+networks:
+  chatapp-network:
+    driver: bridge

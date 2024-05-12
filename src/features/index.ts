@@ -1,8 +1,8 @@
-import userRoutes from "@/features/user/userRoutes"
-import chatRoutes from "@/features/chat/chatRoutes"
-import authRoutes from "@/features/auth/authRoutes"
-import channelRoutes from "@/features/channel/channelRoutes"
-import grouRoutes from "@/features/group/groupRoutes"
-import searchRoutes from "@/features/search/searchRoutes"
+import userRoutes from "./user/userRoutes"
+import chatRoutes from "./chat/chatRoutes"
+import authRoutes from "./auth/authRoutes"
+import channelRoutes from "./channel/channelRoutes"
+import grouRoutes from "./group/groupRoutes"
+import searchRoutes from "./search/searchRoutes"
 
 export default {userRoutes, chatRoutes, authRoutes, channelRoutes, grouRoutes, searchRoutes}

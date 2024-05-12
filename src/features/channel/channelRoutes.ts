@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import {authenticate} from "@/middlewares/authenticate"
+import {authenticate} from "../../middlewares/authenticate"
 import * as controller from "./channelController"
 
 router.use(authenticate)

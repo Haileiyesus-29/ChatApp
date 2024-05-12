@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from "express"
-import sendResponse from "@/utils/response"
+import sendResponse from "../../utils/response"
 import * as services from "./authService"
-import generateToken from "@/helpers/generateToken"
-import {ERRORS} from "@/utils/errors"
+import generateToken from "../../helpers/generateToken"
+import {ERRORS} from "../../utils/errors"
 
 export async function loginUser(req: Request, res: Response, next: NextFunction) {
   const {data, error} = await services.loginUserAccount(req.body)
@@ -15,7 +15,7 @@ export async function loginUser(req: Request, res: Response, next: NextFunction)
 
   res.cookie("refToken", refToken, {
     httpOnly: true,
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "development" ? "none" : "strict",
     path: "/api/auth/verify",
     secure: true,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -33,7 +33,7 @@ export async function registerUser(req, res, next) {
 
   res.cookie("refToken", refToken, {
     httpOnly: true,
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "development" ? "none" : "strict",
     path: "/api/auth/verify",
     secure: true,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -50,7 +50,7 @@ export async function verifyUser(req, res: Response, next: NextFunction) {
 
   res.cookie("refToken", refToken, {
     httpOnly: true,
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "development" ? "none" : "strict",
     path: "/api/auth/verify",
     secure: true,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -62,7 +62,7 @@ export async function verifyUser(req, res: Response, next: NextFunction) {
 export async function logoutUser(req: Request, res: Response, next: NextFunction) {
   res.clearCookie("refToken", {
     httpOnly: true,
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "development" ? "none" : "strict",
     path: "/api/auth/verify",
     secure: true,
   })

@@ -1,8 +1,8 @@
-import db from "@/config/db"
-import findByUsername from "@/helpers/findByUsername"
-import {formatMessageResponse} from "@/helpers/formatMessageResponse"
-import {ERRORS} from "@/utils/errors"
-import {MessageResponse, ReturnType} from "@/utils/types"
+import db from "../../config/db"
+import findByUsername from "../../helpers/findByUsername"
+import {formatMessageResponse} from "../../helpers/formatMessageResponse"
+import {ERRORS} from "../../utils/errors"
+import {MessageResponse, ReturnType} from "../../utils/types"
 import {Group, Message, User} from "@prisma/client"
 
 // GET groups

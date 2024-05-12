@@ -1,5 +1,5 @@
-import db from "@/config/db"
-import {ERRORS} from "@/utils/errors"
+import db from "../config/db"
+import {ERRORS} from "../utils/errors"
 import {NextFunction, Request, Response} from "express"
 import jwt, {JwtPayload} from "jsonwebtoken"
 

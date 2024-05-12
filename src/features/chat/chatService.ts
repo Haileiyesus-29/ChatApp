@@ -1,7 +1,7 @@
-import db from "@/config/db"
-import {formatMessageResponse} from "@/helpers/formatMessageResponse"
-import {ERRORS} from "@/utils/errors"
-import {AccountResponse, MessageResponse, ReturnType} from "@/utils/types"
+import db from "../../config/db"
+import {formatMessageResponse} from "../../helpers/formatMessageResponse"
+import {ERRORS} from "../../utils/errors"
+import {AccountResponse, MessageResponse, ReturnType} from "../../utils/types"
 import {Message, User} from "@prisma/client"
 
 export async function getContactList(user: User): Promise<ReturnType<any[]>> {

@@ -1,5 +1,5 @@
 import {Channel, Group, User} from "@prisma/client"
-import db from "@/config/db"
+import db from "../config/db"
 
 async function findById(id: string): Promise<User | Group | Channel | null> {
   const findFromUsers = db.user.findFirst({where: {id}})

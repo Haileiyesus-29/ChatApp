@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs"
 import jwt, {JwtPayload} from "jsonwebtoken"
-import db from "@/config/db"
-import {ERRORS} from "@/utils/errors"
-import {AccountResponse, ReturnType} from "@/utils/types"
+import db from "../../config/db"
+import {ERRORS} from "../../utils/errors"
+import {AccountResponse, ReturnType} from "../../utils/types"
 import {User} from "@prisma/client"
-import findByUsername from "@/helpers/findByUsername"
-import hashPassword from "@/helpers/hashPassword"
-import removePassword from "@/helpers/removePassword"
+import findByUsername from "../../helpers/findByUsername"
+import hashPassword from "../../helpers/hashPassword"
+import removePassword from "../../helpers/removePassword"
 
 export async function loginUserAccount(payload: {
   email: string

@@ -1,4 +1,4 @@
-import cloudinary from "@/config/cloudinaryConfig"
+import cloudinary from "../config/cloudinaryConfig"
 
 function genUploadSignature({
   eager = "c_pad,h_300,w_400|c_crop,h_200,w_260",

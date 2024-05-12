@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express"
 import * as services from "./channelService"
-import sendResponse from "@/utils/response"
+import sendResponse from "../../utils/response"
 import SocketManager from "../socket/socket"
 
 // TODO: implement getChannels function

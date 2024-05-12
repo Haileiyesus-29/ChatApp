@@ -1,4 +1,4 @@
-import {MessageResponse} from "@/utils/types"
+import {MessageResponse} from "../utils/types"
 import {Message} from "@prisma/client"
 
 type MessageFormat = {

@@ -1,6 +1,6 @@
 import {Router} from "express"
 import * as userController from "./userController"
-import {authenticate} from "@/middlewares/authenticate"
+import {authenticate} from "../../middlewares/authenticate"
 
 const router = Router()
 

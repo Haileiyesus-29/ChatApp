@@ -1,6 +1,6 @@
 import {send} from "process"
 import * as services from "./searchService"
-import sendResponse from "@/utils/response"
+import sendResponse from "../../utils/response"
 
 export async function searchUser(req, res, next) {
   const query = req.query.q

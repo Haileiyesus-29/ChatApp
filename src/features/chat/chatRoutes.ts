@@ -1,5 +1,5 @@
 import {Router} from "express"
-import {authenticate} from "@/middlewares/authenticate"
+import {authenticate} from "../../middlewares/authenticate"
 import * as controller from "./chatController"
 
 /**
