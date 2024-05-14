@@ -24,7 +24,7 @@ function About() {
     <main className="flex items-center gap-2 bg-zinc-900 p-2 h-full overflow-y-auto">
       <section className="flex md:flex-row flex-col bg-zinc-950 rounded h-full overflow-y-auto grow">
         <div className="p-4 max-w-xs basis-1/3">
-          <img src={info.image || "default_profile.jpg"} alt={info.name} />
+          <img src={info?.image || "default_profile.jpg"} alt={info?.name} />
         </div>
         <div className="p-4 grow">
           <h1 className="border-zinc-50 text-3xl">{info.name}</h1>

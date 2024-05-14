@@ -41,9 +41,10 @@ const useGroup = create((set, getState) => ({
 
     let groupMessages = []
     if (currState.messages[msg.receiver]) {
-      groupMessages = [...currState.messages[msg.receiver]].push(msg)
+      groupMessages = [...currState.messages[msg.receiver]]
+      groupMessages.push(msg)
     } else {
-      groupMessages = (await api.get(ENDPOINT.GET_GROUP_MESSAGES(msg.receiver))).data ?? [msg]
+      groupMessages = (await api.get(ENDPOINT.GET_GROUP_MESSAGES(msg.receiver))).data || []
     }
 
     set(store => ({
@@ -56,13 +57,16 @@ const useGroup = create((set, getState) => ({
     }))
   },
   createGroup: async (payload, cb) => {
-    const response = await api.post(ENDPOINT.CREATE_GROUP(), payload)
-    cb?.(response)
-    if (!response.data || response.error) return
-    set(store => ({
-      ...store,
-      chatList: [response.data, ...store.chatList],
-    }))
+    try {
+      const response = await api.post(ENDPOINT.CREATE_GROUP(), payload)
+      cb?.(response?.data)
+      set(store => ({
+        ...store,
+        chatList: [{...response.data, type: "group"}, ...store.chatList],
+      }))
+    } catch (error) {
+      return cb?.(error?.response?.data)
+    }
   },
   getGroupInfo: async id => {
     const response = await api.get(ENDPOINT.GET_GROUP(id))

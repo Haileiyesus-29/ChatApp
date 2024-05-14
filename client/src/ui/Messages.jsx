@@ -59,7 +59,7 @@ function Messages() {
       <ChatTitle user={user} />
       <section ref={messageBox} className="bg-zinc-900 p-2 overflow-y-auto grow">
         <div className="flex flex-col justify-end items-start mt-auto min-h-full">
-          {messages[id]?.map(message => (
+          {(messages[id] || [])?.map(message => (
             <PersonalChatBubble key={message.id} message={message} />
           ))}
         </div>

@@ -64,8 +64,6 @@ const useChat = create((set, getState) => ({
       userMessages = (await api.get(ENDPOINT.GET_CHAT_THREAD(chatId))).data ?? [message]
     }
 
-    console.log("new message __ ", currState.messages[chatId])
-
     set(store => ({
       ...store,
       chatList,

@@ -36,9 +36,10 @@ const useChannel = create((set, getStore) => ({
 
     let channelMessages
     if (currState.messages[msg.sender]) {
-      channelMessages = [...currState.messages[msg.sender]].push(msg)
+      channelMessages = [...currState.messages[msg.sender]]
+      channelMessages.push(msg)
     } else {
-      channelMessages = (await api.get(ENDPOINT.GET_CHANNEL_MESSAGES(msg.sender))).data ?? [msg]
+      channelMessages = (await api.get(ENDPOINT.GET_CHANNEL_MESSAGES(msg.sender))).data ?? []
     }
 
     set(store => ({
@@ -51,13 +52,17 @@ const useChannel = create((set, getStore) => ({
     }))
   },
   createChannel: async (payload, cb) => {
-    const response = await api.post(ENDPOINT.CREATE_CHANNEL(), payload)
-    cb?.(response)
-    if (!response.data || response.error) return
-    set(store => ({
-      ...store,
-      chatList: [response.data, ...store.chatList],
-    }))
+    try {
+      const response = await api.post(ENDPOINT.CREATE_CHANNEL(), payload)
+      cb?.(response.data)
+      if (!response.data || response.error) return
+      set(store => ({
+        ...store,
+        chatList: [{...response.data, type: "channel"}, ...store.chatList],
+      }))
+    } catch (error) {
+      return cb?.(error.response.data)
+    }
   },
   getChannelInfo: async id => {
     const response = await api.get(ENDPOINT.GET_CHANNEL(id))

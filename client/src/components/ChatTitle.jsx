@@ -8,7 +8,7 @@ function ChatTitle({user}) {
     <section className="flex justify-between items-center gap-2 bg-zinc-950 p-2 rounded-t-lg">
       <Avatar className="w-12 h-12">
         <AvatarImage src={user?.image || "default_profile.jpg"} alt={user?.name} />
-        <AvatarFallback>Profile Image</AvatarFallback>
+        <AvatarFallback>PP</AvatarFallback>
       </Avatar>
       <Link
         to={paths.about(user?.id, user?.type || "chat")}

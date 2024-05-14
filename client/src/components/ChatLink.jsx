@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
-import {Check, CheckCheck} from "lucide-react"
+// import {Check, CheckCheck} from "lucide-react"
 import {Link} from "react-router-dom"
 
 function ChatLink({user}) {
@@ -22,8 +22,8 @@ function ChatLink({user}) {
       className="relative flex items-center gap-2 bg-zinc-950 py-2 pr-10 pl-4 rounded-lg overflow-hidden shrink-0"
     >
       <Avatar className="w-8 h-8">
-        <AvatarImage src={user?.image || "default_profile.jpg"} alt={user?.name} />
-        <AvatarFallback>Profile Image</AvatarFallback>
+        <AvatarImage src={user?.image} alt={user?.name} />
+        <AvatarFallback>PP</AvatarFallback>
       </Avatar>
       <div className="flex flex-col justify-between overflow-hidden">
         <span className="top-1 right-4 absolute text-sm text-zinc-50/50 capitalize">

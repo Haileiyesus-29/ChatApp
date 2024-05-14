@@ -7,6 +7,7 @@ import {User} from "@prisma/client"
 import findByUsername from "../../helpers/findByUsername"
 import hashPassword from "../../helpers/hashPassword"
 import removePassword from "../../helpers/removePassword"
+import validatePassword from "../../helpers/validatePassword"
 
 export async function loginUserAccount(payload: {
   email: string
@@ -16,7 +17,7 @@ export async function loginUserAccount(payload: {
     return {data: null, error: ERRORS.badRequest(["Invalid credentials"])}
 
   const user = await db.user.findFirst({
-    where: {email: payload.email},
+    where: {email: payload.email.toLocaleLowerCase()},
   })
 
   if (!user || !(await bcrypt.compare(payload.password, user.password)))
@@ -38,7 +39,7 @@ export async function createNewUser(payload: User): Promise<ReturnType<AccountRe
 
   const currentUser = await db.user.findFirst({
     where: {
-      email: payload.email,
+      email: payload.email.toLocaleLowerCase(),
     },
   })
 
@@ -47,12 +48,20 @@ export async function createNewUser(payload: User): Promise<ReturnType<AccountRe
   if (payload.username && (await findByUsername(payload.username)))
     return {data: null, error: ERRORS.badRequest(["Username not available"])}
 
+  if (!validatePassword(payload.password))
+    return {
+      data: null,
+      error: ERRORS.badRequest([
+        "Password must be at least 8 characters long and contain a number, an uppercase letter, and a lowercase letter",
+      ]),
+    }
+
   const hashedPassword = await hashPassword(payload.password)
 
   const user = await db.user.create({
     data: {
       name: payload.name,
-      email: payload.email,
+      email: payload.email.toLocaleLowerCase(),
       password: hashedPassword,
       username:
         payload.username || `user_${parseInt((Math.random() * 1e13).toString()) + Date.now()}`,

@@ -1,3 +1,4 @@
+import validateUsername from "../../helpers/validateUsername"
 import db from "../../config/db"
 import findByUsername from "../../helpers/findByUsername"
 import {formatMessageResponse} from "../../helpers/formatMessageResponse"
@@ -17,6 +18,7 @@ export async function updateChannelWithId(
     select: {
       id: true,
       ownerId: true,
+      username: true,
     },
   })
 
@@ -24,7 +26,15 @@ export async function updateChannelWithId(
     return {data: null, error: ERRORS.badRequest("Bad Request")}
   }
 
-  if (updates.username && (await findByUsername(updates.username))) {
+  if (!validateUsername(updates.username)) {
+    return {data: null, error: ERRORS.badRequest("Invalid username")}
+  }
+
+  if (
+    updates.username &&
+    (await findByUsername(updates.username)) &&
+    updates.username !== channel.username
+  ) {
     return {data: null, error: ERRORS.badRequest("username not available")}
   }
 
@@ -304,6 +314,10 @@ export async function createChannel(
 ): Promise<ReturnType<Channel>> {
   if (!channelData.name) {
     return {data: null, error: ERRORS.badRequest("Invalid channel data")}
+  }
+
+  if (channelData.username && !validateUsername(channelData.username)) {
+    return {data: null, error: ERRORS.badRequest("Invalid username")}
   }
 
   const channel = await db.channel.create({

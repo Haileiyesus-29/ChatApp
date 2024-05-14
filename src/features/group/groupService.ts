@@ -1,3 +1,4 @@
+import validateUsername from "../../helpers/validateUsername"
 import db from "../../config/db"
 import findByUsername from "../../helpers/findByUsername"
 import {formatMessageResponse} from "../../helpers/formatMessageResponse"
@@ -92,15 +93,26 @@ export async function updateGroup(
     select: {
       id: true,
       ownerId: true,
+      username: true,
     },
   })
 
   if (!group || group.ownerId !== user.id) {
     return {data: null, error: ERRORS.badRequest("Bad Request")}
   }
-  if (updates.username && (await findByUsername(updates.username))) {
+
+  if (updates.username && !validateUsername(updates.username)) {
+    return {data: null, error: ERRORS.badRequest("Invalid username")}
+  }
+
+  if (
+    updates.username &&
+    (await findByUsername(updates.username)) &&
+    updates.username !== group.username
+  ) {
     return {data: null, error: ERRORS.badRequest("username not available")}
   }
+
   const updatedGroup = await db.group.update({
     where: {
       id: groupId,
@@ -310,6 +322,9 @@ export async function createGroup(
     return {data: null, error: ERRORS.badRequest("Invalid group data")}
   }
 
+  if (groupData.username && !validateUsername(groupData.username)) {
+    return {data: null, error: ERRORS.badRequest("Invalid username")}
+  }
   if (groupData.username && (await findByUsername(groupData.username))) {
     return {data: null, error: ERRORS.badRequest("username not available")}
   }
