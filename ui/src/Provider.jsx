@@ -1,10 +1,14 @@
-/* eslint-disable react/prop-types */
+import {PropTypes} from "prop-types"
 import {useEffect} from "react"
 import useChat from "@/store/useChat"
 import useGroup from "@/store/useGroup"
 import useChannel from "@/store/useChannel"
 import instance from "@/services/socket"
 import useAuth from "@/store/useAuth"
+
+Provider.propTypes = {
+  children: PropTypes.node,
+}
 
 function Provider({children}) {
   const {fetchChatList, newMessage: newChatMessage, setUserId} = useChat(store => store)

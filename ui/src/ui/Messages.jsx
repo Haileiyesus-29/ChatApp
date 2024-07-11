@@ -3,39 +3,22 @@ import PersonalChatBubble from "@/components/PersonalChatBubble"
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import useAuth from "@/store/useAuth"
-import {useEffect, useRef, useState} from "react"
+import {useRef} from "react"
 import {useForm} from "react-hook-form"
 import {useOutletContext, useParams} from "react-router-dom"
 import {SendHorizontal} from "lucide-react"
+import {useQuery} from "@tanstack/react-query"
+import queryConfig from "@/services/query"
+import Loader from "./Loader"
 
 function Messages() {
   const messageBox = useRef()
   const {id} = useParams()
-  const {account} = useAuth(store => store)
-  const {messages, fetchChatThread, chatList, sendMessage, getInfo} = useOutletContext()
-  const [user, setUser] = useState(() => chatList.find(chat => chat.id === id) ?? null)
+  const account = useAuth(state => state.account)
 
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    messageBox.current.scrollTop = messageBox.current.scrollHeight
-  }, [messages])
-
-  useEffect(() => {
-    if (!messages[id]) {
-      fetchChatThread(id)
-    }
-  }, [fetchChatThread, id, messages])
-
-  useEffect(() => {
-    if (!user?.id) {
-      getInfo(id)
-        .then(setUser)
-        .then(() => setLoading(false))
-    } else {
-      setLoading(false)
-    }
-  }, [getInfo, id, user?.id])
+  const {type} = useOutletContext()
+  const messageQuery = useQuery(queryConfig.fetchMessages(type, id))
+  const chatQuery = useQuery(queryConfig.fetchChatInfo(type, id))
 
   const {
     register,
@@ -44,28 +27,32 @@ function Messages() {
     formState: {isSubmitting},
   } = useForm({defaultValues: {text: ""}})
 
-  const onSubmit = async data => {
-    await sendMessage({recipientId: id, message: data})
-    setValue("text", "")
-  }
+  const onSubmit = e =>
+    handleSubmit(data => {
+      console.log(data)
+      setValue("text", "")
+    })(e)
 
+  // Only show form if the chat is not a channel or the user is the owner of the channel
   const showForm =
-    (user?.type === "channel" && user?.ownerId === account.id) || user?.type !== "channel"
+    chatQuery.data?.type !== "channel" ||
+    (chatQuery.data?.type === "channel" && chatQuery.data?.owner === account.id)
 
-  if (!user && !loading) return <h1>Not Found</h1>
+  const loading = messageQuery.isLoading || chatQuery.isLoading
 
+  if (loading) return <Loader />
   return (
     <main className="flex flex-col justify-between gap-1 h-full overflow-hidden">
-      <ChatTitle user={user} />
+      <ChatTitle user={chatQuery.data} type={type} />
       <section ref={messageBox} className="bg-zinc-900 p-2 overflow-y-auto grow">
         <div className="flex flex-col justify-end items-start mt-auto min-h-full">
-          {(messages[id] || [])?.map(message => (
+          {messageQuery.data.map(message => (
             <PersonalChatBubble key={message.id} message={message} />
           ))}
         </div>
       </section>
       {showForm && (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-1 px-1 py-2">
+        <form onSubmit={onSubmit} className="flex items-center gap-1 px-1 py-2">
           <Input
             {...register("text", {required: true})}
             autoComplete="off"

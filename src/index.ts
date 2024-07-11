@@ -28,10 +28,10 @@ app.use("/api/channel", routes.channelRoutes)
 app.use("/api/group", routes.grouRoutes)
 app.use("/api/search", routes.searchRoutes)
 
-app.use(express.static(path.join(__dirname, "../client/dist")))
+app.use(express.static(path.join(__dirname, "../ui/dist")))
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist/index.html"))
+  res.sendFile(path.join(__dirname, "../ui/dist/index.html"))
 })
 
 app.use(errorHandler)

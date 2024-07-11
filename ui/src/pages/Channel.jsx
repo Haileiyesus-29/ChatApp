@@ -1,28 +1,18 @@
-import useChannel from '@/store/useChannel'
-import { Outlet } from 'react-router-dom'
+import queryConfig from "@/services/query"
+import {useQuery} from "@tanstack/react-query"
+import {Outlet} from "react-router-dom"
 
 function Channel() {
-   const {
-      loading,
-      messages,
-      chatList,
-      fetchChannelThread: fetchChatThread,
-      sendMessage,
-      getChannelInfo: getInfo,
-   } = useChannel(store => store)
+  const chatlistQuery = useQuery(queryConfig.getChannelChatlist())
 
-   return (
-      <Outlet
-         context={{
-            chatList,
-            loading,
-            fetchChatThread,
-            messages,
-            sendMessage,
-            getInfo,
-            type: 'channel',
-         }}
-      />
-   )
+  if (chatlistQuery.isLoading) return <div>Loading...</div>
+  return (
+    <Outlet
+      context={{
+        chatList: chatlistQuery.data,
+        type: "channel",
+      }}
+    />
+  )
 }
 export default Channel

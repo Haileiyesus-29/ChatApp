@@ -1,29 +1,19 @@
-import useGroup from '@/store/useGroup'
-import { Outlet } from 'react-router-dom'
+import queryConfig from "@/services/query"
+import {useQuery} from "@tanstack/react-query"
+import {Outlet} from "react-router-dom"
 
 function Group() {
-   const {
-      loading,
-      messages,
-      chatList,
-      fetchGroupThread: fetchChatThread,
-      sendMessage,
-      getGroupInfo: getInfo,
-   } = useGroup(store => store)
+  const chatlistQuery = useQuery(queryConfig.getGroupChatlist())
 
-   return (
-      <Outlet
-         context={{
-            chatList,
-            loading,
-            fetchChatThread,
-            messages,
-            sendMessage,
-            getInfo,
-            type: 'group',
-         }}
-      />
-   )
+  if (chatlistQuery.isLoading) return <div>Loading...</div>
+  return (
+    <Outlet
+      context={{
+        chatList: chatlistQuery.data,
+        type: "group",
+      }}
+    />
+  )
 }
 
 export default Group

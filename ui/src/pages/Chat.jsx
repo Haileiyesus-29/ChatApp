@@ -1,28 +1,19 @@
-import useChat from '@/store/useChat'
-import { Outlet } from 'react-router-dom'
+import queryConfig from "@/services/query"
+import {useQuery} from "@tanstack/react-query"
+import {Outlet} from "react-router-dom"
 
 function Chat() {
-   const {
-      chatList,
-      loading,
-      fetchChatThread,
-      messages,
-      sendMessage,
-      getChatInfo: getInfo,
-   } = useChat(store => store)
+  const chatlistQuery = useQuery(queryConfig.getChatChatlist())
 
-   return (
-      <Outlet
-         context={{
-            chatList,
-            loading,
-            fetchChatThread,
-            messages,
-            sendMessage,
-            getInfo,
-            type: 'chat',
-         }}
-      />
-   )
+  if (chatlistQuery.isLoading) return <div>Loading...</div>
+
+  return (
+    <Outlet
+      context={{
+        chatList: chatlistQuery.data,
+        type: "chat",
+      }}
+    />
+  )
 }
 export default Chat

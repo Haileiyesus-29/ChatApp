@@ -3,7 +3,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Link} from "react-router-dom"
 import paths from "@/paths"
 
-function ChatTitle({user}) {
+function ChatTitle({user, type}) {
   return (
     <section className="flex justify-between items-center gap-2 bg-zinc-950 p-2 rounded-t-lg">
       <Avatar className="w-12 h-12">
@@ -11,7 +11,7 @@ function ChatTitle({user}) {
         <AvatarFallback>PP</AvatarFallback>
       </Avatar>
       <Link
-        to={paths.about(user?.id, user?.type || "chat")}
+        to={paths.about(user.id, type)}
         className="flex flex-col justify-between overflow-hidden grow"
       >
         <h3 className="text-lg">{user?.name}</h3>

@@ -13,7 +13,11 @@ class SocketManager {
   private userSessions: Map<string, UserConnection> = new Map()
 
   private constructor(server) {
-    this.io = new Server(server)
+    this.io = new Server(server, {
+      cors: {
+        origin: "*",
+      },
+    })
     console.log(`Socket server running`)
 
     this.io.use(this.authenticate.bind(this))
