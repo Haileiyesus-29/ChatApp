@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import {Navigate, Outlet} from "react-router-dom"
 import Header from "@/components/Header"
 import NavLinks from "@/components/NavLinks"
@@ -19,7 +18,6 @@ function Container() {
 
   if (loading) return <Loader />
   if (!account) return <Navigate to="/login" />
-
   return (
     <Provider>
       <div className="grid grid-cols-[min-content,1fr] grid-rows-[min-content,1fr] bg-black mx-auto lg:rounded-xl w-full max-w-screen-lg h-full overflow-hidden">

@@ -7,9 +7,9 @@ function Home() {
   const [chatList, setChatList] = useState([])
   const [chatChatlist, groupChatlist, channelChatlist] = useQueries({
     queries: [
-      queryConfig.getChatChatlist(),
-      queryConfig.getGroupChatlist(),
-      queryConfig.getChannelChatlist(),
+      queryConfig.getChatList("chat"),
+      queryConfig.getChatList("group"),
+      queryConfig.getChatList("channel"),
     ],
   })
 

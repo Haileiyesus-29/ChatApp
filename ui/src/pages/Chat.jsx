@@ -3,7 +3,7 @@ import {useQuery} from "@tanstack/react-query"
 import {Outlet} from "react-router-dom"
 
 function Chat() {
-  const chatlistQuery = useQuery(queryConfig.getChatChatlist())
+  const chatlistQuery = useQuery(queryConfig.getChatList("chat"))
 
   if (chatlistQuery.isLoading) return <div>Loading...</div>
 

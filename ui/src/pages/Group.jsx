@@ -3,7 +3,7 @@ import {useQuery} from "@tanstack/react-query"
 import {Outlet} from "react-router-dom"
 
 function Group() {
-  const chatlistQuery = useQuery(queryConfig.getGroupChatlist())
+  const chatlistQuery = useQuery(queryConfig.getChatList("group"))
 
   if (chatlistQuery.isLoading) return <div>Loading...</div>
   return (

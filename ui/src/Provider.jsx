@@ -1,8 +1,5 @@
 import {PropTypes} from "prop-types"
 import {useEffect} from "react"
-import useChat from "@/store/useChat"
-import useGroup from "@/store/useGroup"
-import useChannel from "@/store/useChannel"
 import instance from "@/services/socket"
 import useAuth from "@/store/useAuth"
 
@@ -11,69 +8,25 @@ Provider.propTypes = {
 }
 
 function Provider({children}) {
-  const {fetchChatList, newMessage: newChatMessage, setUserId} = useChat(store => store)
-
-  const {fetchChatList: fetchGroupList, newMessage: newGroupMessage} = useGroup(store => store)
-  const {fetchChatList: fetchChannelList, newMessage: newChannelMessage} = useChannel(
-    store => store
-  )
   const {account} = useAuth(store => store)
 
   useEffect(() => {
-    if (account) {
-      instance.socket.connect()
-    }
+    if (account) instance.connect()
+
     return () => {
-      instance?.socket.disconnect()
+      instance?.disconnect()
     }
   }, [account])
 
-  useEffect(() => {
-    fetchChatList()
-    setUserId(account?.id)
-  }, [fetchChatList, setUserId, account])
+  const listener = (...args) => {
+    console.log(args)
+  }
 
   useEffect(() => {
-    fetchGroupList()
-  }, [fetchGroupList])
+    instance.on("chat:message", listener)
+    return () => instance.off("chat:message", listener)
+  }, [])
 
-  useEffect(() => {
-    fetchChannelList()
-  }, [fetchChannelList])
-
-  useEffect(() => {
-    const listener = message => {
-      newChatMessage(message)
-    }
-    instance.socket.on("chat:message", listener)
-
-    return () => {
-      instance.socket.off("chat:message", listener)
-    }
-  }, [newChatMessage])
-
-  useEffect(() => {
-    const listener = message => {
-      newGroupMessage(message)
-    }
-    instance.socket.on("group:message", listener)
-
-    return () => {
-      instance.socket.off("group:message", listener)
-    }
-  }, [newGroupMessage])
-
-  useEffect(() => {
-    const listener = message => {
-      newChannelMessage(message)
-    }
-    instance.socket.on("channel:message", listener)
-
-    return () => {
-      instance.socket.off("channel:message", listener)
-    }
-  }, [newChannelMessage])
-
-  return <>{children}</>
+  return children
 }
 export default Provider

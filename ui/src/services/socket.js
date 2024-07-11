@@ -1,40 +1,32 @@
-import { io } from 'socket.io-client'
+import {io} from "socket.io-client"
 
 class SocketClient {
-   static #instance = null
-   #socket
+  #socket = null
 
-   constructor() {
-      this.#socket = io({
-         withCredentials: true,
-         reconnectionDelay: 3000,
-         autoConnect: false,
-         auth: {
-            token: sessionStorage.getItem('token'),
-         },
-      })
+  constructor() {
+    this.#socket = io({
+      withCredentials: true,
+      reconnectionDelay: 3000,
+      autoConnect: false,
+      retries: 5,
+      auth: {
+        token: sessionStorage.getItem("token"),
+      },
+    })
 
-      this.#socket.on('connect', () => {
-         console.log('Connected to server')
-      })
+    this.#socket?.on("connect", () => {
+      console.log("Connected to server")
+    })
 
-      this.#socket.on('disconnect', () => {
-         console.log('Disconnected from server')
-      })
-   }
-
-   get socket() {
-      return this.#socket
-   }
-
-   static get instance() {
-      if (!this.#instance) {
-         this.#instance = new SocketClient()
-      }
-      return this.#instance
-   }
+    this.#socket?.on("disconnect", () => {
+      console.log("Disconnected from server")
+    })
+  }
+  get instance() {
+    return this.#socket
+  }
 }
 
-const instance = SocketClient.instance
+const socketClient = new SocketClient()
 
-export default instance
+export default socketClient.instance

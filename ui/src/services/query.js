@@ -6,7 +6,7 @@ const queryConfig = {
     return {
       queryKey: ["message", type, id],
       queryFn: async () => {
-        const response = await api.get(getEndpoint(type, id))
+        const response = await api.get(getMessagesEndpoint(type, id))
         return response.data
       },
       enabled: !!id,
@@ -22,28 +22,15 @@ const queryConfig = {
       enabled: !!id,
     }
   },
-  getChatChatlist: () => ({
-    queryKey: ["chat", "chatlist"],
-    queryFn: async () => {
-      const response = await api.get(ENDPOINT.GET_ALL_CHATS())
-      return response.data
-    },
-  }),
-  getGroupChatlist: () => ({
-    queryKey: ["group", "chatlist"],
-    queryFn: async () => {
-      const response = await api.get(ENDPOINT.GET_ALL_GROUPS())
-      return response.data
-    },
-  }),
-  getChannelChatlist: () => ({
-    queryKey: ["channel", "chatlist"],
-    queryFn: async () => {
-      const response = await api.get(ENDPOINT.GET_ALL_CHANNELS())
-      return response.data
-    },
-  }),
-
+  getChatList: type => {
+    return {
+      queryKey: ["chatList", type],
+      queryFn: async () => {
+        const response = await api.get(getChatlistEndpoint(type))
+        return response.data
+      },
+    }
+  },
   getChatInfo: (type, id) => ({
     queryKey: ["chatInfo", type, id],
     queryFn: async () => {
@@ -55,7 +42,20 @@ const queryConfig = {
 
 export default queryConfig
 
-const getEndpoint = (type, id) => {
+const getChatlistEndpoint = type => {
+  switch (type) {
+    case "chat":
+      return ENDPOINT.GET_ALL_CHATS()
+    case "group":
+      return ENDPOINT.GET_ALL_GROUPS()
+    case "channel":
+      return ENDPOINT.GET_ALL_CHANNELS()
+    default:
+      return ENDPOINT.GET_ALL_CHATS()
+  }
+}
+
+const getMessagesEndpoint = (type, id) => {
   switch (type) {
     case "chat":
       return ENDPOINT.GET_CHAT_THREAD(id)
