@@ -3,16 +3,11 @@ import {Navigate, Outlet} from "react-router-dom"
 import Header from "@/components/Header"
 import NavLinks from "@/components/NavLinks"
 import useAuth from "@/store/useAuth"
-import {useEffect} from "react"
 import Provider from "@/Provider"
 import Loader from "./Loader"
 
 function Container() {
-  const {loading, account, verify} = useAuth(state => state)
-
-  useEffect(() => {
-    verify()
-  }, [verify])
+  const {loading, account} = useAuth(state => state)
 
   const renderMainComponents = () => (
     <>

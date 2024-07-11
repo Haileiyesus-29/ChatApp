@@ -45,6 +45,7 @@ const useChat = create((set, getState) => ({
     if (!isChatted) {
       chatList.push({
         id: chatId,
+        type: "user",
         ...message.user,
         lastMessage: message,
       })

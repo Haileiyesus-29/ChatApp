@@ -2,10 +2,9 @@ services:
   db:
     image: postgres:alpine
     container_name: chatapp-db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: chatapp
+    env_file:
+      - path: ./docker.env
+        required: true
     ports:
       - "5432:5432"
     networks:
@@ -14,7 +13,7 @@ services:
     build: .
     container_name: chatapp
     env_file:
-      - path: ./.env.docker
+      - path: ./docker.env
         required: true
     ports:
       - "5000:5000"

@@ -26,9 +26,11 @@ const useGroup = create((set, getState) => ({
   },
   newMessage: async msg => {
     const currState = getState()
-    const chatList = currState.chatList
+    let alreadyChatted = false
+    let chatList = currState.chatList
       .map(g => {
         if (g.id === msg.receiver) {
+          alreadyChatted = true
           return {...g, lastMessage: msg}
         }
         return g
@@ -38,6 +40,8 @@ const useGroup = create((set, getState) => ({
         const bDate = new Date(b.lastMessage.createdAt)
         return bDate - aDate
       })
+
+    if (!alreadyChatted) chatList.unshift({...msg.group, type: "group", lastMessage: msg})
 
     let groupMessages = []
     if (currState.messages[msg.receiver]) {

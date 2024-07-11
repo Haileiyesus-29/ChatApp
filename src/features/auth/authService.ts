@@ -52,7 +52,7 @@ export async function createNewUser(payload: User): Promise<ReturnType<AccountRe
     return {
       data: null,
       error: ERRORS.badRequest([
-        "Password must be at least 8 characters long and contain a number, an uppercase letter, and a lowercase letter",
+        "Password must be at least 6 characters long and contain a number and a letter",
       ]),
     }
 
