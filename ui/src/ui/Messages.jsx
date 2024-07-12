@@ -84,8 +84,7 @@ function Messages() {
   }, [messageQuery.data])
 
   const showForm =
-    chatQuery.data?.type !== "channel" ||
-    (chatQuery.data?.type === "channel" && chatQuery.data?.owner === account.id)
+    type !== "channel" || (type === "channel" && chatQuery.data?.ownerId === account.id)
 
   const loading = messageQuery.isLoading || chatQuery.isLoading
 

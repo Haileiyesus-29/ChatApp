@@ -13,7 +13,7 @@ import SocketManager from "./features/socket/socket"
 dotenv.config()
 
 const app: Express = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT
 
 const server = http.createServer(app)
 

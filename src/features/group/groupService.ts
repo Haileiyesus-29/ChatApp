@@ -343,8 +343,8 @@ export async function createGroup(
   return {data: group, error: null}
 }
 
-export async function joinGroup(user: User, data: {groupId: string}): Promise<ReturnType<Group>> {
-  const groupId = data?.groupId
+export async function joinGroup(user: User, data: {id: string}): Promise<ReturnType<Group>> {
+  const groupId = data?.id
   if (!groupId) return {data: null, error: ERRORS.badRequest(["Invalid credentials"])}
 
   let updatedGroup: Group | null = null

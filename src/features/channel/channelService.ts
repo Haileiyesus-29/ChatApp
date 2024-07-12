@@ -336,11 +336,8 @@ export async function createChannel(
   return {data: channel, error: null}
 }
 
-export async function joinChannel(
-  user: User,
-  data: {channelId: string}
-): Promise<ReturnType<Channel>> {
-  const channelId = data?.channelId
+export async function joinChannel(user: User, data: {id: string}): Promise<ReturnType<Channel>> {
+  const channelId = data?.id
   if (!channelId) return {data: null, error: ERRORS.badRequest(["Invalid credentials"])}
 
   let updatedChannel: Channel | null = null

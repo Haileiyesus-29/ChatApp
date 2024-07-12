@@ -4,29 +4,31 @@ import {ENDPOINT} from "@/endpoints"
 import api from "@/services/api"
 import useAuth from "@/store/useAuth"
 import Search from "@/ui/Search"
+import {useQueryClient} from "@tanstack/react-query"
 import {useEffect, useState} from "react"
 
 function Header() {
   const {account} = useAuth(state => state)
   const [searchInput, setSearchInput] = useState("")
+  const queryClient = useQueryClient()
+
   const [searchResults, setSearchResults] = useState({
     users: [],
     groups: [],
     channels: [],
   })
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchResults = async () => {
-      try {
-        setLoading(true)
-        const response = await api.get(ENDPOINT.SEARCH(searchInput))
-        setSearchResults(response.data)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setLoading(false)
-      }
+      await queryClient.prefetchQuery({
+        queryKey: ["search", searchInput],
+        queryFn: async () => {
+          const res = await api.get(ENDPOINT.SEARCH(searchInput))
+          setSearchResults(res.data)
+          return res.data
+        },
+        staleTime: 1000 * 60 * 5,
+      })
     }
 
     const timer = setTimeout(() => {
@@ -38,7 +40,7 @@ function Header() {
     }, 500)
 
     return () => clearTimeout(timer)
-  }, [searchInput])
+  }, [searchInput, queryClient])
 
   return (
     <header className="relative flex justify-between items-center gap-2 col-span-full px-3 py-2">
@@ -57,7 +59,11 @@ function Header() {
       />
       {searchInput && (
         <div className="top-full left-1/2 z-20 absolute w-11/12 max-w-md h-[90svh] transition-all -translate-x-1/2 md:-translate-x-28">
-          <Search searchResults={searchResults} loading={loading} setSearchInput={setSearchInput} />
+          <Search
+            searchResults={searchResults}
+            loading={queryClient.isFetching}
+            setSearchInput={setSearchInput}
+          />
         </div>
       )}
     </header>
