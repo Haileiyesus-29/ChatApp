@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY package.json .
 
-COPY client/package.json ./client/package.json
-
 RUN npm install
 
-RUN cd client && npm install
+COPY ui/package.json ./ui/package.json
+
+RUN npm install --prefix ui
 
 COPY prisma . 
 
@@ -16,7 +16,7 @@ RUN npx prisma generate
 
 COPY . .
 
-RUN cd client && npm run build
+RUN npm run build --prefix ui
 
 RUN npm run build
 
