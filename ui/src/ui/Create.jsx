@@ -6,15 +6,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import useChannel from "@/store/useChannel"
-import useGroup from "@/store/useGroup"
 
 function Create() {
   const {pathname} = useLocation()
   const path = pathname.split("/").slice(-1).toString()
-
-  const {createGroup} = useGroup(store => store)
-  const {createChannel} = useChannel(store => store)
 
   return (
     <main className="flex flex-col bg-zinc-900">
@@ -29,7 +24,7 @@ function Create() {
           )}
         </BreadcrumbList>
       </Breadcrumb>
-      <Outlet context={{createChannel, createGroup, type: path}} />
+      <Outlet context={{type: path}} />
     </main>
   )
 }

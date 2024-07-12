@@ -47,6 +47,7 @@ const useAuth = create(set => ({
     if (response?.errors) return
     sessionStorage.setItem("token", response?.token)
     set({account: response?.data})
+    return null
   },
 
   updateProfile: async (payload, cb) => {

@@ -17,45 +17,42 @@ function Provider({children}) {
     (event, data) => {
       let chatId = null
       if (event === "chat") chatId = account.id === data.sender ? data.receiver : data.sender
-      if (event === "group" || event === "channel") chatId = data.receiver
+      if (event === "group") chatId = data.receiver
+      if (event === "channel") chatId = data.sender
+
+      queryClient.setQueryData(queryConfig.getChatList(event).queryKey, old => {
+        let chached = false
+
+        const list = (old || []).map(chat => {
+          if (chat.id === chatId) {
+            chached = true
+            chat.lastMessage = data
+          }
+          return chat
+        })
+
+        if (!chached) list.push({...data.user, lastMessage: data})
+
+        list.sort((a, b) => {
+          const dateA = new Date(a.lastMessage?.createdAt)
+          const dateB = new Date(b.lastMessage?.createdAt)
+          return dateB - dateA
+        })
+
+        return list
+      })
 
       // update messages cache
       const oldMessages = queryClient.getQueryData(
         queryConfig.fetchMessages(event, chatId).queryKey
       )
-      if (!oldMessages) {
-        queryClient.fetchQuery(queryConfig.fetchMessages(event, chatId))
-        return
-      }
+      if (!oldMessages) return queryClient.fetchQuery(queryConfig.fetchMessages(event, chatId))
 
       queryClient.setQueryData(queryConfig.fetchMessages(event, chatId).queryKey, () =>
         oldMessages.filter(msg => msg.id !== data.id).concat(data)
       )
-
-      // update chat list cache
-      const oldChats = queryClient.getQueryData(queryConfig.getChatList(event).queryKey)
-      if (!oldChats) return queryClient.fetchQuery(queryConfig.getChatList(event))
-      queryClient.setQueryData(queryConfig.getChatList(event).queryKey, old => {
-        if (!old)
-          return [
-            {
-              ...data.user,
-              type: event,
-              lastMessage: data,
-            },
-          ]
-        old.forEach(chat => {
-          if (chat.id === chatId) {
-            chat.lastMessage = data
-          }
-        })
-        return [...old].sort((a, b) => {
-          const dateA = new Date(a.lastMessage?.createdAt)
-          const dateB = new Date(b.lastMessage?.createdAt)
-          return dateB - dateA
-        })
-      })
     },
+
     [account.id, queryClient]
   )
 

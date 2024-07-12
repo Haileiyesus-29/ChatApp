@@ -7,6 +7,10 @@ import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
 import {useNavigate, useOutletContext} from "react-router-dom"
+import {useMutation, useQueryClient} from "@tanstack/react-query"
+import api from "@/services/api"
+import {ENDPOINT} from "@/endpoints"
+import queryConfig from "@/services/query"
 
 const schema = z.object({
   name: z.string().trim().min(1, {message: "Name is required"}),
@@ -18,38 +22,46 @@ const schema = z.object({
 })
 
 function CreateForm() {
-  const {createGroup, createChannel, type} = useOutletContext()
+  const {type} = useOutletContext()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async data => {
+      const endpoint = type === "channel" ? ENDPOINT.CREATE_CHANNEL() : ENDPOINT.CREATE_GROUP()
+      const res = await api.post(endpoint, data)
+      return res.data
+    },
+    onError: error => {
+      console.log(error)
+      if (error.response.data.errors) {
+        error.response.data.errors.forEach(err => {
+          setError(err.field, {message: err.message})
+        })
+        return
+      }
+      setError("root", {message: error.response.data.message})
+    },
+    onSuccess: data => {
+      queryClient.setQueryData(queryConfig.getChatList(type).queryKey, old => {
+        return [...(old || []), {...data, lastMessage: null, type}]
+      })
+      navigate(`/${type}/${data.id}`)
+    },
+  })
 
   const {
     register,
     handleSubmit,
-    setValue,
     setError,
     formState: {isSubmitting, errors},
   } = useForm({
     resolver: zodResolver(schema),
   })
 
-  const callback = response => {
-    if (response.errors) {
-      setError("root", {message: response.errors || "Something went wrong"})
-    } else {
-      navigate(`/${type}`)
-    }
-  }
-
-  const onSubmit = data => {
-    if (type === "group") {
-      createGroup(data, callback)
-    } else {
-      createChannel(data, callback)
-    }
-  }
-
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(mutation.mutate)}
       className="flex flex-col gap-3 mx-auto py-10 p-2 w-full max-w-md"
     >
       {errors.root && (

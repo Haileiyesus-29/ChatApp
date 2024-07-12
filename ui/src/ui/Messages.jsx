@@ -35,35 +35,32 @@ function Messages() {
     },
     onSuccess: res => {
       if (!res) return
+      // update chat list cache
+      queryClient.setQueryData(queryConfig.getChatList(type).queryKey, old => {
+        let msgCached = false
+        const messages = (old || []).map(chat => {
+          if (chat.id === id) {
+            msgCached = true
+            chat.lastMessage = res
+          }
+          return chat
+        })
+
+        if (!msgCached) messages.push({...chatQuery.data, lastMessage: res})
+
+        messages.sort((a, b) => {
+          const dateA = new Date(a.lastMessage?.createdAt)
+          const dateB = new Date(b.lastMessage?.createdAt)
+          return dateB - dateA
+        })
+
+        return messages
+      })
 
       // update messages chache
       queryClient.setQueryData(queryConfig.fetchMessages(type, id).queryKey, old =>
         old.filter(msg => msg.id !== res.id).concat(res)
       )
-
-      // update chat list cache
-      queryClient.setQueryData(queryConfig.getChatList(type).queryKey, old => {
-        if (!old)
-          return [
-            {
-              ...chatQuery.data,
-              type,
-              lastMessage: res,
-            },
-          ]
-
-        old.forEach(chat => {
-          if (chat.id === id) {
-            chat.lastMessage = res
-          }
-        })
-
-        return [...old].sort((a, b) => {
-          const dateA = new Date(a.lastMessage?.createdAt)
-          const dateB = new Date(b.lastMessage?.createdAt)
-          return dateB - dateA
-        })
-      })
 
       setValue("text", "")
       messageBox.current.scrollTop = messageBox.current.scrollHeight
