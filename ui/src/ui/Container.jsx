@@ -4,9 +4,16 @@ import NavLinks from "@/components/NavLinks"
 import useAuth from "@/store/useAuth"
 import Provider from "@/Provider"
 import Loader from "./Loader"
+import {useQuery} from "@tanstack/react-query"
 
 function Container() {
-  const {loading, account} = useAuth(state => state)
+  const {loading, account, verify} = useAuth(state => state)
+
+  useQuery({
+    queryKey: ["verify"],
+    queryFn: verify,
+    refetchInterval: 1000 * 60 * 15,
+  })
 
   const renderMainComponents = () => (
     <>

@@ -3,7 +3,7 @@ import PersonalChatBubble from "@/components/PersonalChatBubble"
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import useAuth from "@/store/useAuth"
-import {useRef} from "react"
+import {useEffect, useRef} from "react"
 import {useForm} from "react-hook-form"
 import {useOutletContext, useParams} from "react-router-dom"
 import {SendHorizontal} from "lucide-react"
@@ -37,10 +37,9 @@ function Messages() {
       if (!res) return
 
       // update messages chache
-      queryClient.setQueryData(queryConfig.fetchMessages(type, id).queryKey, old => {
-        if (old) return [...old, res]
-        return [res]
-      })
+      queryClient.setQueryData(queryConfig.fetchMessages(type, id).queryKey, old =>
+        old.filter(msg => msg.id !== res.id).concat(res)
+      )
 
       // update chat list cache
       queryClient.setQueryData(queryConfig.getChatList(type).queryKey, old => {
@@ -82,6 +81,10 @@ function Messages() {
     handleSubmit(data => {
       mutation.mutateAsync(data)
     })(e)
+
+  useEffect(() => {
+    if (messageBox.current) messageBox.current.scrollTop = messageBox.current.scrollHeight
+  }, [messageQuery.data])
 
   const showForm =
     chatQuery.data?.type !== "channel" ||

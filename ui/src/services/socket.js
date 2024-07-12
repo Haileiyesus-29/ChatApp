@@ -10,7 +10,7 @@ class SocketClient {
       autoConnect: false,
       retries: 5,
       auth: {
-        token: sessionStorage.getItem("token"),
+        token: sessionStorage.getItem("tokens"),
       },
     })
 
