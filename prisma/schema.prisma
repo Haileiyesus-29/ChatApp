@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  username      String    @unique
+  name          String
+  image         String?
+  bio           String?
+  password      String
+  createdAt     DateTime  @default(now())
+  groups        Group[]   @relation("GroupMembers")
+  ownGroups     Group[]   @relation("GroupOwner")
+  channels      Channel[] @relation("ChannelMembers")
+  ownChannels   Channel[] @relation("ChannelOwner")
+
+  sentMessages  Message[] @relation("UserSent")
+  recMessages   Message[] @relation("UserRec")
+  contacts      User[]    @relation("Contact")
+  contactOf     User[]    @relation("Contact")
+}
+
+model Group {
+  id       String    @id @default(uuid())
+  username String    @unique
+  name     String
+  image    String?
+  desc     String?
+  members  User[]    @relation("GroupMembers")
+  owner    User      @relation("GroupOwner", fields: [ownerId], references: [id])
+  ownerId  String
+  messages Message[] @relation("GroupRec")
+}
+
+model Channel {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  name         String
+  image        String?
+  desc         String?
+  members      User[]    @relation("ChannelMembers")
+  owner        User      @relation("ChannelOwner", fields: [ownerId], references: [id])
+  ownerId      String
+  messages     Message[] @relation("ChannelSent")
+}
+
+model Message {
+  id           String   @id @default(uuid())
+  text         String?
+  images       String[]
+  emoji        String?
+  createdAt    DateTime @default(now())
+  userSender   User?    @relation("UserSent", fields: [userSenderId], references: [id])
+  userSenderId String?
+  userRec      User?    @relation("UserRec", fields: [userRecId], references: [id])
+  userRecId    String?
+  groupRec     Group?   @relation("GroupRec", fields: [groupRecId], references: [id])
+  groupRecId      String?
+  chanSender   Channel? @relation("ChannelSent", fields: [chanSenderId], references: [id])
+  chanSenderId String?
+
+  @@index([userRecId], name: "user_receiver_index")
+  @@index([groupRecId], name: "group_receiver_index")
+  @@index([userSenderId], name: "user_sender_index")
+  @@index([chanSenderId], name: "channel_sender_index")
+}
